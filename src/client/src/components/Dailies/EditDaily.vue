@@ -26,46 +26,66 @@
 </script>
 
 <template>
-	<div>
-		<h1>Edit Daily</h1>
-		<div>{{ lookups }}</div>
+	<div class="">
+		<h1 class="text-4xl">Edit Daily</h1>
 		<form id="daily-edit" action="">
-			<input name="name" />
-			<input name="note" />
-			<div>
-				<button 
-					type="button" 
-					class="expander"
-					@click="toggleAdvancedShow"
-				>Extra </button>
+			<div class="required-block">
+				<fieldset>
+					<legend>Name:</legend>
+					<input name="name" />
+				</fieldset>
+				<fieldset>
+					<legend for="note">Description:</legend>
+					<input name="note" />
+				</fieldset>
 			</div>
-			<div 
-				class="advanced-fields"
-				:class="{ 'closed': !showAdvanced, 'open': showAdvanced }"
+			<details>
+				<summary>Extra</summary>
+				<div>
+					<fieldset>
+						<legend for="rateType">How Often?</legend>
+						<select name="rateType">
+							<option 
+								v-for="option of cycleRateTypes" 
+								:key="`rate-${option.id}`"
+								:value="option.id"
+							>
+								{{option.name}}
+							</option>
+						</select>
+					</fieldset>
+					<fieldset>
+						<legend for="rate"></legend>
+						<input name="rate" />
+					</fieldset>
+					<fieldset>
+						<legend for="difficulty">Difficulty</legend>
+						<input name="difficulty" type="range" min="0" max="10">
+					</fieldset>
+					<fieldset>
+						<legend for="urgency">Urgency</legend>
+						<input name="urgency" type="range" min="0" max="10">
+					</fieldset>
+					<fieldset>
+						<legend for="startTime">Start Time</legend>
+						<input name="startTime" type="time"/>
+					</fieldset>
+					<fieldset>
+						<legend for="activeFromDate">Active Since</legend>
+						<input name="activeFromDate" type="date"/>
+					</fieldset>
+					<fieldset>
+						<legend for="activeToDate">Active till</legend>
+						<input name="activeToDate" type="date"/>
+					</fieldset>
+				</div>
+			</details>
+			<button 
+				class="bg-sky-600 px-3 py-1 text-gray-100 shadow-lg hover:shadow-slate-500" 
+				type="submit"
 			>
-			<div>
-				<label for="rateType">How Often?</label>
-				<select name="rateType">
-					<option 
-						v-for="option of cycleRateTypes" 
-						:key="`rate-${option.id}`"
-						:value="option.id"
-					>
-						{{option.name}}
-					</option>
-				</select>
-			</div>
-			<div>
-				<label for="rate"></label>
-				<input name="rate" />
-			</div>
-				<input name="difficulty" />
-				<input name="urgency" />
-				<input name="startTime" />
-				<input name="activeFromDate" />
-				<input name="activeToDate" />
-			</div>
-			<button type="submit">Submit</button>
+				Submit
+			</button>
 		</form>
 	</div>
 </template>

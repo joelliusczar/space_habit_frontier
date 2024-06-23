@@ -15,7 +15,6 @@ onMounted(async () => {
 	<div class="greetings">
 		<h1 class="green">Howdy world!</h1>
 		<div>
-			{{data}}
 		</div>
 	</div>
 </template>
