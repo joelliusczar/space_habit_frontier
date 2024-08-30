@@ -13,6 +13,16 @@
 				"close": true
 			},
 		},
+		{
+			"label": "bootle",
+			"type": "shell",
+			"command": "cd ./src && ./gradlew bootRun --debug-jvm",
+			"problemMatcher": [],
+			"presentation": {
+				"reveal": "silent",
+				"close": true
+			},
+		},
 
 
 	]

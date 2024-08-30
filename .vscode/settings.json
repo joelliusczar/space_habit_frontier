@@ -9,4 +9,6 @@
   },
   "editor.insertSpaces": false,
   "editor.comments.insertSpace": false,
+  "java.gradle.buildServer.enabled": "on",
+  "gradle.nestedProjects": true
 }

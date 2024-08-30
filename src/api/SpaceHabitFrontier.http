@@ -1,6 +1,0 @@
-@SpaceHabitFrontier_HostAddress = http://localhost:5092
-
-GET {{SpaceHabitFrontier_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
