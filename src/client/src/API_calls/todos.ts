@@ -1,4 +1,6 @@
-export const createTodo = (data: FormData) => {
+import type { FormValues } from "../types/todo_types";
+
+export const createTodo = (data: FormValues) => {
 	const abortController = new AbortController();
 	return {
 		abortController: abortController,
@@ -7,7 +9,10 @@ export const createTodo = (data: FormData) => {
 				"/api/todos",
 				{
 					method: "POST",
-					body: data,
+					body: JSON.stringify(data),
+					headers: {
+						"Content-Type": "application/json",
+					},
 					signal: abortController.signal
 				}
 			);

@@ -193,33 +193,48 @@ if [ ! -e "$confDir"/"$SHF_APP_NAME".conf ]; then
 		cp "$SHF_TEMPLATES_SRC"/nginx_evil.conf "$confDir"/nginx_evil.conf
 fi
 
-echo '##### dotnet #####'
-if ! dotnet --version >/dev/null; then
-		case $(uname) in
+echo '##### java #####'
+if ! java -version 2>/dev/null; then
+	case $(uname) in
 		(Darwin*)
-			echo "operating system not configured"
+			install_package java
 			;;
-		(*)
-			if [ -f '/etc/debian_version' ]; then
-				case $(cat '/etc/debian_version')
-				(12*)
-					wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-					sudo dpkg -i packages-microsoft-prod.deb
-					rm packages-microsoft-prod.deb
-					if [ "$SHF_ENV" = 'local' ]; then
-						sudo apt-get install -y dotnet-sdk-7.0
-					else
-						sudo apt-get install -y aspnetcore-runtime-7.0
-					fi
-					;;
-				(*)
-					echo "operating system not configured"
-				esac
-			else
-				echo "operating system not configured"
-				;;
+		(Linux*)
+			if [ "$pkgMgrChoice" = "$SHF_APT_CONST" ]; then
+				#install_package nginx-full
 			fi
 			;;
+		(*) ;;
+	esac
+fi
+
+echo '##### gradle #####'
+if ! gradle -v 2>/dev/null; then
+	case $(uname) in
+		(Darwin*)
+			install_package gradle
+			;;
+		(Linux*)
+			if [ "$pkgMgrChoice" = "$SHF_APT_CONST" ]; then
+				#install_package nginx-full
+			fi
+			;;
+		(*) ;;
+	esac
+fi
+
+echo '##### postgresql #####'
+if ! psql -V 2>/dev/null; then
+	case $(uname) in
+		(Darwin*)
+			install_package postgresql
+			;;
+		(Linux*)
+			if [ "$pkgMgrChoice" = "$SHF_APT_CONST" ]; then
+				#install_package nginx-full
+			fi
+			;;
+		(*) ;;
 	esac
 fi
 

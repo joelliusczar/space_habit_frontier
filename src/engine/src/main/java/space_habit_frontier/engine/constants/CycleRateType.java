@@ -9,7 +9,8 @@ public enum CycleRateType implements FriendlyNameable {
 	DAILY,
 	WEEKLY,
 	MONTHLY,
-	YEARLY;
+	YEARLY,
+	DATE;
 
 	public String getFriendlyName() {
 		return WordUtils.capitalizeFully(this.name());

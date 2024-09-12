@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import HelloWorld from "./components/HelloWorld.vue";
-import DailiesList from "./components/Todos/TodosList.vue";
-import EditDaily from "./components/Todos/EditTodo.vue";
+import DailiesList from "./components/todos/TodosList.vue";
+import EditDaily from "./components/todos/EditTodo.vue";
 import { useLookups } from "./composables/useLookups";
 
 useLookups();

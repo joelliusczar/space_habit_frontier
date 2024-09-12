@@ -68,7 +68,7 @@ str_contains() (
 	haystackStr="$1"
 	needleStr="$2"
 	case "$haystackStr" in
-		*"$needleStr"*)
+		(*"$needleStr"*)
 			return 0
 	esac
 	return 1
@@ -83,10 +83,10 @@ array_contains() (
 	shift
 	while [ ! -z "$1" ]; do
 		case $1 in
-			"$searchValue")
+			("$searchValue")
 				return 0
 				;;
-			*)
+			(*)
 			;;
 		esac
 		shift
@@ -115,10 +115,12 @@ error_check_path() (
 
 
 error_check_all_paths() (
+
 	while [ ! -z "$1" ]; do
 		error_check_path "$1" || return "$?"
 		shift
 	done
+
 )
 
 
@@ -472,6 +474,8 @@ __deployment_env_check_recommended__() {
 
 	[ -z "$SHF_LOCAL_REPO_DIR" ] &&
 	echo 'environmental var SHF_LOCAL_REPO_DIR not set'
+	[ -n "$(__get_db_owner_key__)" ] ||
+	echo 'deployment var SHF_DB_PASS_OWNER not set in keys'
 }
 
 
@@ -620,6 +624,22 @@ get_repo_path() (
 	echo "$HOME"/"$SHF_BUILD_DIR"/"$SHF_PROJ_NAME_SNAKE"
 )
 
+generate_initial_keys_file() (
+	process_global_vars "$@" &&
+	if [ ! -s  "$(__get_app_root__)"/keys/"$SHF_PROJ_NAME_SNAKE" ]; then
+		keyFile="$(__get_app_root__)"/keys/"$SHF_PROJ_NAME_SNAKE"
+		nsUuid="$(python3 -c 'import uuid; print(uuid.uuid4())')"
+		echo "PB_SECRET=" > "$keyFile"
+		echo "PB_API_KEY=" >> "$keyFile"
+		echo "SHF_AUTH_SECRET_KEY=$(openssl rand -hex 32)" >> "$keyFile"
+		echo "SHF_SERVER_SSH_ADDRESS=root@" >> "$keyFile"
+		echo "SHF_SERVER_KEY_FILE=" >> "$keyFile"
+		echo "SHF_DB_PASS_API=$(openssl rand -hex 16)" >> "$keyFile"
+		echo "SHF_DB_PASS_OWNER=$(openssl rand -hex 16)" >> "$keyFile"
+		echo "__DB_SETUP_PASS__=$(openssl rand -hex 16)" >> "$keyFile"
+		echo "SHF_NAMESPACE_UUID=$nsUuid" >> "$keyFile"
+	fi
+)
 
 __set_env_path_var__() {
 	if perl -e "exit 1 if index('$PATH','$(__get_app_root__)/${SHF_BIN_DIR}') != -1";
@@ -679,6 +699,14 @@ __get_id_file__() (
 	perl -ne 'print "$1\n" if /SHF_SERVER_KEY_FILE=(.+)/' "$keyFile"
 )
 
+__get_db_owner_key__() (
+	if [ -n "$SHF_DB_PASS_OWNER" ] && [ "$SHF_ENV" != 'local' ]; then
+		echo "$SHF_DB_PASS_OWNER"
+		return
+	fi
+	perl -ne 'print "$1\n" if /SHF_DB_PASS_OWNER=(\w+)/' \
+		"$(__get_app_root__)"/keys/"$SHF_PROJ_NAME_SNAKE"
+)
 
 __get_api_db_user_key__() (
 	if [ -n "$SHF_DB_PASS_API" ] && [ "$SHF_ENV" != 'local' ]; then
@@ -842,6 +870,23 @@ setup_env_api_file() (
 )
 
 
+__setup_db_postgresql__() (
+	process_global_vars "$@" &&
+	dbName="space_habit_frontier_db" &&
+	if ! psql --list | grep "$dbName" >/dev/null; then
+		createdb "$dbName" &&
+		psql -d "$dbName" -c \
+			"CREATE USER shf_db_mgr WITH PASSWORD '${SHF_DB_PASS_OWNER}'" &&
+		psql -d "$dbName" -c \
+			"CREATE USER shf_api_user WITH PASSWORD '${SHF_DB_PASS_API}'" &&
+		psql -d "$dbName" -c \
+			"GRANT ALL PRIVILEGES ON DATABASE $dbName TO shf_db_mgr WITH GRANT OPTION"
+	fi
+)
+
+setup_db() (
+	__setup_db_postgresql__
+)
 
 sync_utility_scripts() (
 	process_global_vars "$@" &&
@@ -1477,6 +1522,7 @@ __get_remote_export_script__() (
 	output="export expName='${expName}';"
 	output="${output} export PB_SECRET='$(__get_pb_secret__)';" &&
 	output="${output} export PB_API_KEY='$(__get_pb_api_key__)';" &&
+	output="${output} export SHF_DB_PASS_OWNER='$(__get_db_owner_key__)';" &&
 	echo "$output"
 )
 
@@ -1842,11 +1888,11 @@ setup_app_directories() {
 
 __setup_api_dir__() {
 	if [ !  -e "$(get_web_root)"/"$SHF_API_DEST" ]; then
-	{
+
 		sudo -p 'Pass required to create web server directory: ' \
 			mkdir -pv "$(get_web_root)"/"$SHF_API_DEST" ||
 		show_err_and_return "Could not create $(get_web_root)/${SHF_API_DEST}"
-	}
+	fi
 }
 
 
