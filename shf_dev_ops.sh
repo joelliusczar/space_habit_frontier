@@ -135,7 +135,7 @@ sudo_rm_contents() (
 )
 
 
-rm_contents_if_exist() (
+rm_contents_if_filled() (
 	dirEmptira="$1"
 	if ! is_dir_empty "$dirEmptira"; then
 		sudo_rm_contents "$dirEmptira"
@@ -179,7 +179,7 @@ empty_dir_contents() (
 	echo "emptying '${dirEmptira}'"
 	error_check_path "$dirEmptira" &&
 	if [ -e "$dirEmptira" ]; then
-		rm_contents_if_exist || return "$?"
+		rm_contents_if_filled "$dirEmptira" || return "$?"
 	else
 		sudo_mkdir "$dirEmptira" || return "$?"
 	fi &&
@@ -244,6 +244,12 @@ gen_pass() (
 	pass_len=${1:-16}
 	LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom | head -c "$pass_len"
 )
+
+
+gen_pass_2() {
+	pass_len=${1:-16}
+	openssl rand -hex "$pass_len"
+}
 
 
 is_ssh() (
@@ -401,7 +407,7 @@ get_ssl_public() (
 
 set_python_version_const() {
 	#python version info
-	if shf-python -V >/dev/null 2>&1; then
+	if shf-python -V >/dev/null 2>&1 && [ -z "$VIRTUAL_ENV" ]; then
 		pyVersion=$(shf-python -V)
 	elif python3 -V >/dev/null 2>&1; then
 		pyVersion=$(python3 -V)
@@ -422,11 +428,11 @@ is_python_version_good() {
 }
 
 
-__is_current_dir_repo__() {
+is_current_dir_repo() {
 	dir="$1"
-	[ -f "$dir"/dev_ops.sh ] &&
+	[ -f "$dir"/shf_dev_ops.sh ] &&
 	[ -f "$dir"/README.md ] &&
-	[ -f "$dir"/deploy_to_server.sh ] &&
+	[ -f "$dir"/deploy.sh ] &&
 	[ -d "$dir"/.vscode ] &&
 	[ -d "$dir"/src ] &&
 	[ -d "$dir"/src/space_habit_frontier ]
@@ -476,6 +482,8 @@ __deployment_env_check_recommended__() {
 	echo 'environmental var SHF_LOCAL_REPO_DIR not set'
 	[ -n "$(__get_db_owner_key__)" ] ||
 	echo 'deployment var SHF_DB_PASS_OWNER not set in keys'
+	[ -n "$SHF_API_LOG_LEVEL" ] ||
+	echo 'deployment var SHF_API_LOG_LEVEL not set in keys'
 }
 
 
@@ -510,6 +518,19 @@ __deployment_env_check_required__() {
 	echo 'deployment var SHF_AUTH_SECRET_KEY not set in keys'
 	track_exit_code
 
+	#db
+	[ -n "$(__get_api_db_user_key__)" ]
+	track_exit_code ||
+	echo 'deployment var SHF_DB_PASS_API not set in keys'
+	[ -n "$(__get_janitor_db_user_key__)" ]
+	track_exit_code ||
+	echo 'deployment var SHF_DB_PASS_JANITOR not set in keys'
+
+	if [ -n "$__TEST_FLAG__" ]; then
+		echo 'TEST FLAG active'
+	fi
+
+	return "$fnExitCode"
 }
 
 
@@ -551,6 +572,14 @@ __server_env_check_required__() {
 	echo 'environmental var SHF_AUTH_SECRET_KEY not set'
 	track_exit_code
 
+	#db
+	[ -n "$SHF_DB_PASS_API" ]
+	track_exit_code ||
+	echo 'environmental var SHF_DB_PASS_API not set'
+	[ -n "$SHF_DB_PASS_JANITOR" ]
+	track_exit_code ||
+	echo 'environmental var SHF_DB_PASS_JANITOR not set'
+
 	return "$fnExitCode"
 }
 
@@ -584,6 +613,14 @@ __dev_env_check_required__() {
 	fnExitCode="$?"
 	track_exit_code
 
+	#db
+	[ -n "$SHF_DB_PASS_API" ]
+	track_exit_code ||
+	echo 'environmental var SHF_DB_PASS_API not set'
+	[ -n "$SHF_DB_PASS_JANITOR" ]
+	track_exit_code ||
+	echo 'environmental var SHF_DB_PASS_JANITOR not set'
+
 	#for encrypting app token
 	[ -z "$SHF_AUTH_SECRET_KEY" ] &&
 	echo 'environmental var SHF_AUTH_SECRET_KEY not set'
@@ -604,7 +641,7 @@ get_repo_path() (
 	if [ -n "$SHF_LOCAL_REPO_DIR" ]; then
 		echo "$SHF_LOCAL_REPO_DIR"
 		return
-	elif __is_current_dir_repo__ "$PWD"; then
+	elif is_current_dir_repo "$PWD"; then
 		echo "$PWD"
 		return
 	else
@@ -613,7 +650,7 @@ get_repo_path() (
 				-path "$SHF_BUILD_DIR"/"$SHF_PROJ_NAME_SNAKE"
 				);
 		do
-			if __is_current_dir_repo__ "$guess"; then
+			if is_current_dir_repo "$guess"; then
 				echo "$guess"
 				return
 			fi
@@ -636,7 +673,7 @@ generate_initial_keys_file() (
 		echo "SHF_SERVER_KEY_FILE=" >> "$keyFile"
 		echo "SHF_DB_PASS_API=$(openssl rand -hex 16)" >> "$keyFile"
 		echo "SHF_DB_PASS_OWNER=$(openssl rand -hex 16)" >> "$keyFile"
-		echo "__DB_SETUP_PASS__=$(openssl rand -hex 16)" >> "$keyFile"
+		echo "SHF_DB_PASS_SETUP=$(openssl rand -hex 16)" >> "$keyFile"
 		echo "SHF_NAMESPACE_UUID=$nsUuid" >> "$keyFile"
 	fi
 )
@@ -718,6 +755,16 @@ __get_api_db_user_key__() (
 )
 
 
+__get_janitor_db_user_key__() (
+	if [ -n "$SHF_DB_PASS_JANITOR" ] && [ "$SHF_ENV" != 'local' ]; then
+		echo "$SHF_DB_PASS_JANITOR"
+		return
+	fi
+	perl -ne 'print "$1\n" if /SHF_DB_PASS_JANITOR=(\w+)/' \
+		"$(__get_app_root__)"/keys/"$SHF_PROJ_NAME_SNAKE"
+)
+
+
 __get_remote_private_key__() (
 	echo "/etc/ssl/private/${SHF_PROJ_NAME_0}.private.key.pem"
 )
@@ -791,20 +838,38 @@ install_py_env() {
 	echo "done installing py env"
 }
 
+__replace_dev_ops_lib_files__() {
+	envRoot="$(__get_app_root__)"/"$MC_TRUNK"
+	copy_dir "$MC_DEV_OPS_LIB_SRC" \
+		"$(get_libs_dest_dir "$envRoot")""$MC_DEV_OPS_LIB"
+}
 
 __replace_lib_files__() {
-	envRoot="$(__get_app_root__)"/"$SHF_TRUNK"
-	copy_dir "$SHF_DEV_OPS_LIB_SRC" \
-		"$(get_libs_dest_dir "$envRoot")""$SHF_DEV_OPS_LIB"
+	__replace_dev_ops_lib_files__
 }
 
 
 __install_py_env_if_needed__() {
+	libChoice=${1:-all}
+	tmpVirturalEnv="$VIRTUAL_ENV"
 	if [ ! -e "$(__get_app_root__)"/"$SHF_TRUNK"/"$SHF_PY_ENV"/bin/activate ]; then
 		__install_py_env__
 	else
 		echo "replacing space_habit_frontier files"
-		__replace_lib_files__ >/dev/null #only replace my code
+		if [ -z "$VIRTUAL_ENV" ]; then
+			echo "activate environment"
+			. "$(__get_app_root__)"/"$MC_TRUNK"/"$MC_PY_ENV"/bin/activate
+		fi &&
+		if [ "$libChoice" = 'all' ]; then
+			__replace_lib_files__ >/dev/null #only replace my code
+		elif [ "$libChoice" = 'devops' ]; then
+			__replace_dev_ops_lib_files__
+		fi
+		#if we're in env and we opened it, deactivate it.
+		if [ -n "$VIRTUAL_ENV" ] && [ -z "$tmpVirturalEnv"]; then
+			echo "deactivate environment"
+			deactivate 2>&1 1>/dev/null
+		fi
 	fi
 }
 
@@ -844,10 +909,8 @@ link_app_python_if_not_linked() {
 }
 
 
-
-
 #test runner needs to read .env
-setup_env_api_file() (
+__setup_env_api_file__() (
 	echo 'setting up .env file'
 	envFile="$(__get_app_root__)"/"$SHF_CONFIG_DIR"/.env
 	error_check_all_paths "$SHF_TEMPLATES_SRC"/.env_api "$envFile" &&
@@ -865,6 +928,21 @@ setup_env_api_file() (
 		"$envFile" &&
 	perl -pi -e \
 		"s@^(SHF_TEST_ROOT=).*\$@\1'${SHF_TEST_ROOT}'@" \
+		"$envFile" &&
+	perl -pi -e \
+		"s@^(SHF_DB_PASS_SETUP=).*\$@\1'${SHF_DB_PASS_SETUP}'@" \
+		"$envFile" &&
+	perl -pi -e \
+		"s@^(SHF_DB_PASS_OWNER=).*\$@\1'${SHF_DB_PASS_OWNER}'@" \
+		"$envFile" &&
+	perl -pi -e \
+		"s@^(SHF_DB_PASS_API=).*\$@\1'${SHF_DB_PASS_API}'@" \
+		"$envFile" &&
+	perl -pi -e \
+		"s@^(SHF_DB_PASS_JANITOR=).*\$@\1'${SHF_DB_PASS_JANITOR}'@" \
+		"$envFile" &&
+	perl -pi -e \
+		"s@^(SHF_API_LOG_LEVEL=).*\$@\1'${SHF_API_LOG_LEVEL}'@" \
 		"$envFile" &&
 	echo 'done setting up .env file'
 )
@@ -953,7 +1031,7 @@ extract_commonName_from_cert() (
 
 scan_pems_for_common_name() (
 	commonName="$1"
-	activate_shf_env &&
+	activate_shf_env 'devops' &&
 	python -m 'space_habit_frontier_dev_ops.installed_certs' "$commonName" \
 		< /etc/ssl/certs/ca-certificates.crt
 )
@@ -961,11 +1039,11 @@ scan_pems_for_common_name() (
 
 certs_matching_name() (
 	commonName="$1"
-		case $(uname) in
+		case $(uname) in #()
 		(Darwin*)
 			security find-certificate -a -p -c "$commonName" \
 				$(__get_keychain_osx__)
-			;;
+			;; #()
 		(*)
 			scan_pems_for_common_name "$commonName"
 			;;
@@ -982,10 +1060,10 @@ __certs_matching_name_exact__() (
 
 
 __get_openssl_default_conf__() (
-	case $(uname) in
+	case $(uname) in #()
 		(Darwin*)
 			echo '/System/Library/OpenSSL/openssl.cnf'
-			;;
+			;; #()
 		(Linux*)
 			echo '/etc/ssl/openssl.cnf'
 			;;
@@ -1100,7 +1178,7 @@ __clean_up_invalid_cert__() (
 	certName="$2" &&
 	echo "Clean up certs for ${commonName} if needed"
 	case $(uname) in
-		(Darwin*)
+		(Darwin*) #()
 			cert=''
 			#turns out the d flag is not posix compliant :<
 			certs_matching_name "$commonName" \
@@ -1114,7 +1192,7 @@ __clean_up_invalid_cert__() (
 						cert=''
 					fi
 				done
-			;;
+			;; #()
 		(*)
 				cert=''
 				#turns out the d flag is not posix compliant :<
@@ -1149,12 +1227,12 @@ __setup_ssl_cert_local__() (
 	privateKeyFile="$4" &&
 
 	case $(uname) in
-		(Darwin*)
+		(Darwin*) #()
 			__openssl_gen_cert__ "$commonName" "$domain" \
 				"$publicKeyFile" "$privateKeyFile" &&
 			__install_local_cert_osx__ "$publicKeyFile" ||
 			return 1
-			;;
+			;; #()
 		(*)
 			if [ -f '/etc/debian_version' ]; then
 				__openssl_gen_cert__ "$commonName" "$domain" \
@@ -1188,7 +1266,7 @@ print_ssl_cert_info() (
 	process_global_vars "$@" &&
 	domain=$(__get_domain_name__ "$SHF_ENV" 'omitPort') &&
 	echo "$domain"
-	case "$SHF_ENV" in
+	case "$SHF_ENV" in #()
 		(local*)
 			isDebugServer=${1#is_debug_server=}
 			if [ -n "$isDebugServer" ]; then
@@ -1219,7 +1297,7 @@ print_ssl_cert_info() (
 							cert=''
 						fi
 					done
-			;;
+			;; #()
 		(*)
 			publicKeyFile=$(__get_remote_public_key__) &&
 			cat "$publicKeyFile" | openssl x509 -enddate -subject -noout
@@ -1244,7 +1322,7 @@ add_test_url_to_hosts() (
 setup_ssl_cert_nginx() (
 	process_global_vars "$@" &&
 	domain=$(__get_domain_name__ "$SHF_ENV" 'omitPort') &&
-	case "$SHF_ENV" in
+	case "$SHF_ENV" in #()
 		(local*)
 			add_test_url_to_hosts "$domain"
 			publicKeyFile=$(__get_local_nginx_cert_path__).public.key.crt &&
@@ -1258,7 +1336,7 @@ setup_ssl_cert_nginx() (
 			fi
 			publicKeyName=$(__get_local_nginx_cert_name__).public.key.crt &&
 			__set_firefox_cert_policy__ "$publicKeyName"
-			;;
+			;; #()
 		(*)
 			publicKeyFile=$(__get_remote_public_key__) &&
 			privateKeyFile=$(__get_remote_private_key__) &&
@@ -1373,10 +1451,10 @@ update_nginx_conf() (
 	appConfFile="$1"
 	error_check_all_paths "$SHF_TEMPLATES_SRC" "$appConfFile" &&
 	__copy_and_update_nginx_template__ &&
-	case "$SHF_ENV" in
+	case "$SHF_ENV" in #()
 		(local*)
 			__set_local_nginx_app_conf__
-			;;
+			;; #()
 		(*)
 			__set_deployed_nginx_app_conf__
 			;;
@@ -1438,10 +1516,10 @@ enable_nginx_include() (
 
 restart_nginx() (
 	echo 'starting/restarting up nginx'
-	case $(uname) in
+	case $(uname) in #()
 		(Darwin*)
 			nginx -s reload
-			;;
+			;; #()
 		(Linux*)
 			if systemctl is-active --quiet nginx; then
 				sudo -p 'starting nginx' systemctl restart nginx
@@ -1449,7 +1527,7 @@ restart_nginx() (
 				sudo -p 'enabling nginx' systemctl enable nginx
 				sudo -p 'restarting nginx' systemctl start nginx
 			fi
-			;;
+			;; #()
 		(*) ;;
 	esac &&
 	echo 'Done starting/restarting up nginx'
@@ -1522,7 +1600,11 @@ __get_remote_export_script__() (
 	output="export expName='${expName}';"
 	output="${output} export PB_SECRET='$(__get_pb_secret__)';" &&
 	output="${output} export PB_API_KEY='$(__get_pb_api_key__)';" &&
+	output="${output} export SHF_DB_PASS_SETUP='$(__get_db_setup_key__)';" &&
 	output="${output} export SHF_DB_PASS_OWNER='$(__get_db_owner_key__)';" &&
+	output="${output} export SHF_DB_PASS_API='$(__get_api_db_user_key__)';" &&
+	output="${output} export SHF_DB_PASS_JANITOR='$(__get_janitor_db_user_key__)';" &&
+	output="${output} export SHF_API_LOG_LEVEL='${SHF_API_LOG_LEVEL}';" &&
 	echo "$output"
 )
 
@@ -1556,7 +1638,7 @@ setup_api() (
 
 
 create_swap_if_needed() (
-		case $(uname) in
+		case $(uname) in #()
 		(Linux*)
 			if [ ! -e /swapfile ]; then
 				sudo dd if=/dev/zero of=/swapfile bs=128M count=24 &&
@@ -1564,7 +1646,7 @@ create_swap_if_needed() (
 				sudo mkswap /swapfile &&
 				sudo swapon /swapfile
 			fi
-			;;
+			;; #()
 		(*) ;;
 	esac
 )
@@ -1603,7 +1685,7 @@ startup_full_web() (
 
 
 __create_fake_keys_file__() {
-	echo "shf_auth_key=$(openssl rand -hex 32)" \
+	echo "shf_auth_key=$(gen_pass_2)" \
 		> "$(__get_app_root__)"/keys/"$SHF_PROJ_NAME_SNAKE"
 }
 
@@ -1617,8 +1699,6 @@ get_hash_of_file() (
 	)
 	cat "$file" | python3 -c "$pyScript"
 )
-
-
 
 
 replace_sql_script() (
@@ -1637,7 +1717,8 @@ setup_unit_test_env() (
 	define_directory_vars &&
 	export __TEST_FLAG__='true'
 	publicKeyFile=$(__get_debug_cert_path__).public.key.crt
-
+	copy_dir "$SHF_TEMPLATES_SRC" "$(__get_app_root__)"/"$SHF_TEMPLATES_DEST" &&
+	__setup_env_api_file__
 	__create_fake_keys_file__
 	setup_app_directories
 
@@ -1664,13 +1745,13 @@ debug_print() (
 
 
 get_rc_candidate() {
-	case $(uname) in
+	case $(uname) in #()
 		(Linux*)
 			echo "$HOME"/.bashrc
-			;;
+			;; #()
 		(Darwin*)
 			echo "$HOME"/.zshrc
-			;;
+			;; #()
 		(*) ;;
 	esac
 }
@@ -1690,15 +1771,15 @@ get_web_root() (
 		echo "$SHF_TEST_ROOT"
 		return
 	fi
-	case $(uname) in
+	case $(uname) in #()
 		(Linux*)
 			echo "${SHF_WEB_ROOT_OVERRIDE:-/srv}"
 			return
-			;;
+			;; #()
 		(Darwin*)
 			echo "${SHF_WEB_ROOT_OVERRIDE:-/Library/WebServer}"
 			return
-			;;
+			;; #()
 		(*) ;;
 	esac
 )
@@ -1727,45 +1808,45 @@ process_global_args() {
 	#in case need to pass the args to a remote script. example
 	__GLOBAL_ARGS__=''
 	while [ ! -z "$1" ]; do
-		case "$1" in
+		case "$1" in #()
 			#build out to test_trash rather than the normal directories
 			#sets SHF_APP_ROOT and SHF_WEB_ROOT_OVERRIDE
 			#without having to set them explicitly
 			(test)
 				export __TEST_FLAG__='true'
 				__GLOBAL_ARGS__="${__GLOBAL_ARGS__} test"
-				;;
+				;; #()
 			(replace=*)
 				export __REPLACE__=${1#replace=}
 				__GLOBAL_ARGS__="${__GLOBAL_ARGS__} replace='${__REPLACE__}'"
-				;;
+				;; #()
 			(clean) #tells setup functions to delete files/dirs before installing
 				export __CLEAN_FLAG='clean'
 				__GLOBAL_ARGS__="${__GLOBAL_ARGS__} clean"
-				;;
+				;; #()
 			#activates debug_print. Also tells deploy script to use the diag branch
 			(diag)
 				export __DIAG_FLAG__='true'
 				__GLOBAL_ARGS__="${__GLOBAL_ARGS__} diag"
 				echo '' > diag_out_"$__INCLUDE_COUNT__"
-				;;
+				;; #()
 			(setuplvl=*) #affects which setup scripst to run
 				export __SETUP_LVL__=${1#setuplvl=}
 				__GLOBAL_ARGS__="${__GLOBAL_ARGS__} setuplvl='${__SETUP_LVL__}'"
-				;;
+				;; #()
 			#when I want to conditionally run with some experimental code
 			(experiment=*)
 				export __EXPERIMENT_NAME__=${1#experiment=}
 				__GLOBAL_ARGS__="${__GLOBAL_ARGS__} experiment='${__EXPERIMENT_NAME__}'"
-				;;
+				;; #()
 			(skip=*)
 				export __SKIP__=${1#skip=}
 				__GLOBAL_ARGS__="${__GLOBAL_ARGS__} skip='${__SKIP__}'"
-				;;
+				;; #()
 			(dbsetuppass=*)
-				export __DB_SETUP_PASS__=${1#dbsetuppass=}
-				__GLOBAL_ARGS__="${__GLOBAL_ARGS__} dbsetuppass='${__DB_SETUP_PASS__}'"
-				;;
+				export SHF_DB_PASS_SETUP=${1#dbsetuppass=}
+				__GLOBAL_ARGS__="${__GLOBAL_ARGS__} dbsetuppass='${SHF_DB_PASS_SETUP}'"
+				;; #()
 			(*) ;;
 		esac
 		shift
@@ -1810,6 +1891,11 @@ define_consts() {
 	export SHF_SERVER_NAME=$(__get_domain_name__ "$SHF_ENV")
 	export SHF_FULL_URL="https://${SHF_SERVER_NAME}"
 
+	##  uncomment out as needed
+	# if is_current_dir_repo "$PWD" && [ "$MC_ENV" = 'local' ]; then
+	# 	echo "Running inside build dir. Setting test flag"
+	# 	export __TEST_FLAG__='true'
+	# fi
 	export __SHF_CONSTANTS_SET__='true'
 	echo "constants defined"
 }
@@ -1923,11 +2009,12 @@ unset_globals() {
 		SHF_AUTH_SECRET_KEY
 		SHF_DB_PASS_API
 		SHF_DB_PASS_OWNER
+		MC_DB_PASS_JANITOR
 		SHF_LOCAL_REPO_DIR
 		SHF_REPO_URL
 		SHF_SERVER_KEY_FILE
 		SHF_SERVER_SSH_ADDRESS
-		__DB_SETUP_PASS__
+		SHF_DB_PASS_SETUP
 	EOF
 	)
 	cat "$(get_repo_path)"/shf_dev_ops.sh | grep export \
@@ -1938,17 +2025,17 @@ unset_globals() {
 					echo "leaving $constant"
 					continue
 				fi
-				case "$constant" in
+				case "$constant" in #()
 					(SHF_*)
 						echo "unsetting ${constant}"
 						unset "$constant"
-						;;
+						;; #()
 					(__*)
 						echo "unsetting ${constant}"
 						unset "$constant"
-						;;
+						;; #()
 					(*)
-						;;
+						;; #()
 					esac
 			done
 	disable_wordsplitting

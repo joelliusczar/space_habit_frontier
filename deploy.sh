@@ -64,6 +64,8 @@ export expName="$expName" &&
 export PB_SECRET=$(__get_pb_secret__) &&
 export PB_API_KEY=$(__get_pb_api_key__) &&
 export SHF_AUTH_SECRET_KEY=$(__get_shf_auth_key__) &&
+export SHF_API_LOG_LEVEL="$SHF_API_LOG_LEVEL" &&
+
 
 RemoteScriptEOF0
 } > env_var_fifo &

@@ -63,113 +63,113 @@ public class TodoFormDto extends NamedId {
 		this.note = note;
 	}
 
-	  // Getter and Setter for rateType
-		public int getRateType() {
-			return rateType;
-    }
+	// Getter and Setter for rateType
+	public int getRateType() {
+		return rateType;
+	}
 
-    public void setRateType(int rateType) {
-        this.rateType = rateType;
-    }
+	public void setRateType(int rateType) {
+			this.rateType = rateType;
+	}
 
-    // Getter and Setter for dueDate
-    public String getDueDate() {
-        return dueDate;
-    }
+	// Getter and Setter for dueDate
+	public String getDueDate() {
+			return dueDate;
+	}
 
-    public void setDueDate(String dueDate) {
-        this.dueDate = dueDate;
-    }
+	public void setDueDate(String dueDate) {
+			this.dueDate = dueDate;
+	}
 
-    // Getter and Setter for yearlyDueDays
-    public List<MonthDay> getYearlyDueDays() {
-        return yearlyDueDays;
-    }
+	// Getter and Setter for yearlyDueDays
+	public List<MonthDay> getYearlyDueDays() {
+			return yearlyDueDays;
+	}
 
-    public void setYearlyDueDays(List<MonthDay> yearlyDueDays) {
-        this.yearlyDueDays = yearlyDueDays;
-    }
+	public void setYearlyDueDays(List<MonthDay> yearlyDueDays) {
+			this.yearlyDueDays = yearlyDueDays;
+	}
 
-    // Getter and Setter for yearlySkipMod
-    public boolean isYearlySkipMod() {
-        return yearlySkipMod;
-    }
+	// Getter and Setter for yearlySkipMod
+	public boolean isYearlySkipMod() {
+			return yearlySkipMod;
+	}
 
-    public void setYearlySkipMod(boolean yearlySkipMod) {
-        this.yearlySkipMod = yearlySkipMod;
-    }
+	public void setYearlySkipMod(boolean yearlySkipMod) {
+			this.yearlySkipMod = yearlySkipMod;
+	}
 
-    // Getter and Setter for monthlyDueDays
-    public List<Integer> getMonthlyDueDays() {
-        return monthlyDueDays;
-    }
+	// Getter and Setter for monthlyDueDays
+	public List<Integer> getMonthlyDueDays() {
+			return monthlyDueDays;
+	}
 
-    public void setMonthlyDueDays(List<Integer> monthlyDueDays) {
-        this.monthlyDueDays = monthlyDueDays;
-    }
+	public void setMonthlyDueDays(List<Integer> monthlyDueDays) {
+			this.monthlyDueDays = monthlyDueDays;
+	}
 
-    // Getter and Setter for monthlySkipMod
-    public boolean isMonthlySkipMod() {
-        return monthlySkipMod;
-    }
+	// Getter and Setter for monthlySkipMod
+	public boolean isMonthlySkipMod() {
+			return monthlySkipMod;
+	}
 
-    public void setMonthlySkipMod(boolean monthlySkipMod) {
-        this.monthlySkipMod = monthlySkipMod;
-    }
+	public void setMonthlySkipMod(boolean monthlySkipMod) {
+			this.monthlySkipMod = monthlySkipMod;
+	}
 
-    // Getter and Setter for dueDaysOfWeek
-    public List<String> getDueDaysOfWeek() {
-        return dueDaysOfWeek;
-    }
+	// Getter and Setter for dueDaysOfWeek
+	public List<String> getDueDaysOfWeek() {
+			return dueDaysOfWeek;
+	}
 
-    public void setDueDaysOfWeek(List<String> dueDaysOfWeek) {
-        this.dueDaysOfWeek = dueDaysOfWeek;
-    }
+	public void setDueDaysOfWeek(List<String> dueDaysOfWeek) {
+			this.dueDaysOfWeek = dueDaysOfWeek;
+	}
 
-    // Getter and Setter for dailyRate
-    public int getDailyRate() {
-        return dailyRate;
-    }
+	// Getter and Setter for dailyRate
+	public int getDailyRate() {
+			return dailyRate;
+	}
 
-    public void setDailyRate(int dailyRate) {
-        this.dailyRate = dailyRate;
-    }
+	public void setDailyRate(int dailyRate) {
+			this.dailyRate = dailyRate;
+	}
 
-    // Getter and Setter for poisonous
-    public boolean isPoisonous() {
-        return poisonous;
-    }
+	// Getter and Setter for poisonous
+	public boolean isPoisonous() {
+			return poisonous;
+	}
 
-    public void setPoisonous(boolean poisonous) {
-        this.poisonous = poisonous;
-    }
+	public void setPoisonous(boolean poisonous) {
+			this.poisonous = poisonous;
+	}
 
-    // Getter and Setter for danger
-    public int getDanger() {
-        return danger;
-    }
+	// Getter and Setter for danger
+	public int getDanger() {
+			return danger;
+	}
 
-    public void setDanger(int danger) {
-        this.danger = danger;
-    }
+	public void setDanger(int danger) {
+			this.danger = danger;
+	}
 
-    // Getter and Setter for activeFromDate
-    public String getActiveFromDate() {
-        return activeFromDate;
-    }
+	// Getter and Setter for activeFromDate
+	public String getActiveFromDate() {
+			return activeFromDate;
+	}
 
-    public void setActiveFromDate(String activeFromDate) {
-        this.activeFromDate = activeFromDate;
-    }
+	public void setActiveFromDate(String activeFromDate) {
+			this.activeFromDate = activeFromDate;
+	}
 
-    // Getter and Setter for activeToDate
-    public String getActiveToDate() {
-        return activeToDate;
-    }
+	// Getter and Setter for activeToDate
+	public String getActiveToDate() {
+			return activeToDate;
+	}
 
-    public void setActiveToDate(String activeToDate) {
-        this.activeToDate = activeToDate;
-    }
+	public void setActiveToDate(String activeToDate) {
+			this.activeToDate = activeToDate;
+	}
 }
 
 /*
