@@ -1,0 +1,185 @@
+
+
+CREATE TABLE IF NOT EXISTS users (
+	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	username TEXT UNIQUE NOT NULL,
+	email TEXT UNIQUE NOT NULL,
+	hashedpw BYTEA NOT NULL,
+	conditioncode INTEGER NOT NULL DEFAULT 0,
+	creationtimestamp NUMERIC(16, 4),
+	daystart SMALLINT NOT NULL DEFAULT 6,
+	deathgoldpenalty INTEGER NOT NULL DEFAULT 0,
+	deathlvlpenalty INTEGER NOT NULL DEFAULT 0,
+	adventuremode INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS useragents (
+	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	contents TEXT NOT NULL,
+	ualength SMALLINT NOT NULL,
+	uahash BYTEA NOT NULL,
+	ipv4address TEXT NULL,
+	ipv6address TEXT NULL
+);
+
+CREATE TABLE IF NOT EXISTS securityevents (
+	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	creationtimestamp NUMERIC(16, 4) NOT NULL,
+	useragentid BIGINT NOT NULL REFERENCES useragents (id),
+	userid BIGINT NULL REFERENCES users (id)
+);
+
+CREATE TABLE IF NOT EXISTS todos (
+	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	title TEXT NOT NULL,
+	note TEXT,
+	risk SMALLINT NOT NULL DEFAULT 50,
+	duedatetimestamp NUMERIC(16, 4) NULL,
+	effectivedatetimestamp NUMERIC(16, 4) NULL,
+	streakstarttimestamp NUMERIC(16, 4) NOT NULL,
+	repeatcount SMALLINT NOT NULL DEFAULT 1,
+	repeattype SMALLINT NOT NULL DEFAULT 0,
+	repeatrate SMALLINT NOT NULL DEFAULT 1,
+	weekactivedays BIT(7) NOT NULL DEFAULT B'1111111',
+	yearactivedays INTEGER[366] NULL,
+	creationtimestamp NUMERIC(16, 4) NOT NULL,
+	userid BIGINT NOT NULL REFERENCES users (id),
+	parenttodoid BIGINT NULL REFERENCES todos (id)
+);
+
+CREATE TABLE IF NOT EXISTS actions (
+	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	title TEXT NOT NULL,
+	note TEXT,
+	risk SMALLINT NOT NULL DEFAULT 50,
+	freeviolations SMALLINT NOT NULL DEFAULT 0,
+	orientationtype SMALLINT NOT NULL DEFAULT 1,
+	maxcount SMALLINT NULL,
+	userid BIGINT NOT NULL REFERENCES users (id)
+);
+
+CREATE TABLE IF NOT EXISTS adventureevents (
+	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	eventtype SMALLINT NOT NULL,
+	creationtimestamp NUMERIC(16, 4) NOT NULL,
+	userid BIGINT NOT NULL REFERENCES users (id)
+);
+
+CREATE TABLE IF NOT EXISTS todoevents (
+	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	damage INT NOT NULL DEFAULT 0,
+	creationtimestamp NUMERIC(16, 4) NOT NULL,
+	todoid BIGINT REFERENCES todos (id),
+	userid BIGINT NOT NULL REFERENCES users (id)
+);
+
+CREATE TABLE IF NOT EXISTS actionevents (
+	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	damage INT NOT NULL DEFAULT 0,
+	creationtimestamp NUMERIC(16, 4) NOT NULL,
+	actionid BIGINT REFERENCES actions (id),
+	userid BIGINT NOT NULL REFERENCES users (id)
+);
+
+CREATE TABLE IF NOT EXISTS lkdungeons (
+	id BIGINT PRIMARY KEY,
+	title TEXT NOT NULL,
+	exposition TEXT NOT NULL,
+	minlvl SMALLINT NOT NULL DEFAULT 0,
+	imageuri TEXT NULL
+);
+
+CREATE TABLE IF NOT EXISTS lkmonsters (
+	id BIGINT PRIMARY KEY,
+	title TEXT NOT NULL,
+	exposition TEXT NOT NULL,
+	lvlrange INT4RANGE NOT NULL,
+	xpmultiplier SMALLINT NOT NULL DEFAULT 1,
+	imageuri TEXT NULL
+);
+
+CREATE TABLE IF NOT EXISTS lkdungeonlkmonsters (
+	lkdungeonid BIGINT NOT NULL REFERENCES lkdungeons (id),
+	lkmonsterid BIGINT NOT NULL REFERENCES lkmonsters (id)
+);
+
+CREATE TABLE IF NOT EXISTS lkitems (
+	id BIGINT PRIMARY KEY,
+	title TEXT NOT NULL,
+	exposition TEXT,
+	cost INTEGER NOT NULL DEFAULT 0,
+	effecttypes SMALLINT[],
+	imageuri TEXT NULL
+);
+
+CREATE TABLE IF NOT EXISTS lkdungeonlkitems (
+	lkdungeonid BIGINT NOT NULL REFERENCES lkdungeons (id),
+	lkitemid BIGINT NOT NULL REFERENCES lkitems (id)
+);
+
+CREATE TABLE IF NOT EXISTS monsteritemdrops (
+	lkmonsterid BIGINT NOT NULL REFERENCES lkmonsters (id),
+	lkitemid BIGINT NOT NULL REFERENCES lkitems (id)
+);
+
+CREATE TABLE IF NOT EXISTS lkusables (
+	id BIGINT PRIMARY KEY,
+	hprestore BIGINT NOT NULL DEFAULT 0,
+	xpbonus BIGINT NOT NULL DEFAULT 0,
+	goldbonus SMALLINT NOT NULL DEFAULT 0,
+	damagebonus SMALLINT NOT NULL DEFAULT 0,
+	successrate REAL NOT NULL DEFAULT 1,
+	skips SMALLINT NOT NULL DEFAULT 0,
+	saves SMALLINT NOT NULL DEFAULT 0,
+	duration SMALLINT NOT NULL DEFAULT 0
+) INHERITS (lkitems);
+
+
+CREATE TABLE IF NOT EXISTS lkweapons (
+	id BIGINT PRIMARY KEY,
+	damagebonus SMALLINT NOT NULL DEFAULT 0,
+	absorbbonus SMALLINT NOT NULL DEFAULT 0
+) INHERITS (lkitems);
+
+
+CREATE TABLE IF NOT EXISTS lkarmor (
+	id BIGINT PRIMARY KEY,
+	defensebonus SMALLINT NOT NULL DEFAULT 0,
+	evadebonus SMALLINT NOT NULL DEFAULT 0,
+	hpbonus SMALLINT NOT NULL DEFAULT 0
+) INHERITS (lkitems);
+
+
+CREATE TABLE IF NOT EXISTS hero (
+	id BIGINT PRIMARY KEY REFERENCES users (id),
+	xp BIGINT NOT NULL DEFAULT 0,
+	gold BIGINT NOT NULL DEFAULT 0,
+	inventory JSON,
+	monster JSON,
+	dungeon JSON,
+	currenthp BIGINT NOT NULL DEFAULT 0,
+	activebonustypes SMALLINT[],
+	activepenaltytypes SMALLINT[],
+	weaponrightid BIGINT NULL REFERENCES lkweapons (id),
+	weaponleftid BIGINT NULL REFERENCES lkweapons (id),
+	frontarmorid BIGINT NULL REFERENCES lkarmor (id),
+	backarmorid BIGINT NULL REFERENCES lkarmor (id),
+	toparmorid BIGINT NULL REFERENCES lkarmor (id),
+	bottomarmorid BIGINT NULL REFERENCES lkarmor (id)
+);
+
+CREATE TABLE IF NOT EXISTS dungeon (
+	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	title TEXT NOT NULL,
+	coordinates POINT NOT NULL,
+	lvl INTEGER NOT NULL DEFAULT 1,
+	lkdungeonid BIGINT NOT NULL REFERENCES lkdungeons (id),
+	userid BIGINT NOT NULL REFERENCES users (id)
+);
+
+-- CREATE TABLE IF NOT EXISTS monsters (
+-- 	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+-- 	lkmonsterid BIGINT NOT NULL REFERENCES lkmonsters (id),
+-- 	lvl SMALLINT NOT NULL,
+-- 	userid BIGINT NOT NULL REFERENCES users (id),
+-- );
