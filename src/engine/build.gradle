@@ -4,8 +4,39 @@
 
 plugins {
     id 'buildlogic.java-library-conventions'
+    id "org.jooq.jooq-codegen-gradle" version "3.19.0"
 }
 
 dependencies {
     implementation 'org.apache.commons:commons-text'
+    implementation "org.jooq:jooq:3.19.0"
+    jooqCodegen 'org.postgresql:postgresql:42.5.4'
+    implementation 'org.postgresql:postgresql:42.5.4'
+}
+
+
+jooq {
+    configuration {
+        jdbc {
+            driver = 'org.postgresql.Driver'
+            url = 'jdbc:postgresql://localhost:5432/space_habit_frontier_db'
+            user = "${System.getenv('SHF_OWNER_NAME')}"
+            password = "${System.getenv('SHF_DB_PASS_OWNER')}"
+        }
+
+        generator {
+            database {
+                org.jooq.meta.postgres.PostgresDatabase
+                inputSchema = "public"
+            }
+
+            generate {
+                implicitJoinPathsToMany = false
+                target {
+                    packageName = "space_habit_frontier.engine.db_generated"
+                    directory = "${layout.projectDirectory}/src/main/java"
+                }
+            }
+        }
+    }
 }
