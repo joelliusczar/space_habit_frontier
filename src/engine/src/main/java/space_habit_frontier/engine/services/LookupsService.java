@@ -14,7 +14,9 @@ public class LookupsService {
 	}
 
 	public Lookups getLookups() {
-		var lookups = new Lookups();
+		var lookups = new Lookups(
+			getCycleRateTypes()
+		);
 
 		return lookups;
 	}
