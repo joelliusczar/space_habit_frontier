@@ -5,6 +5,7 @@ package space_habit_frontier.engine.db_generated.tables.records;
 
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import org.jooq.Record1;
 import org.jooq.impl.UpdatableRecordImpl;
@@ -23,15 +24,15 @@ public class UsersRecord extends UpdatableRecordImpl<UsersRecord> {
     /**
      * Setter for <code>public.users.id</code>.
      */
-    public void setId(Long value) {
+    public void setId(UUID value) {
         set(0, value);
     }
 
     /**
      * Getter for <code>public.users.id</code>.
      */
-    public Long getId() {
-        return (Long) get(0);
+    public UUID getId() {
+        return (UUID) get(0);
     }
 
     /**
@@ -165,7 +166,7 @@ public class UsersRecord extends UpdatableRecordImpl<UsersRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Record1<Long> key() {
+    public Record1<UUID> key() {
         return (Record1) super.key();
     }
 
@@ -183,7 +184,7 @@ public class UsersRecord extends UpdatableRecordImpl<UsersRecord> {
     /**
      * Create a detached, initialised UsersRecord
      */
-    public UsersRecord(Long id, String username, String email, byte[] hashedpw, Integer conditioncode, BigDecimal creationtimestamp, Short daystart, Integer deathgoldpenalty, Integer deathlvlpenalty, Integer adventuremode) {
+    public UsersRecord(UUID id, String username, String email, byte[] hashedpw, Integer conditioncode, BigDecimal creationtimestamp, Short daystart, Integer deathgoldpenalty, Integer deathlvlpenalty, Integer adventuremode) {
         super(Users.USERS);
 
         setId(id);

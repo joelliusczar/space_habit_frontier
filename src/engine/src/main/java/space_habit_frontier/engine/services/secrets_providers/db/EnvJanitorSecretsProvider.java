@@ -11,12 +11,12 @@ public class EnvJanitorSecretsProvider implements DbSecretsProvider {
 
 	@Override
 	public String dbPassword() {
-		return System.getenv("SHF_DB_PASS_JANITOR");
+		return System.getenv("DSF_DB_PASS_JANITOR");
 	}
 
 	@Override
 	public String dbName() {
-		return System.getenv("SHF_DATABASE_NAME");
+		return System.getenv("DSF_DATABASE_NAME");
 	}
 
 }

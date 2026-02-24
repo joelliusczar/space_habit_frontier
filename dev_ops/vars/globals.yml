@@ -1,0 +1,19 @@
+---
+app_details:
+  db: space_habit_frontier_db
+  name: space_habit_frontier
+  prefix: SHF
+  db_owner: shf_owner
+  engine: space_habit_frontier
+  api_version: v1
+src_dirs:
+  engine: ../src/main/java/space_habit_frontier/engine
+  templates: files
+dest_dirs:
+  engine_dir_name: ''
+tech:
+  api_lang: java
+  db: postgresql
+url_segments:
+  base: spacehabitfrontier
+  tld: com

@@ -7,6 +7,7 @@ package space_habit_frontier.engine.db_generated.tables;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -59,7 +60,7 @@ public class Hero extends TableImpl<HeroRecord> {
     /**
      * The column <code>public.hero.id</code>.
      */
-    public final TableField<HeroRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<HeroRecord, UUID> ID = createField(DSL.name("id"), SQLDataType.UUID.nullable(false), this, "");
 
     /**
      * The column <code>public.hero.xp</code>.
@@ -74,7 +75,7 @@ public class Hero extends TableImpl<HeroRecord> {
     /**
      * The column <code>public.hero.inventory</code>.
      */
-    public final TableField<HeroRecord, JSON> INVENTORY = createField(DSL.name("inventory"), SQLDataType.JSON, this, "");
+    public final TableField<HeroRecord, JSON> INVENTORY = createField(DSL.name("inventory"), SQLDataType.JSON.defaultValue(DSL.field(DSL.raw("'[]'::json"), SQLDataType.JSON)), this, "");
 
     /**
      * The column <code>public.hero.monster</code>.
@@ -94,12 +95,12 @@ public class Hero extends TableImpl<HeroRecord> {
     /**
      * The column <code>public.hero.activebonustypes</code>.
      */
-    public final TableField<HeroRecord, Short[]> ACTIVEBONUSTYPES = createField(DSL.name("activebonustypes"), SQLDataType.SMALLINT.array(), this, "");
+    public final TableField<HeroRecord, Short[]> ACTIVEBONUSTYPES = createField(DSL.name("activebonustypes"), SQLDataType.SMALLINT.nullable(false).defaultValue(DSL.field(DSL.raw("ARRAY[]::smallint[]"), SQLDataType.SMALLINT)).array(), this, "");
 
     /**
      * The column <code>public.hero.activepenaltytypes</code>.
      */
-    public final TableField<HeroRecord, Short[]> ACTIVEPENALTYTYPES = createField(DSL.name("activepenaltytypes"), SQLDataType.SMALLINT.array(), this, "");
+    public final TableField<HeroRecord, Short[]> ACTIVEPENALTYTYPES = createField(DSL.name("activepenaltytypes"), SQLDataType.SMALLINT.nullable(false).defaultValue(DSL.field(DSL.raw("ARRAY[]::smallint[]"), SQLDataType.SMALLINT)).array(), this, "");
 
     /**
      * The column <code>public.hero.weaponrightid</code>.

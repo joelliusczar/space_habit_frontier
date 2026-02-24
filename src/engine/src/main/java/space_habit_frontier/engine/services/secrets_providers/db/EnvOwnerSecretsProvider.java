@@ -6,17 +6,17 @@ public class EnvOwnerSecretsProvider implements DbSecretsProvider{
 
 	@Override
 	public String dbUserName() {
-		return System.getenv("SHF_OWNER_NAME");
+		return System.getenv("DSF_OWNER_NAME");
 	}
 
 	@Override
 	public String dbPassword() {
-		return System.getenv("SHF_DB_PASS_OWNER");
+		return System.getenv("DSF_DB_PASS_OWNER");
 	}
 
 	@Override
 	public String dbName() {
-		return System.getenv("SHF_DATABASE_NAME");
+		return System.getenv("DSF_DATABASE_NAME");
 	}
 	
 }

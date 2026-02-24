@@ -15,6 +15,7 @@ import space_habit_frontier.engine.db_generated.tables.Actionevents;
 import space_habit_frontier.engine.db_generated.tables.Actions;
 import space_habit_frontier.engine.db_generated.tables.Adventureevents;
 import space_habit_frontier.engine.db_generated.tables.Dungeon;
+import space_habit_frontier.engine.db_generated.tables.FlywaySchemaHistory;
 import space_habit_frontier.engine.db_generated.tables.Hero;
 import space_habit_frontier.engine.db_generated.tables.Lkarmor;
 import space_habit_frontier.engine.db_generated.tables.Lkdungeonlkitems;
@@ -25,11 +26,10 @@ import space_habit_frontier.engine.db_generated.tables.Lkmonsters;
 import space_habit_frontier.engine.db_generated.tables.Lkusables;
 import space_habit_frontier.engine.db_generated.tables.Lkweapons;
 import space_habit_frontier.engine.db_generated.tables.Monsteritemdrops;
-import space_habit_frontier.engine.db_generated.tables.Securityevents;
 import space_habit_frontier.engine.db_generated.tables.Todoevents;
 import space_habit_frontier.engine.db_generated.tables.Todos;
-import space_habit_frontier.engine.db_generated.tables.Useragents;
 import space_habit_frontier.engine.db_generated.tables.Users;
+import space_habit_frontier.engine.db_generated.tables.Visitors;
 
 
 /**
@@ -64,6 +64,11 @@ public class Public extends SchemaImpl {
      * The table <code>public.dungeon</code>.
      */
     public final Dungeon DUNGEON = Dungeon.DUNGEON;
+
+    /**
+     * The table <code>public.flyway_schema_history</code>.
+     */
+    public final FlywaySchemaHistory FLYWAY_SCHEMA_HISTORY = FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY;
 
     /**
      * The table <code>public.hero</code>.
@@ -116,11 +121,6 @@ public class Public extends SchemaImpl {
     public final Monsteritemdrops MONSTERITEMDROPS = Monsteritemdrops.MONSTERITEMDROPS;
 
     /**
-     * The table <code>public.securityevents</code>.
-     */
-    public final Securityevents SECURITYEVENTS = Securityevents.SECURITYEVENTS;
-
-    /**
      * The table <code>public.todoevents</code>.
      */
     public final Todoevents TODOEVENTS = Todoevents.TODOEVENTS;
@@ -131,14 +131,14 @@ public class Public extends SchemaImpl {
     public final Todos TODOS = Todos.TODOS;
 
     /**
-     * The table <code>public.useragents</code>.
-     */
-    public final Useragents USERAGENTS = Useragents.USERAGENTS;
-
-    /**
      * The table <code>public.users</code>.
      */
     public final Users USERS = Users.USERS;
+
+    /**
+     * The table <code>public.visitors</code>.
+     */
+    public final Visitors VISITORS = Visitors.VISITORS;
 
     /**
      * No further instances allowed
@@ -160,6 +160,7 @@ public class Public extends SchemaImpl {
             Actions.ACTIONS,
             Adventureevents.ADVENTUREEVENTS,
             Dungeon.DUNGEON,
+            FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY,
             Hero.HERO,
             Lkarmor.LKARMOR,
             Lkdungeonlkitems.LKDUNGEONLKITEMS,
@@ -170,11 +171,10 @@ public class Public extends SchemaImpl {
             Lkusables.LKUSABLES,
             Lkweapons.LKWEAPONS,
             Monsteritemdrops.MONSTERITEMDROPS,
-            Securityevents.SECURITYEVENTS,
             Todoevents.TODOEVENTS,
             Todos.TODOS,
-            Useragents.USERAGENTS,
-            Users.USERS
+            Users.USERS,
+            Visitors.VISITORS
         );
     }
 }

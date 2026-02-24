@@ -66,7 +66,7 @@ public class Lkarmor extends TableImpl<LkarmorRecord> {
     /**
      * The column <code>public.lkarmor.exposition</code>.
      */
-    public final TableField<LkarmorRecord, String> EXPOSITION = createField(DSL.name("exposition"), SQLDataType.CLOB, this, "");
+    public final TableField<LkarmorRecord, String> EXPOSITION = createField(DSL.name("exposition"), SQLDataType.CLOB.nullable(false), this, "");
 
     /**
      * The column <code>public.lkarmor.cost</code>.

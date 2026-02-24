@@ -62,7 +62,7 @@ public class Lkusables extends TableImpl<LkusablesRecord> {
     /**
      * The column <code>public.lkusables.exposition</code>.
      */
-    public final TableField<LkusablesRecord, String> EXPOSITION = createField(DSL.name("exposition"), SQLDataType.CLOB, this, "");
+    public final TableField<LkusablesRecord, String> EXPOSITION = createField(DSL.name("exposition"), SQLDataType.CLOB.nullable(false), this, "");
 
     /**
      * The column <code>public.lkusables.cost</code>.

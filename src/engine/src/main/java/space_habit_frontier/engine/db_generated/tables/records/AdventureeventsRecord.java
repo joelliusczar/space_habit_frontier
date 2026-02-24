@@ -5,6 +5,7 @@ package space_habit_frontier.engine.db_generated.tables.records;
 
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import org.jooq.Record1;
 import org.jooq.impl.UpdatableRecordImpl;
@@ -23,15 +24,15 @@ public class AdventureeventsRecord extends UpdatableRecordImpl<AdventureeventsRe
     /**
      * Setter for <code>public.adventureevents.id</code>.
      */
-    public void setId(Long value) {
+    public void setId(UUID value) {
         set(0, value);
     }
 
     /**
      * Getter for <code>public.adventureevents.id</code>.
      */
-    public Long getId() {
-        return (Long) get(0);
+    public UUID getId() {
+        return (UUID) get(0);
     }
 
     /**
@@ -65,15 +66,15 @@ public class AdventureeventsRecord extends UpdatableRecordImpl<AdventureeventsRe
     /**
      * Setter for <code>public.adventureevents.userid</code>.
      */
-    public void setUserid(Long value) {
+    public void setUserid(UUID value) {
         set(3, value);
     }
 
     /**
      * Getter for <code>public.adventureevents.userid</code>.
      */
-    public Long getUserid() {
-        return (Long) get(3);
+    public UUID getUserid() {
+        return (UUID) get(3);
     }
 
     // -------------------------------------------------------------------------
@@ -81,7 +82,7 @@ public class AdventureeventsRecord extends UpdatableRecordImpl<AdventureeventsRe
     // -------------------------------------------------------------------------
 
     @Override
-    public Record1<Long> key() {
+    public Record1<UUID> key() {
         return (Record1) super.key();
     }
 
@@ -99,7 +100,7 @@ public class AdventureeventsRecord extends UpdatableRecordImpl<AdventureeventsRe
     /**
      * Create a detached, initialised AdventureeventsRecord
      */
-    public AdventureeventsRecord(Long id, Short eventtype, BigDecimal creationtimestamp, Long userid) {
+    public AdventureeventsRecord(UUID id, Short eventtype, BigDecimal creationtimestamp, UUID userid) {
         super(Adventureevents.ADVENTUREEVENTS);
 
         setId(id);

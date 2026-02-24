@@ -7,11 +7,11 @@ package space_habit_frontier.engine.db_generated.tables;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Identity;
 import org.jooq.InverseForeignKey;
 import org.jooq.Name;
 import org.jooq.Path;
@@ -60,7 +60,7 @@ public class Actions extends TableImpl<ActionsRecord> {
     /**
      * The column <code>public.actions.id</code>.
      */
-    public final TableField<ActionsRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false).identity(true), this, "");
+    public final TableField<ActionsRecord, UUID> ID = createField(DSL.name("id"), SQLDataType.UUID.nullable(false), this, "");
 
     /**
      * The column <code>public.actions.title</code>.
@@ -70,7 +70,7 @@ public class Actions extends TableImpl<ActionsRecord> {
     /**
      * The column <code>public.actions.note</code>.
      */
-    public final TableField<ActionsRecord, String> NOTE = createField(DSL.name("note"), SQLDataType.CLOB, this, "");
+    public final TableField<ActionsRecord, String> NOTE = createField(DSL.name("note"), SQLDataType.CLOB.nullable(false).defaultValue(DSL.field(DSL.raw("''::text"), SQLDataType.CLOB)), this, "");
 
     /**
      * The column <code>public.actions.risk</code>.
@@ -90,12 +90,12 @@ public class Actions extends TableImpl<ActionsRecord> {
     /**
      * The column <code>public.actions.maxcount</code>.
      */
-    public final TableField<ActionsRecord, Short> MAXCOUNT = createField(DSL.name("maxcount"), SQLDataType.SMALLINT, this, "");
+    public final TableField<ActionsRecord, Short> MAXCOUNT = createField(DSL.name("maxcount"), SQLDataType.SMALLINT.nullable(false).defaultValue(DSL.field(DSL.raw("'-1'::integer"), SQLDataType.SMALLINT)), this, "");
 
     /**
      * The column <code>public.actions.userid</code>.
      */
-    public final TableField<ActionsRecord, Long> USERID = createField(DSL.name("userid"), SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<ActionsRecord, UUID> USERID = createField(DSL.name("userid"), SQLDataType.UUID.nullable(false), this, "");
 
     private Actions(Name alias, Table<ActionsRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
@@ -160,11 +160,6 @@ public class Actions extends TableImpl<ActionsRecord> {
     @Override
     public Schema getSchema() {
         return aliased() ? null : Public.PUBLIC;
-    }
-
-    @Override
-    public Identity<ActionsRecord, Long> getIdentity() {
-        return (Identity<ActionsRecord, Long>) super.getIdentity();
     }
 
     @Override

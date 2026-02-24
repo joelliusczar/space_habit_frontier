@@ -16,7 +16,8 @@
     "@headlessui/vue": "^1.7.22",
     "dayjs": "^1.11.13",
     "just-safe-get": "^4.2.0",
-    "vue": "^3.4.21"
+    "vue": "^3.4.21",
+    "vue-router": "^4.5.1"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",

@@ -1,0 +1,9 @@
+---
+keys:
+  auth_secret_key: 9cb147b06b772ff19ed0bc8ea131ada855691d084ff0deb275bcda1889a5898d
+  db_pass_api: apipass
+  db_pass_janitor: janitorpass
+  db_pass_owner: ownerpass
+  db_pass_radio: radiopass
+  db_pass_setup: setuppass
+  namespace_uuid: 75d9b052-841a-454e-876d-cf5018e8bea0

@@ -8,11 +8,11 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Identity;
 import org.jooq.InverseForeignKey;
 import org.jooq.Name;
 import org.jooq.Path;
@@ -60,7 +60,7 @@ public class Users extends TableImpl<UsersRecord> {
     /**
      * The column <code>public.users.id</code>.
      */
-    public final TableField<UsersRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false).identity(true), this, "");
+    public final TableField<UsersRecord, UUID> ID = createField(DSL.name("id"), SQLDataType.UUID.nullable(false), this, "");
 
     /**
      * The column <code>public.users.username</code>.
@@ -170,11 +170,6 @@ public class Users extends TableImpl<UsersRecord> {
     @Override
     public Schema getSchema() {
         return aliased() ? null : Public.PUBLIC;
-    }
-
-    @Override
-    public Identity<UsersRecord, Long> getIdentity() {
-        return (Identity<UsersRecord, Long>) super.getIdentity();
     }
 
     @Override

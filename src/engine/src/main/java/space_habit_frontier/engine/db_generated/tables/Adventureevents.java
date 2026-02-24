@@ -8,11 +8,11 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.PlainSQL;
 import org.jooq.QueryPart;
@@ -58,7 +58,7 @@ public class Adventureevents extends TableImpl<AdventureeventsRecord> {
     /**
      * The column <code>public.adventureevents.id</code>.
      */
-    public final TableField<AdventureeventsRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false).identity(true), this, "");
+    public final TableField<AdventureeventsRecord, UUID> ID = createField(DSL.name("id"), SQLDataType.UUID.nullable(false), this, "");
 
     /**
      * The column <code>public.adventureevents.eventtype</code>.
@@ -73,7 +73,7 @@ public class Adventureevents extends TableImpl<AdventureeventsRecord> {
     /**
      * The column <code>public.adventureevents.userid</code>.
      */
-    public final TableField<AdventureeventsRecord, Long> USERID = createField(DSL.name("userid"), SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<AdventureeventsRecord, UUID> USERID = createField(DSL.name("userid"), SQLDataType.UUID.nullable(false), this, "");
 
     private Adventureevents(Name alias, Table<AdventureeventsRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
@@ -107,11 +107,6 @@ public class Adventureevents extends TableImpl<AdventureeventsRecord> {
     @Override
     public Schema getSchema() {
         return aliased() ? null : Public.PUBLIC;
-    }
-
-    @Override
-    public Identity<AdventureeventsRecord, Long> getIdentity() {
-        return (Identity<AdventureeventsRecord, Long>) super.getIdentity();
     }
 
     @Override

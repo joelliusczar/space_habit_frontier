@@ -1,0 +1,1 @@
+ALTER TABLE IF EXISTS vistors RENAME TO visitors;

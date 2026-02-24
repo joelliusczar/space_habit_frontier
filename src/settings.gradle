@@ -11,4 +11,4 @@ plugins {
 }
 
 rootProject.name = 'space_habit_frontier'
-include('app', 'engine', 'console')
+include('app', 'engine', 'console', 'migrations')

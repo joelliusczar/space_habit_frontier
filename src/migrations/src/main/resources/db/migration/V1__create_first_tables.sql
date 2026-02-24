@@ -1,7 +1,7 @@
 
 
 CREATE TABLE IF NOT EXISTS users (
-	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	id UUID PRIMARY KEY,
 	username TEXT UNIQUE NOT NULL,
 	email TEXT UNIQUE NOT NULL,
 	hashedpw BYTEA NOT NULL,
@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS users (
 	adventuremode INTEGER NOT NULL DEFAULT 0
 );
 
-CREATE TABLE IF NOT EXISTS useragents (
+
+CREATE TABLE IF NOT EXISTS vistors (
 	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
 	contents TEXT NOT NULL,
 	ualength SMALLINT NOT NULL,
@@ -22,17 +23,11 @@ CREATE TABLE IF NOT EXISTS useragents (
 	ipv6address TEXT NULL
 );
 
-CREATE TABLE IF NOT EXISTS securityevents (
-	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-	creationtimestamp NUMERIC(16, 4) NOT NULL,
-	useragentid BIGINT NOT NULL REFERENCES useragents (id),
-	userid BIGINT NULL REFERENCES users (id)
-);
 
 CREATE TABLE IF NOT EXISTS todos (
-	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	id UUID PRIMARY KEY,
 	title TEXT NOT NULL,
-	note TEXT,
+	note TEXT NOT NULL DEFAULT '',
 	risk SMALLINT NOT NULL DEFAULT 50,
 	duedatetimestamp NUMERIC(16, 4) NULL,
 	effectivedatetimestamp NUMERIC(16, 4) NULL,
@@ -41,45 +36,50 @@ CREATE TABLE IF NOT EXISTS todos (
 	repeattype SMALLINT NOT NULL DEFAULT 0,
 	repeatrate SMALLINT NOT NULL DEFAULT 1,
 	weekactivedays BIT(7) NOT NULL DEFAULT B'1111111',
-	yearactivedays INTEGER[366] NULL,
+	yearactivedays INTEGER[366] NOT NULL DEFAULT ARRAY[]::INTEGER[],
 	creationtimestamp NUMERIC(16, 4) NOT NULL,
-	userid BIGINT NOT NULL REFERENCES users (id),
-	parenttodoid BIGINT NULL REFERENCES todos (id)
+	userid UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+	parenttodoid UUID NULL REFERENCES todos (id) ON DELETE CASCADE
 );
 
+
 CREATE TABLE IF NOT EXISTS actions (
-	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	id UUID PRIMARY KEY,
 	title TEXT NOT NULL,
-	note TEXT,
+	note TEXT NOT NULL DEFAULT '',
 	risk SMALLINT NOT NULL DEFAULT 50,
 	freeviolations SMALLINT NOT NULL DEFAULT 0,
 	orientationtype SMALLINT NOT NULL DEFAULT 1,
-	maxcount SMALLINT NULL,
-	userid BIGINT NOT NULL REFERENCES users (id)
+	maxcount SMALLINT NOT NULL DEFAULT -1,
+	userid UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE
 );
+
 
 CREATE TABLE IF NOT EXISTS adventureevents (
-	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	id UUID PRIMARY KEY,
 	eventtype SMALLINT NOT NULL,
 	creationtimestamp NUMERIC(16, 4) NOT NULL,
-	userid BIGINT NOT NULL REFERENCES users (id)
+	userid UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE
 );
+
 
 CREATE TABLE IF NOT EXISTS todoevents (
-	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	id UUID PRIMARY KEY,
 	damage INT NOT NULL DEFAULT 0,
 	creationtimestamp NUMERIC(16, 4) NOT NULL,
-	todoid BIGINT REFERENCES todos (id),
-	userid BIGINT NOT NULL REFERENCES users (id)
+	todoid UUID REFERENCES todos (id) ON DELETE CASCADE,
+	userid UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE
 );
 
+
 CREATE TABLE IF NOT EXISTS actionevents (
-	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	id UUID PRIMARY KEY,
 	damage INT NOT NULL DEFAULT 0,
 	creationtimestamp NUMERIC(16, 4) NOT NULL,
-	actionid BIGINT REFERENCES actions (id),
-	userid BIGINT NOT NULL REFERENCES users (id)
+	actionid UUID REFERENCES actions (id) ON DELETE CASCADE,
+	userid UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE
 );
+
 
 CREATE TABLE IF NOT EXISTS lkdungeons (
 	id BIGINT PRIMARY KEY,
@@ -88,6 +88,7 @@ CREATE TABLE IF NOT EXISTS lkdungeons (
 	minlvl SMALLINT NOT NULL DEFAULT 0,
 	imageuri TEXT NULL
 );
+
 
 CREATE TABLE IF NOT EXISTS lkmonsters (
 	id BIGINT PRIMARY KEY,
@@ -98,29 +99,34 @@ CREATE TABLE IF NOT EXISTS lkmonsters (
 	imageuri TEXT NULL
 );
 
+
 CREATE TABLE IF NOT EXISTS lkdungeonlkmonsters (
-	lkdungeonid BIGINT NOT NULL REFERENCES lkdungeons (id),
-	lkmonsterid BIGINT NOT NULL REFERENCES lkmonsters (id)
+	lkdungeonid BIGINT NOT NULL REFERENCES lkdungeons (id) ON DELETE CASCADE,
+	lkmonsterid BIGINT NOT NULL REFERENCES lkmonsters (id) ON DELETE CASCADE
 );
+
 
 CREATE TABLE IF NOT EXISTS lkitems (
 	id BIGINT PRIMARY KEY,
 	title TEXT NOT NULL,
-	exposition TEXT,
+	exposition TEXT NOT NULL,
 	cost INTEGER NOT NULL DEFAULT 0,
 	effecttypes SMALLINT[],
 	imageuri TEXT NULL
 );
 
+
 CREATE TABLE IF NOT EXISTS lkdungeonlkitems (
-	lkdungeonid BIGINT NOT NULL REFERENCES lkdungeons (id),
-	lkitemid BIGINT NOT NULL REFERENCES lkitems (id)
+	lkdungeonid BIGINT NOT NULL REFERENCES lkdungeons (id) ON DELETE CASCADE,
+	lkitemid BIGINT NOT NULL REFERENCES lkitems (id) ON DELETE CASCADE
 );
 
+
 CREATE TABLE IF NOT EXISTS monsteritemdrops (
-	lkmonsterid BIGINT NOT NULL REFERENCES lkmonsters (id),
-	lkitemid BIGINT NOT NULL REFERENCES lkitems (id)
+	lkmonsterid BIGINT NOT NULL REFERENCES lkmonsters (id) ON DELETE CASCADE,
+	lkitemid BIGINT NOT NULL REFERENCES lkitems (id) ON DELETE CASCADE
 );
+
 
 CREATE TABLE IF NOT EXISTS lkusables (
 	id BIGINT PRIMARY KEY,
@@ -151,30 +157,31 @@ CREATE TABLE IF NOT EXISTS lkarmor (
 
 
 CREATE TABLE IF NOT EXISTS hero (
-	id BIGINT PRIMARY KEY REFERENCES users (id),
+	id UUID PRIMARY KEY REFERENCES users (id) ON DELETE CASCADE,
 	xp BIGINT NOT NULL DEFAULT 0,
 	gold BIGINT NOT NULL DEFAULT 0,
-	inventory JSON,
+	inventory JSON DEFAULT '[]'::JSON,
 	monster JSON,
 	dungeon JSON,
 	currenthp BIGINT NOT NULL DEFAULT 0,
-	activebonustypes SMALLINT[],
-	activepenaltytypes SMALLINT[],
-	weaponrightid BIGINT NULL REFERENCES lkweapons (id),
-	weaponleftid BIGINT NULL REFERENCES lkweapons (id),
-	frontarmorid BIGINT NULL REFERENCES lkarmor (id),
-	backarmorid BIGINT NULL REFERENCES lkarmor (id),
-	toparmorid BIGINT NULL REFERENCES lkarmor (id),
-	bottomarmorid BIGINT NULL REFERENCES lkarmor (id)
+	activebonustypes SMALLINT[] NOT NULL DEFAULT ARRAY[]::SMALLINT[],
+	activepenaltytypes SMALLINT[] NOT NULL DEFAULT ARRAY[]::SMALLINT[],
+	weaponrightid BIGINT NULL REFERENCES lkweapons (id) ON DELETE SET NULL,
+	weaponleftid BIGINT NULL REFERENCES lkweapons (id) ON DELETE SET NULL,
+	frontarmorid BIGINT NULL REFERENCES lkarmor (id) ON DELETE SET NULL,
+	backarmorid BIGINT NULL REFERENCES lkarmor (id) ON DELETE SET NULL,
+	toparmorid BIGINT NULL REFERENCES lkarmor (id) ON DELETE SET NULL,
+	bottomarmorid BIGINT NULL REFERENCES lkarmor (id) ON DELETE SET NULL
 );
+
 
 CREATE TABLE IF NOT EXISTS dungeon (
 	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
 	title TEXT NOT NULL,
 	coordinates POINT NOT NULL,
 	lvl INTEGER NOT NULL DEFAULT 1,
-	lkdungeonid BIGINT NOT NULL REFERENCES lkdungeons (id),
-	userid BIGINT NOT NULL REFERENCES users (id)
+	lkdungeonid BIGINT NOT NULL REFERENCES lkdungeons (id) ON DELETE CASCADE,
+	userid UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE
 );
 
 -- CREATE TABLE IF NOT EXISTS monsters (

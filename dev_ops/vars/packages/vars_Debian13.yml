@@ -1,0 +1,12 @@
+---
+packages:
+  postgresql: postgresql
+  mysql: mariadb-server
+  pymysql: python3-pymysql
+  pypsql: python3-psycopg2
+  firefox: firefox-esr
+  nginx: nginx-full
+  git: git
+  chrony: chrony
+  javaruntime: default-jre
+  tomcat: tomcat9

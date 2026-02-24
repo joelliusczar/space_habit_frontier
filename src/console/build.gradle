@@ -15,7 +15,7 @@ dependencies {
 }
 
 task(exp, dependsOn: 'classes', type: JavaExec) {
-    main = 'space_habit_frontier.console.App'
+    mainClass = 'space_habit_frontier.console.App'
     classpath = sourceSets.main.runtimeClasspath
 }
 

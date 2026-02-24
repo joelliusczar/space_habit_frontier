@@ -1,11 +1,8 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import { useLookups } from "./composables/useLookups";
-import TodosList from "./components/todos/TodosList.vue";
-import TodoEdit from "./components/todos/TodoEdit.vue";
+import { RouterView } from "vue-router";
 
-const routes = {
-	"": TodosList
-};
 
 useLookups();
 </script>
@@ -17,6 +14,6 @@ useLookups();
 	</header>
 
 	<main class="grid">
-		<TodoEdit />
+		<RouterView />
 	</main>
 </template>

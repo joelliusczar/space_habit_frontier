@@ -14,6 +14,7 @@ import space_habit_frontier.engine.db_generated.tables.Actionevents;
 import space_habit_frontier.engine.db_generated.tables.Actions;
 import space_habit_frontier.engine.db_generated.tables.Adventureevents;
 import space_habit_frontier.engine.db_generated.tables.Dungeon;
+import space_habit_frontier.engine.db_generated.tables.FlywaySchemaHistory;
 import space_habit_frontier.engine.db_generated.tables.Hero;
 import space_habit_frontier.engine.db_generated.tables.Lkarmor;
 import space_habit_frontier.engine.db_generated.tables.Lkdungeonlkitems;
@@ -24,15 +25,15 @@ import space_habit_frontier.engine.db_generated.tables.Lkmonsters;
 import space_habit_frontier.engine.db_generated.tables.Lkusables;
 import space_habit_frontier.engine.db_generated.tables.Lkweapons;
 import space_habit_frontier.engine.db_generated.tables.Monsteritemdrops;
-import space_habit_frontier.engine.db_generated.tables.Securityevents;
 import space_habit_frontier.engine.db_generated.tables.Todoevents;
 import space_habit_frontier.engine.db_generated.tables.Todos;
-import space_habit_frontier.engine.db_generated.tables.Useragents;
 import space_habit_frontier.engine.db_generated.tables.Users;
+import space_habit_frontier.engine.db_generated.tables.Visitors;
 import space_habit_frontier.engine.db_generated.tables.records.ActioneventsRecord;
 import space_habit_frontier.engine.db_generated.tables.records.ActionsRecord;
 import space_habit_frontier.engine.db_generated.tables.records.AdventureeventsRecord;
 import space_habit_frontier.engine.db_generated.tables.records.DungeonRecord;
+import space_habit_frontier.engine.db_generated.tables.records.FlywaySchemaHistoryRecord;
 import space_habit_frontier.engine.db_generated.tables.records.HeroRecord;
 import space_habit_frontier.engine.db_generated.tables.records.LkarmorRecord;
 import space_habit_frontier.engine.db_generated.tables.records.LkdungeonlkitemsRecord;
@@ -43,11 +44,10 @@ import space_habit_frontier.engine.db_generated.tables.records.LkmonstersRecord;
 import space_habit_frontier.engine.db_generated.tables.records.LkusablesRecord;
 import space_habit_frontier.engine.db_generated.tables.records.LkweaponsRecord;
 import space_habit_frontier.engine.db_generated.tables.records.MonsteritemdropsRecord;
-import space_habit_frontier.engine.db_generated.tables.records.SecurityeventsRecord;
 import space_habit_frontier.engine.db_generated.tables.records.TodoeventsRecord;
 import space_habit_frontier.engine.db_generated.tables.records.TodosRecord;
-import space_habit_frontier.engine.db_generated.tables.records.UseragentsRecord;
 import space_habit_frontier.engine.db_generated.tables.records.UsersRecord;
+import space_habit_frontier.engine.db_generated.tables.records.VisitorsRecord;
 
 
 /**
@@ -65,6 +65,7 @@ public class Keys {
     public static final UniqueKey<ActionsRecord> ACTIONS_PKEY = Internal.createUniqueKey(Actions.ACTIONS, DSL.name("actions_pkey"), new TableField[] { Actions.ACTIONS.ID }, true);
     public static final UniqueKey<AdventureeventsRecord> ADVENTUREEVENTS_PKEY = Internal.createUniqueKey(Adventureevents.ADVENTUREEVENTS, DSL.name("adventureevents_pkey"), new TableField[] { Adventureevents.ADVENTUREEVENTS.ID }, true);
     public static final UniqueKey<DungeonRecord> DUNGEON_PKEY = Internal.createUniqueKey(Dungeon.DUNGEON, DSL.name("dungeon_pkey"), new TableField[] { Dungeon.DUNGEON.ID }, true);
+    public static final UniqueKey<FlywaySchemaHistoryRecord> FLYWAY_SCHEMA_HISTORY_PK = Internal.createUniqueKey(FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY, DSL.name("flyway_schema_history_pk"), new TableField[] { FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY.INSTALLED_RANK }, true);
     public static final UniqueKey<HeroRecord> HERO_PKEY = Internal.createUniqueKey(Hero.HERO, DSL.name("hero_pkey"), new TableField[] { Hero.HERO.ID }, true);
     public static final UniqueKey<LkarmorRecord> LKARMOR_PKEY = Internal.createUniqueKey(Lkarmor.LKARMOR, DSL.name("lkarmor_pkey"), new TableField[] { Lkarmor.LKARMOR.ID }, true);
     public static final UniqueKey<LkdungeonsRecord> LKDUNGEONS_PKEY = Internal.createUniqueKey(Lkdungeons.LKDUNGEONS, DSL.name("lkdungeons_pkey"), new TableField[] { Lkdungeons.LKDUNGEONS.ID }, true);
@@ -72,13 +73,12 @@ public class Keys {
     public static final UniqueKey<LkmonstersRecord> LKMONSTERS_PKEY = Internal.createUniqueKey(Lkmonsters.LKMONSTERS, DSL.name("lkmonsters_pkey"), new TableField[] { Lkmonsters.LKMONSTERS.ID }, true);
     public static final UniqueKey<LkusablesRecord> LKUSABLES_PKEY = Internal.createUniqueKey(Lkusables.LKUSABLES, DSL.name("lkusables_pkey"), new TableField[] { Lkusables.LKUSABLES.ID }, true);
     public static final UniqueKey<LkweaponsRecord> LKWEAPONS_PKEY = Internal.createUniqueKey(Lkweapons.LKWEAPONS, DSL.name("lkweapons_pkey"), new TableField[] { Lkweapons.LKWEAPONS.ID }, true);
-    public static final UniqueKey<SecurityeventsRecord> SECURITYEVENTS_PKEY = Internal.createUniqueKey(Securityevents.SECURITYEVENTS, DSL.name("securityevents_pkey"), new TableField[] { Securityevents.SECURITYEVENTS.ID }, true);
     public static final UniqueKey<TodoeventsRecord> TODOEVENTS_PKEY = Internal.createUniqueKey(Todoevents.TODOEVENTS, DSL.name("todoevents_pkey"), new TableField[] { Todoevents.TODOEVENTS.ID }, true);
     public static final UniqueKey<TodosRecord> TODOS_PKEY = Internal.createUniqueKey(Todos.TODOS, DSL.name("todos_pkey"), new TableField[] { Todos.TODOS.ID }, true);
-    public static final UniqueKey<UseragentsRecord> USERAGENTS_PKEY = Internal.createUniqueKey(Useragents.USERAGENTS, DSL.name("useragents_pkey"), new TableField[] { Useragents.USERAGENTS.ID }, true);
     public static final UniqueKey<UsersRecord> USERS_EMAIL_KEY = Internal.createUniqueKey(Users.USERS, DSL.name("users_email_key"), new TableField[] { Users.USERS.EMAIL }, true);
     public static final UniqueKey<UsersRecord> USERS_PKEY = Internal.createUniqueKey(Users.USERS, DSL.name("users_pkey"), new TableField[] { Users.USERS.ID }, true);
     public static final UniqueKey<UsersRecord> USERS_USERNAME_KEY = Internal.createUniqueKey(Users.USERS, DSL.name("users_username_key"), new TableField[] { Users.USERS.USERNAME }, true);
+    public static final UniqueKey<VisitorsRecord> VISTORS_PKEY = Internal.createUniqueKey(Visitors.VISITORS, DSL.name("vistors_pkey"), new TableField[] { Visitors.VISITORS.ID }, true);
 
     // -------------------------------------------------------------------------
     // FOREIGN KEY definitions
@@ -103,8 +103,6 @@ public class Keys {
     public static final ForeignKey<LkdungeonlkmonstersRecord, LkmonstersRecord> LKDUNGEONLKMONSTERS__LKDUNGEONLKMONSTERS_LKMONSTERID_FKEY = Internal.createForeignKey(Lkdungeonlkmonsters.LKDUNGEONLKMONSTERS, DSL.name("lkdungeonlkmonsters_lkmonsterid_fkey"), new TableField[] { Lkdungeonlkmonsters.LKDUNGEONLKMONSTERS.LKMONSTERID }, Keys.LKMONSTERS_PKEY, new TableField[] { Lkmonsters.LKMONSTERS.ID }, true);
     public static final ForeignKey<MonsteritemdropsRecord, LkitemsRecord> MONSTERITEMDROPS__MONSTERITEMDROPS_LKITEMID_FKEY = Internal.createForeignKey(Monsteritemdrops.MONSTERITEMDROPS, DSL.name("monsteritemdrops_lkitemid_fkey"), new TableField[] { Monsteritemdrops.MONSTERITEMDROPS.LKITEMID }, Keys.LKITEMS_PKEY, new TableField[] { Lkitems.LKITEMS.ID }, true);
     public static final ForeignKey<MonsteritemdropsRecord, LkmonstersRecord> MONSTERITEMDROPS__MONSTERITEMDROPS_LKMONSTERID_FKEY = Internal.createForeignKey(Monsteritemdrops.MONSTERITEMDROPS, DSL.name("monsteritemdrops_lkmonsterid_fkey"), new TableField[] { Monsteritemdrops.MONSTERITEMDROPS.LKMONSTERID }, Keys.LKMONSTERS_PKEY, new TableField[] { Lkmonsters.LKMONSTERS.ID }, true);
-    public static final ForeignKey<SecurityeventsRecord, UseragentsRecord> SECURITYEVENTS__SECURITYEVENTS_USERAGENTID_FKEY = Internal.createForeignKey(Securityevents.SECURITYEVENTS, DSL.name("securityevents_useragentid_fkey"), new TableField[] { Securityevents.SECURITYEVENTS.USERAGENTID }, Keys.USERAGENTS_PKEY, new TableField[] { Useragents.USERAGENTS.ID }, true);
-    public static final ForeignKey<SecurityeventsRecord, UsersRecord> SECURITYEVENTS__SECURITYEVENTS_USERID_FKEY = Internal.createForeignKey(Securityevents.SECURITYEVENTS, DSL.name("securityevents_userid_fkey"), new TableField[] { Securityevents.SECURITYEVENTS.USERID }, Keys.USERS_PKEY, new TableField[] { Users.USERS.ID }, true);
     public static final ForeignKey<TodoeventsRecord, TodosRecord> TODOEVENTS__TODOEVENTS_TODOID_FKEY = Internal.createForeignKey(Todoevents.TODOEVENTS, DSL.name("todoevents_todoid_fkey"), new TableField[] { Todoevents.TODOEVENTS.TODOID }, Keys.TODOS_PKEY, new TableField[] { Todos.TODOS.ID }, true);
     public static final ForeignKey<TodoeventsRecord, UsersRecord> TODOEVENTS__TODOEVENTS_USERID_FKEY = Internal.createForeignKey(Todoevents.TODOEVENTS, DSL.name("todoevents_userid_fkey"), new TableField[] { Todoevents.TODOEVENTS.USERID }, Keys.USERS_PKEY, new TableField[] { Users.USERS.ID }, true);
     public static final ForeignKey<TodosRecord, TodosRecord> TODOS__TODOS_PARENTTODOID_FKEY = Internal.createForeignKey(Todos.TODOS, DSL.name("todos_parenttodoid_fkey"), new TableField[] { Todos.TODOS.PARENTTODOID }, Keys.TODOS_PKEY, new TableField[] { Todos.TODOS.ID }, true);

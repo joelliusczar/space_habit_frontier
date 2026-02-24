@@ -5,6 +5,7 @@ package space_habit_frontier.engine.db_generated.tables.records;
 
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import org.jooq.Record1;
 import org.jooq.impl.UpdatableRecordImpl;
@@ -23,15 +24,15 @@ public class TodosRecord extends UpdatableRecordImpl<TodosRecord> {
     /**
      * Setter for <code>public.todos.id</code>.
      */
-    public void setId(Long value) {
+    public void setId(UUID value) {
         set(0, value);
     }
 
     /**
      * Getter for <code>public.todos.id</code>.
      */
-    public Long getId() {
-        return (Long) get(0);
+    public UUID getId() {
+        return (UUID) get(0);
     }
 
     /**
@@ -205,29 +206,29 @@ public class TodosRecord extends UpdatableRecordImpl<TodosRecord> {
     /**
      * Setter for <code>public.todos.userid</code>.
      */
-    public void setUserid(Long value) {
+    public void setUserid(UUID value) {
         set(13, value);
     }
 
     /**
      * Getter for <code>public.todos.userid</code>.
      */
-    public Long getUserid() {
-        return (Long) get(13);
+    public UUID getUserid() {
+        return (UUID) get(13);
     }
 
     /**
      * Setter for <code>public.todos.parenttodoid</code>.
      */
-    public void setParenttodoid(Long value) {
+    public void setParenttodoid(UUID value) {
         set(14, value);
     }
 
     /**
      * Getter for <code>public.todos.parenttodoid</code>.
      */
-    public Long getParenttodoid() {
-        return (Long) get(14);
+    public UUID getParenttodoid() {
+        return (UUID) get(14);
     }
 
     // -------------------------------------------------------------------------
@@ -235,7 +236,7 @@ public class TodosRecord extends UpdatableRecordImpl<TodosRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Record1<Long> key() {
+    public Record1<UUID> key() {
         return (Record1) super.key();
     }
 
@@ -253,7 +254,7 @@ public class TodosRecord extends UpdatableRecordImpl<TodosRecord> {
     /**
      * Create a detached, initialised TodosRecord
      */
-    public TodosRecord(Long id, String title, String note, Short risk, BigDecimal duedatetimestamp, BigDecimal effectivedatetimestamp, BigDecimal streakstarttimestamp, Short repeatcount, Short repeattype, Short repeatrate, String weekactivedays, Integer[] yearactivedays, BigDecimal creationtimestamp, Long userid, Long parenttodoid) {
+    public TodosRecord(UUID id, String title, String note, Short risk, BigDecimal duedatetimestamp, BigDecimal effectivedatetimestamp, BigDecimal streakstarttimestamp, Short repeatcount, Short repeattype, Short repeatrate, String weekactivedays, Integer[] yearactivedays, BigDecimal creationtimestamp, UUID userid, UUID parenttodoid) {
         super(Todos.TODOS);
 
         setId(id);

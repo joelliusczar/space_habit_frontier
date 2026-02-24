@@ -8,11 +8,11 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Identity;
 import org.jooq.InverseForeignKey;
 import org.jooq.Name;
 import org.jooq.Path;
@@ -62,7 +62,7 @@ public class Todos extends TableImpl<TodosRecord> {
     /**
      * The column <code>public.todos.id</code>.
      */
-    public final TableField<TodosRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false).identity(true), this, "");
+    public final TableField<TodosRecord, UUID> ID = createField(DSL.name("id"), SQLDataType.UUID.nullable(false), this, "");
 
     /**
      * The column <code>public.todos.title</code>.
@@ -72,7 +72,7 @@ public class Todos extends TableImpl<TodosRecord> {
     /**
      * The column <code>public.todos.note</code>.
      */
-    public final TableField<TodosRecord, String> NOTE = createField(DSL.name("note"), SQLDataType.CLOB, this, "");
+    public final TableField<TodosRecord, String> NOTE = createField(DSL.name("note"), SQLDataType.CLOB.nullable(false).defaultValue(DSL.field(DSL.raw("''::text"), SQLDataType.CLOB)), this, "");
 
     /**
      * The column <code>public.todos.risk</code>.
@@ -117,7 +117,7 @@ public class Todos extends TableImpl<TodosRecord> {
     /**
      * The column <code>public.todos.yearactivedays</code>.
      */
-    public final TableField<TodosRecord, Integer[]> YEARACTIVEDAYS = createField(DSL.name("yearactivedays"), SQLDataType.INTEGER.array(), this, "");
+    public final TableField<TodosRecord, Integer[]> YEARACTIVEDAYS = createField(DSL.name("yearactivedays"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.field(DSL.raw("ARRAY[]::integer[]"), SQLDataType.INTEGER)).array(), this, "");
 
     /**
      * The column <code>public.todos.creationtimestamp</code>.
@@ -127,12 +127,12 @@ public class Todos extends TableImpl<TodosRecord> {
     /**
      * The column <code>public.todos.userid</code>.
      */
-    public final TableField<TodosRecord, Long> USERID = createField(DSL.name("userid"), SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<TodosRecord, UUID> USERID = createField(DSL.name("userid"), SQLDataType.UUID.nullable(false), this, "");
 
     /**
      * The column <code>public.todos.parenttodoid</code>.
      */
-    public final TableField<TodosRecord, Long> PARENTTODOID = createField(DSL.name("parenttodoid"), SQLDataType.BIGINT, this, "");
+    public final TableField<TodosRecord, UUID> PARENTTODOID = createField(DSL.name("parenttodoid"), SQLDataType.UUID, this, "");
 
     private Todos(Name alias, Table<TodosRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
@@ -197,11 +197,6 @@ public class Todos extends TableImpl<TodosRecord> {
     @Override
     public Schema getSchema() {
         return aliased() ? null : Public.PUBLIC;
-    }
-
-    @Override
-    public Identity<TodosRecord, Long> getIdentity() {
-        return (Identity<TodosRecord, Long>) super.getIdentity();
     }
 
     @Override

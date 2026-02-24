@@ -4,6 +4,8 @@
 package space_habit_frontier.engine.db_generated.tables.records;
 
 
+import java.util.UUID;
+
 import org.jooq.Record1;
 import org.jooq.impl.UpdatableRecordImpl;
 
@@ -21,15 +23,15 @@ public class ActionsRecord extends UpdatableRecordImpl<ActionsRecord> {
     /**
      * Setter for <code>public.actions.id</code>.
      */
-    public void setId(Long value) {
+    public void setId(UUID value) {
         set(0, value);
     }
 
     /**
      * Getter for <code>public.actions.id</code>.
      */
-    public Long getId() {
-        return (Long) get(0);
+    public UUID getId() {
+        return (UUID) get(0);
     }
 
     /**
@@ -119,15 +121,15 @@ public class ActionsRecord extends UpdatableRecordImpl<ActionsRecord> {
     /**
      * Setter for <code>public.actions.userid</code>.
      */
-    public void setUserid(Long value) {
+    public void setUserid(UUID value) {
         set(7, value);
     }
 
     /**
      * Getter for <code>public.actions.userid</code>.
      */
-    public Long getUserid() {
-        return (Long) get(7);
+    public UUID getUserid() {
+        return (UUID) get(7);
     }
 
     // -------------------------------------------------------------------------
@@ -135,7 +137,7 @@ public class ActionsRecord extends UpdatableRecordImpl<ActionsRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Record1<Long> key() {
+    public Record1<UUID> key() {
         return (Record1) super.key();
     }
 
@@ -153,7 +155,7 @@ public class ActionsRecord extends UpdatableRecordImpl<ActionsRecord> {
     /**
      * Create a detached, initialised ActionsRecord
      */
-    public ActionsRecord(Long id, String title, String note, Short risk, Short freeviolations, Short orientationtype, Short maxcount, Long userid) {
+    public ActionsRecord(UUID id, String title, String note, Short risk, Short freeviolations, Short orientationtype, Short maxcount, UUID userid) {
         super(Actions.ACTIONS);
 
         setId(id);

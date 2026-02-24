@@ -7,6 +7,7 @@ package space_habit_frontier.engine.db_generated.tables;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -90,7 +91,7 @@ public class Dungeon extends TableImpl<DungeonRecord> {
     /**
      * The column <code>public.dungeon.userid</code>.
      */
-    public final TableField<DungeonRecord, Long> USERID = createField(DSL.name("userid"), SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<DungeonRecord, UUID> USERID = createField(DSL.name("userid"), SQLDataType.UUID.nullable(false), this, "");
 
     private Dungeon(Name alias, Table<DungeonRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);

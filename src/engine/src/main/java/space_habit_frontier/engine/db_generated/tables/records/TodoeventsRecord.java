@@ -5,6 +5,7 @@ package space_habit_frontier.engine.db_generated.tables.records;
 
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import org.jooq.Record1;
 import org.jooq.impl.UpdatableRecordImpl;
@@ -23,15 +24,15 @@ public class TodoeventsRecord extends UpdatableRecordImpl<TodoeventsRecord> {
     /**
      * Setter for <code>public.todoevents.id</code>.
      */
-    public void setId(Long value) {
+    public void setId(UUID value) {
         set(0, value);
     }
 
     /**
      * Getter for <code>public.todoevents.id</code>.
      */
-    public Long getId() {
-        return (Long) get(0);
+    public UUID getId() {
+        return (UUID) get(0);
     }
 
     /**
@@ -65,29 +66,29 @@ public class TodoeventsRecord extends UpdatableRecordImpl<TodoeventsRecord> {
     /**
      * Setter for <code>public.todoevents.todoid</code>.
      */
-    public void setTodoid(Long value) {
+    public void setTodoid(UUID value) {
         set(3, value);
     }
 
     /**
      * Getter for <code>public.todoevents.todoid</code>.
      */
-    public Long getTodoid() {
-        return (Long) get(3);
+    public UUID getTodoid() {
+        return (UUID) get(3);
     }
 
     /**
      * Setter for <code>public.todoevents.userid</code>.
      */
-    public void setUserid(Long value) {
+    public void setUserid(UUID value) {
         set(4, value);
     }
 
     /**
      * Getter for <code>public.todoevents.userid</code>.
      */
-    public Long getUserid() {
-        return (Long) get(4);
+    public UUID getUserid() {
+        return (UUID) get(4);
     }
 
     // -------------------------------------------------------------------------
@@ -95,7 +96,7 @@ public class TodoeventsRecord extends UpdatableRecordImpl<TodoeventsRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Record1<Long> key() {
+    public Record1<UUID> key() {
         return (Record1) super.key();
     }
 
@@ -113,7 +114,7 @@ public class TodoeventsRecord extends UpdatableRecordImpl<TodoeventsRecord> {
     /**
      * Create a detached, initialised TodoeventsRecord
      */
-    public TodoeventsRecord(Long id, Integer damage, BigDecimal creationtimestamp, Long todoid, Long userid) {
+    public TodoeventsRecord(UUID id, Integer damage, BigDecimal creationtimestamp, UUID todoid, UUID userid) {
         super(Todoevents.TODOEVENTS);
 
         setId(id);

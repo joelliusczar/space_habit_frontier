@@ -66,7 +66,7 @@ public class Lkweapons extends TableImpl<LkweaponsRecord> {
     /**
      * The column <code>public.lkweapons.exposition</code>.
      */
-    public final TableField<LkweaponsRecord, String> EXPOSITION = createField(DSL.name("exposition"), SQLDataType.CLOB, this, "");
+    public final TableField<LkweaponsRecord, String> EXPOSITION = createField(DSL.name("exposition"), SQLDataType.CLOB.nullable(false), this, "");
 
     /**
      * The column <code>public.lkweapons.cost</code>.

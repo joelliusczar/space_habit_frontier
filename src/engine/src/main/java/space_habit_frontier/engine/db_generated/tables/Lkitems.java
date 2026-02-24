@@ -66,7 +66,7 @@ public class Lkitems extends TableImpl<LkitemsRecord> {
     /**
      * The column <code>public.lkitems.exposition</code>.
      */
-    public final TableField<LkitemsRecord, String> EXPOSITION = createField(DSL.name("exposition"), SQLDataType.CLOB, this, "");
+    public final TableField<LkitemsRecord, String> EXPOSITION = createField(DSL.name("exposition"), SQLDataType.CLOB.nullable(false), this, "");
 
     /**
      * The column <code>public.lkitems.cost</code>.

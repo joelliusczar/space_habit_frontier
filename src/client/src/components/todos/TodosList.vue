@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 import TodoEdit from "./TodoEdit.vue";
 
+const router = useRouter();
 const data = ref(null);
 
 // onMounted(async () => {
@@ -9,7 +11,7 @@ const data = ref(null);
 // });
 
 function openAddNew() {
-	console.log("Herrlo");
+	router.push({ name: "todoAdd" });
 }
 
 </script>
@@ -19,7 +21,6 @@ function openAddNew() {
 		<div>
 			<input type="text" />
 			<button @click="openAddNew">+</button>
-			<TodoEdit />
 		</div>
 	</div>
 </template>

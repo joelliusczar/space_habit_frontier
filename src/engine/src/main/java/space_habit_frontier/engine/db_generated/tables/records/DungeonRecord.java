@@ -4,6 +4,8 @@
 package space_habit_frontier.engine.db_generated.tables.records;
 
 
+import java.util.UUID;
+
 import org.jooq.Record1;
 import org.jooq.impl.UpdatableRecordImpl;
 
@@ -103,15 +105,15 @@ public class DungeonRecord extends UpdatableRecordImpl<DungeonRecord> {
     /**
      * Setter for <code>public.dungeon.userid</code>.
      */
-    public void setUserid(Long value) {
+    public void setUserid(UUID value) {
         set(5, value);
     }
 
     /**
      * Getter for <code>public.dungeon.userid</code>.
      */
-    public Long getUserid() {
-        return (Long) get(5);
+    public UUID getUserid() {
+        return (UUID) get(5);
     }
 
     // -------------------------------------------------------------------------
@@ -137,7 +139,7 @@ public class DungeonRecord extends UpdatableRecordImpl<DungeonRecord> {
     /**
      * Create a detached, initialised DungeonRecord
      */
-    public DungeonRecord(Long id, String title, Object coordinates, Integer lvl, Long lkdungeonid, Long userid) {
+    public DungeonRecord(Long id, String title, Object coordinates, Integer lvl, Long lkdungeonid, UUID userid) {
         super(Dungeon.DUNGEON);
 
         setId(id);

@@ -1,0 +1,88 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - vars/globals.yml
+    - vars/os_paths.yml
+
+
+  pre_tasks:
+    - include_vars: "{{ item }}"
+      with_first_found:
+        - 'vars/packages/vars_{{ansible_distribution}}{{ansible_distribution_major_version}}.yml'
+    - include_vars: 
+        file: 'vars/local_keys.yml'
+        hash_behaviour: merge
+    - name: Create app directory
+      file:
+        path: '{{test_trunk}}'
+        state: directory
+
+  vars:
+    app_trunk: '{{domain["app_root"]|default("~")}}/{{app_details["name"]}}'
+    test_trunk: '../test_trash/{{app_details["name"]}}'
+    ansible_user: '{{lookup("env", "USER")}}'
+
+
+  
+  tasks:
+    - name: Setup postgresql
+      include_role:
+        name: postgresql-setup
+      vars:
+       pkg_name: '{{packages["postgresql"]}}'
+       py_pkg_name: '{{packages["pypsql"]}}'
+       db_name: '{{app_details["db"]}}'
+       db_owner: '{{app_details["db_owner"]}}'
+       db_pass_owner: '{{keys["db_pass_owner"]}}'
+       db_api_user: 'api_user'
+       db_pass_api: '{{keys["db_pass_api"]}}'
+       db_janitor_user: 'janitor_user'
+       db_pass_janitor: '{{keys["db_pass_janitor"]}}'
+    - name: setup java development
+      include_role:
+        name: java-setup
+      vars:
+        runat: localhost
+        gradle_install: true
+    - name: Create directories for logged in user
+      file:
+        state: directory
+        path: '{{item}}'
+        owner: '{{ansible_user}}'
+        group: '{{ansible_user}}'
+      no_log: true
+      become: true
+      tags: entitled
+      loop:
+        - '/usr/local/share/{{app_details["name"]}}'
+        - '/usr/local/share/{{app_details["name"]}}/migrations'
+    - name: Build migration 
+      command:
+        chdir: ../src
+        argv:
+          - './gradlew'
+          - shadowJar
+        environment:
+          DSF_DB_OWNER_NAME: '{{app_details["db_owner"]}}'
+          DSF_DB_OWNER_PASS: '{{keys["db_pass_owner"]}}'
+      register: jarred
+      changed_when: '"executed" in jarred.stdout and "BUILD SUCCESSFUL" in jarred.stdout'
+    - name: Copy migration jar
+      copy:
+        src: '../src/migrations/build/libs/migrations-all.jar'
+        dest: '/usr/local/share/{{app_details["name"]}}/migrations/migrations.jar'
+      register: copied
+    - name: Run migrations
+      command: 
+        argv:
+          - 'java'
+          - '-cp'
+          - '/usr/local/share/{{app_details["name"]}}/migrations/migrations.jar'
+          - 'space_habit_frontier.db_migrate.App'
+        environment:
+          DSF_DB_OWNER_NAME: '{{app_details["db_owner"]}}'
+          DSF_DB_OWNER_PASS: '{{keys["db_pass_owner"]}}'
+      when: copied.changed
+

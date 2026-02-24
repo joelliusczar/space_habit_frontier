@@ -1,2 +1,6 @@
 server:
   port: 5092
+spring:
+  application:
+    name: space-habit-frontier-api
+

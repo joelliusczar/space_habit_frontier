@@ -8,11 +8,11 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.PlainSQL;
 import org.jooq.QueryPart;
@@ -59,7 +59,7 @@ public class Todoevents extends TableImpl<TodoeventsRecord> {
     /**
      * The column <code>public.todoevents.id</code>.
      */
-    public final TableField<TodoeventsRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false).identity(true), this, "");
+    public final TableField<TodoeventsRecord, UUID> ID = createField(DSL.name("id"), SQLDataType.UUID.nullable(false), this, "");
 
     /**
      * The column <code>public.todoevents.damage</code>.
@@ -74,12 +74,12 @@ public class Todoevents extends TableImpl<TodoeventsRecord> {
     /**
      * The column <code>public.todoevents.todoid</code>.
      */
-    public final TableField<TodoeventsRecord, Long> TODOID = createField(DSL.name("todoid"), SQLDataType.BIGINT, this, "");
+    public final TableField<TodoeventsRecord, UUID> TODOID = createField(DSL.name("todoid"), SQLDataType.UUID, this, "");
 
     /**
      * The column <code>public.todoevents.userid</code>.
      */
-    public final TableField<TodoeventsRecord, Long> USERID = createField(DSL.name("userid"), SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<TodoeventsRecord, UUID> USERID = createField(DSL.name("userid"), SQLDataType.UUID.nullable(false), this, "");
 
     private Todoevents(Name alias, Table<TodoeventsRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
@@ -113,11 +113,6 @@ public class Todoevents extends TableImpl<TodoeventsRecord> {
     @Override
     public Schema getSchema() {
         return aliased() ? null : Public.PUBLIC;
-    }
-
-    @Override
-    public Identity<TodoeventsRecord, Long> getIdentity() {
-        return (Identity<TodoeventsRecord, Long>) super.getIdentity();
     }
 
     @Override

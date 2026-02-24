@@ -4,6 +4,8 @@
 package space_habit_frontier.engine.db_generated.tables.records;
 
 
+import java.util.UUID;
+
 import org.jooq.JSON;
 import org.jooq.Record1;
 import org.jooq.impl.UpdatableRecordImpl;
@@ -22,15 +24,15 @@ public class HeroRecord extends UpdatableRecordImpl<HeroRecord> {
     /**
      * Setter for <code>public.hero.id</code>.
      */
-    public void setId(Long value) {
+    public void setId(UUID value) {
         set(0, value);
     }
 
     /**
      * Getter for <code>public.hero.id</code>.
      */
-    public Long getId() {
-        return (Long) get(0);
+    public UUID getId() {
+        return (UUID) get(0);
     }
 
     /**
@@ -234,7 +236,7 @@ public class HeroRecord extends UpdatableRecordImpl<HeroRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Record1<Long> key() {
+    public Record1<UUID> key() {
         return (Record1) super.key();
     }
 
@@ -252,7 +254,7 @@ public class HeroRecord extends UpdatableRecordImpl<HeroRecord> {
     /**
      * Create a detached, initialised HeroRecord
      */
-    public HeroRecord(Long id, Long xp, Long gold, JSON inventory, JSON monster, JSON dungeon, Long currenthp, Short[] activebonustypes, Short[] activepenaltytypes, Long weaponrightid, Long weaponleftid, Long frontarmorid, Long backarmorid, Long toparmorid, Long bottomarmorid) {
+    public HeroRecord(UUID id, Long xp, Long gold, JSON inventory, JSON monster, JSON dungeon, Long currenthp, Short[] activebonustypes, Short[] activepenaltytypes, Long weaponrightid, Long weaponleftid, Long frontarmorid, Long backarmorid, Long toparmorid, Long bottomarmorid) {
         super(Hero.HERO);
 
         setId(id);

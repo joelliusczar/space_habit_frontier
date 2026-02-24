@@ -8,11 +8,11 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.PlainSQL;
 import org.jooq.QueryPart;
@@ -59,7 +59,7 @@ public class Actionevents extends TableImpl<ActioneventsRecord> {
     /**
      * The column <code>public.actionevents.id</code>.
      */
-    public final TableField<ActioneventsRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false).identity(true), this, "");
+    public final TableField<ActioneventsRecord, UUID> ID = createField(DSL.name("id"), SQLDataType.UUID.nullable(false), this, "");
 
     /**
      * The column <code>public.actionevents.damage</code>.
@@ -74,12 +74,12 @@ public class Actionevents extends TableImpl<ActioneventsRecord> {
     /**
      * The column <code>public.actionevents.actionid</code>.
      */
-    public final TableField<ActioneventsRecord, Long> ACTIONID = createField(DSL.name("actionid"), SQLDataType.BIGINT, this, "");
+    public final TableField<ActioneventsRecord, UUID> ACTIONID = createField(DSL.name("actionid"), SQLDataType.UUID, this, "");
 
     /**
      * The column <code>public.actionevents.userid</code>.
      */
-    public final TableField<ActioneventsRecord, Long> USERID = createField(DSL.name("userid"), SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<ActioneventsRecord, UUID> USERID = createField(DSL.name("userid"), SQLDataType.UUID.nullable(false), this, "");
 
     private Actionevents(Name alias, Table<ActioneventsRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
@@ -113,11 +113,6 @@ public class Actionevents extends TableImpl<ActioneventsRecord> {
     @Override
     public Schema getSchema() {
         return aliased() ? null : Public.PUBLIC;
-    }
-
-    @Override
-    public Identity<ActioneventsRecord, Long> getIdentity() {
-        return (Identity<ActioneventsRecord, Long>) super.getIdentity();
     }
 
     @Override
