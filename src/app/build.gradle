@@ -15,6 +15,7 @@ dependencies {
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat-runtime:4.0.3'
     testImplementation 'org.springframework.boot:spring-boot-starter-test:4.0.3'
     implementation 'org.apache.commons:commons-text'
+    implementation 'org.jooq:jooq:3.19.0'
     implementation project(':engine')
 }
 

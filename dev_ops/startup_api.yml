@@ -151,6 +151,20 @@
           - build
       register: jarred
       changed_when: '"executed" in jarred.stdout and "BUILD SUCCESSFUL" in jarred.stdout'
+    - name: Copy set env
+      copy:
+        dest: '/home/{{domain["server_user"]}}/.sdkman/candidates/tomcat/current/bin/setenv.sh'
+        content: |
+          export DSF_APP_ROOT='{{app_trunk}}'
+          export DSF_DB_PASS_API='{{keys["db_pass_api"]}}'
+          export DSF_NAMESPACE_UUID='{{keys["namespace_uuid"]}}'
+          export DSF_DATABASE_NAME='{{app_details["db"]}}'
+          export DSF_AUTH_SECRET_KEY='{{keys["auth_secret_key"]}}'
+          export DSF_BACK_KEY='{{keys["back_key"]}}'
+          export DSF_CONTENT_DIR='{{app_trunk}}/content'
+          export DSF_LIVE_CONFIG_PATH='{{app_trunk}}/app_conf.json'
+          export DSF_EVENT_LOGS_DIR='{{app_trunk}}/event_logs'
+          export DSF_VISIT_LOGS_DIR='{{app_trunk}}/visit_logs'
     - name: Copy war file
       copy:
         src: '../src/app/build/libs/app-plain.war'
