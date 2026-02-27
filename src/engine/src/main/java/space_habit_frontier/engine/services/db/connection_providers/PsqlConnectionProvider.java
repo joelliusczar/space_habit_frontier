@@ -10,8 +10,8 @@ import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 
-import space_habit_frontier.engine.interfaces.ConnectionProvider;
-import space_habit_frontier.engine.interfaces.DataContextProvider;
+import space_habit_frontier.engine.interfaces.db.ConnectionProvider;
+import space_habit_frontier.engine.interfaces.db.DataContextProvider;
 
 
 public class PsqlConnectionProvider 

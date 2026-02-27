@@ -1,4 +1,4 @@
-package space_habit_frontier.engine.interfaces;
+package space_habit_frontier.engine.interfaces.db;
 
 import java.sql.SQLException;
 
