@@ -4,5 +4,33 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
+    {
+      "type": "java",
+      "name": "Attach to java: API",
+      "request": "attach",
+      "hostName": "127.0.0.1",
+      "port": "5005",
+      "projectName": "app"
+    },
+    
+    // {
+    //   "name": "java: API",
+    //   "port": 5005,
+    //   "request": "attach",
+    //   "type": "",
+    //   // "preLaunchTask": "Set unit test env",
+    //   "env": {
+    //     "DSF_DB_PASS_SETUP": "setuppass",
+    //     "DSF_DB_PASS_OWNER": "ownerpass",
+    //     "DSF_DB_PASS_API": "apipass",
+    //     "DSF_DB_PASS_JANITOR": "janitorpass",
+    //     "DSF_AUTH_SECRET_KEY": "deadbeef",
+    //     "DSF_APP_ROOT": "./test_trash",
+    //     "DSF_DATABASE_NAME": "space_habit_frontier_db",
+    //     "DSF_LIVE_CONFIG_PATH": "./live_config.json",
+    //     "DSF_EVENT_LOGS_DIR": "./test_trash/space_habit_frontier/event_logs",
+    //     "DSF_VISIT_LOGS_DIR": "./test_trash/space_habit_frontier/visit_logs",
+    //   },
+    // },
   ]
 }

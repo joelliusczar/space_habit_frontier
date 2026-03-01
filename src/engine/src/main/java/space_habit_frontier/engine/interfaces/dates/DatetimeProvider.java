@@ -1,7 +1,8 @@
 package space_habit_frontier.engine.interfaces.dates;
 
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 
 public interface DatetimeProvider {
-	OffsetDateTime now();
+	ZonedDateTime now();
+	ZonedDateTime nowUtc();
 }

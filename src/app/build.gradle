@@ -16,6 +16,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test:4.0.3'
     implementation 'org.apache.commons:commons-text'
     implementation 'org.jooq:jooq:3.19.0'
+    implementation 'ch.qos.logback:logback-classic:1.5.32'
     implementation project(':engine')
 }
 

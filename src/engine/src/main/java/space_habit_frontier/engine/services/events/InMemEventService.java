@@ -1,6 +1,6 @@
 package space_habit_frontier.engine.services.events;
 
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -61,37 +61,100 @@ public class InMemEventService implements EventLogger, EventQueryer {
 	}
 
 	@Override
-	public Stream<VisitRecord> getVisitRecords(
-		long visitorId,
-		OffsetDateTime from,
-		String url,
-		long limit) {
+	public Stream<VisitRecord> getVisitRecords() {
+		return this.visitorVisitMap.getAll();
+	}
 
-		var res = this.visitorVisitMap.subMap(String.valueOf(visitorId))
+	@Override
+	public Stream<VisitRecord> getVisitRecords(ZonedDateTime from) {
+		return this.visitorVisitMap.getAll()
+			.filter(r -> r.timestamp().isAfter(from));
+	}
+
+	@Override
+	public Stream<VisitRecord> getVisitRecords(ZonedDateTime from,
+		long visitorId
+	) {
+		return this.visitorVisitMap
+			.subMap(String.valueOf(visitorId))
+			.getAll()
+			.filter(r -> r.timestamp().isAfter(from));
+	}
+
+	@Override
+	public Stream<VisitRecord> getVisitRecords(ZonedDateTime from,
+		long visitorId,
+		String url
+	) {
+		var res = this.visitorVisitMap
+			.subMap(String.valueOf(visitorId))
 			.subMap(url)
 			.getAll()
-			.filter(r -> r.timestamp().isAfter(from))
-			.limit(limit);
+			.filter(r -> r.timestamp().isAfter(from));
 		return res;
 	}
 
 	@Override
-	public Stream<EventRecord> getEventRecords(
-		UUID userId,
-		OffsetDateTime from,
-		String action, 
-		String sphere,
-		String keypath, 
-		long limit) {
+	public Stream<EventRecord> getEventRecords() {
+		return this.userIdEventMap
+			.getAll();
+	}
 
+	@Override
+	public Stream<EventRecord> getEventRecords(ZonedDateTime from) {
+		return this.userIdEventMap
+			.getAll()
+			.filter(r -> r.datetimeUtc().isAfter(from));
+	}
+
+	@Override
+	public Stream<EventRecord> getEventRecords(ZonedDateTime from, UUID userId) {
+		return this.userIdEventMap
+			.subMap(String.valueOf(userId))
+			.getAll()
+			.filter(r -> r.datetimeUtc().isAfter(from));
+	}
+
+	@Override
+	public Stream<EventRecord> getEventRecords(ZonedDateTime from,
+		UUID userId,
+		String sphere
+	) {
+		return this.userIdEventMap
+			.subMap(String.valueOf(userId))
+			.subMap(sphere)
+			.getAll()
+			.filter(r -> r.datetimeUtc().isAfter(from));
+	}
+
+	@Override
+	public Stream<EventRecord> getEventRecords(ZonedDateTime from,
+		UUID userId,
+		String sphere,
+		String keypath
+	) {
+		return this.userIdEventMap
+			.subMap(String.valueOf(userId))
+			.subMap(sphere)
+			.subMap(keypath)
+			.getAll()
+			.filter(r -> r.datetimeUtc().isAfter(from));
+	}
+
+	@Override
+	public Stream<EventRecord> getEventRecords(ZonedDateTime from,
+		UUID userId,
+		String sphere,
+		String action, 
+		String keypath
+	) {
 		return this.userIdEventMap
 			.subMap(String.valueOf(userId))
 			.subMap(sphere)
 			.subMap(keypath)
 			.subMap(action)
 			.getAll()
-			.filter(r -> r.datetimeUtc().isAfter(from))
-			.limit(limit);
+			.filter(r -> r.datetimeUtc().isAfter(from));
 	}
 	
 }

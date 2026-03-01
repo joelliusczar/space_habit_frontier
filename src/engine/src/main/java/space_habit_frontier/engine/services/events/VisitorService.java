@@ -8,24 +8,22 @@ import java.util.concurrent.ConcurrentMap;
 import org.jooq.DSLContext;
 
 import space_habit_frontier.engine.db_generated.tables.Visitors;
-import space_habit_frontier.engine.dtos.events.event_maps.VisitorVisitMap;
 import space_habit_frontier.engine.dtos.web.TrackingInfo;
 
 public class VisitorService {
 	private final ConcurrentMap<String, Map<String, Long>> visitorIdMap;
-	private DSLContext dbContext;
+	private final DSLContext dbContext;
 	
 	public VisitorService(
 		ConcurrentMap<String, Map<String, Long>> visitorIdMap,
-		DSLContext dbContext) 
-	{
+		DSLContext dbContext) {
+
 		this.visitorIdMap = visitorIdMap;
 		this.dbContext = dbContext;
-		// Initialize visitor tracking structures here
 	}
 
-	private long checkCache(TrackingInfo trackingInfo)
-	{
+	private long checkCache(TrackingInfo trackingInfo) {
+
 		// Check if the visitor is already in the cache and return their ID
 		if (this.visitorIdMap.containsKey(trackingInfo.ipv6Address())) {
 			var ipMap = this.visitorIdMap.get(trackingInfo.ipv6Address());
@@ -38,8 +36,7 @@ public class VisitorService {
 		return -1L; // Return -1 if not found
 	}
 
-	private void addToCache(TrackingInfo trackingInfo, long visitorId)
-	{
+	private void addToCache(TrackingInfo trackingInfo, long visitorId) {
 		// Add the visitor to the cache
 		this.visitorIdMap
 			.computeIfAbsent(trackingInfo.ipv6Address(), k -> new ConcurrentHashMap<>())
@@ -50,8 +47,8 @@ public class VisitorService {
 	}
 
 	public long getOrAddVisitor(TrackingInfo trackingInfo) 
-		throws NoSuchAlgorithmException
-	{
+		throws NoSuchAlgorithmException {
+
 		var visitorId = checkCache(trackingInfo);
 		if (visitorId != -1L) {
 			return visitorId; // Return cached visitor ID
@@ -60,7 +57,7 @@ public class VisitorService {
 		var md = java.security.MessageDigest.getInstance("MD5");
 		var uaHash = md.digest(uaBytes);
 		return dbContext.transactionResult(configuration -> {
-			DSLContext ctx = configuration.dsl();
+			var ctx = configuration.dsl();
 			// Insert new visitor into the database and get the generated ID
 			var _visitorId = ctx.selectFrom(Visitors.VISITORS)
 				.where(Visitors.VISITORS.IPV4ADDRESS.eq(trackingInfo.ipv4Address())
@@ -73,6 +70,7 @@ public class VisitorService {
 					return _visitorId.get();
 				}
 				var newVisitorId = ctx.insertInto(Visitors.VISITORS)
+					.set(Visitors.VISITORS.CONTENTS, trackingInfo.userAgent())
 					.set(Visitors.VISITORS.IPV4ADDRESS, trackingInfo.ipv4Address())
 					.set(Visitors.VISITORS.IPV6ADDRESS, trackingInfo.ipv6Address())
 					.set(Visitors.VISITORS.UAHASH, uaHash)
@@ -83,6 +81,5 @@ public class VisitorService {
 				addToCache(trackingInfo, newVisitorId);
 				return newVisitorId;
 			});
-
 	}
 }

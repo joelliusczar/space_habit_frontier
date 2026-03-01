@@ -25,9 +25,9 @@ public interface EventLogger
 		var userId = getUserProvider().getSessionUserRequired().getId();
 		var visitorId = getTrackingInfoProvider().getVisitorId();
 		var urlPath = getTrackingInfoProvider().getTrackingInfo().url();
-		var dt = getDatetimeProvider().now();
+		var dt = getDatetimeProvider().nowUtc();
 
-		return new EventRecord(
+		var record = new EventRecord(
 			UUID.randomUUID().toString(),
 			userId.toString(),
 			action,
@@ -39,6 +39,8 @@ public interface EventLogger
 			getTrackingInfoProvider().getTrackingInfo().method(),
 			extraInfo
 		);
+		addEventRecord(record);
+		return record;
 	}
 
 	default VisitRecord createVisitRecord(String extraInfo) 
@@ -46,9 +48,9 @@ public interface EventLogger
 		var urlPath = getTrackingInfoProvider().getTrackingInfo().url();
 		var method = getTrackingInfoProvider().getTrackingInfo().method();
 		var visitorId = getTrackingInfoProvider().getVisitorId();
-		var dt = getDatetimeProvider().now();
+		var dt = getDatetimeProvider().nowUtc();
 
-		return new VisitRecord(
+		var record = new VisitRecord(
 			UUID.randomUUID().toString(),
 			visitorId,
 			dt,
@@ -56,5 +58,7 @@ public interface EventLogger
 			method,
 			extraInfo
 		);
+		addVisitRecord(record);
+		return record;
 	}
 }

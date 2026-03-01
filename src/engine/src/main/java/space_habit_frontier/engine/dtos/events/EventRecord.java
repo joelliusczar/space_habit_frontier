@@ -1,12 +1,12 @@
 package space_habit_frontier.engine.dtos.events;
 
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 
 public record EventRecord(String id, 
 		String userId, 
 		String action, 
 		long visitorId,
-		OffsetDateTime datetimeUtc, 
+		ZonedDateTime datetimeUtc, 
 		String keypath, 
 		String sphere, 
 		String url, 

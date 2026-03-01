@@ -11,15 +11,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RequestMapping("api/lookups")
 public class LookupsController {
 
-	private LookupsService lookupsService;
+	private final LookupsService __lookupsService;
 
 	public LookupsController(LookupsService lookupsService) {
-		this.lookupsService = lookupsService;
+		this.__lookupsService = lookupsService;
 	}
 
 	@GetMapping
 	public Lookups get() {
-		return this.lookupsService.getLookups();
+		return this.__lookupsService.getLookups();
 	}
 
 }

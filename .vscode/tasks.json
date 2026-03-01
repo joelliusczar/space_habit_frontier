@@ -6,13 +6,26 @@
 		{
 			"label": "Set unit test env",
 			"type": "shell",
-			"command": "./dev_ops/<$= lcPrefix %>_dev_dev setup_tests",
+			"command": "./shf_dev_dev setup_tests",
 			"problemMatcher": [],
 			"presentation": {
 				"reveal": "silent",
 				"close": true
 			},
 		},
+		{
+			"label": "Begin api process",
+			"type": "shell",
+			"command": "./gradlew bootRun --debug-jvm",
+			"problemMatcher": [],
+			"presentation": {
+				"reveal": "silent",
+				"close": true
+			},
+			"options": {
+				"cwd": "${workspaceFolder}/src"
+			}
+		}
 
 
 	]

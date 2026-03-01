@@ -12,6 +12,12 @@ dependencies {
     implementation 'org.jooq:jooq:3.19.0'
     jooqCodegen 'org.postgresql:postgresql:42.5.4'
     implementation 'org.postgresql:postgresql:42.5.4'
+    implementation platform("tools.jackson:jackson-bom:3.1.0")
+    // Now declare Jackson modules WITHOUT versions
+    implementation "tools.jackson.core:jackson-databind"
+    implementation 'tools.jackson.core:jackson-core'
+    implementation 'ch.qos.logback:logback-classic:1.5.32'
+    // implementation 'org.slf4j:slf4j-api:2.0.17'
 }
 
 jooq {

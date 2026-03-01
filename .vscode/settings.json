@@ -17,7 +17,9 @@
     "DSF_DB_PASS_API": "apipass",
     "DSF_DB_PASS_JANITOR": "janitorpass",
     "DSF_AUTH_SECRET_KEY": "deadbeef",
-    "DSF_APP_ROOT": "./test_trash"
+    "DSF_APP_ROOT": "./test_trash",
+    "DSF_EVENT_LOGS_DIR": "./test_trash/space_habit_frontier/event_logs",
+    "DSF_VISIT_LOGS_DIR": "./test_trash/space_habit_frontier/visit_logs",
   },
   "terminal.integrated.env.linux": {
     "DSF_DATABASE_NAME": "space_habit_frontier_db",
@@ -26,6 +28,8 @@
     "DSF_DB_PASS_API": "apipass",
     "DSF_DB_PASS_JANITOR": "janitorpass",
     "DSF_AUTH_SECRET_KEY": "deadbeef",
-    "DSF_APP_ROOT": "./test_trash"
+    "DSF_APP_ROOT": "./test_trash",
+    "DSF_EVENT_LOGS_DIR": "./test_trash/space_habit_frontier/event_logs",
+    "DSF_VISIT_LOGS_DIR": "./test_trash/space_habit_frontier/visit_logs",
   },
 }
