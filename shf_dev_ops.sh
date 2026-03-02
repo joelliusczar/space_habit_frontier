@@ -44,6 +44,10 @@ setup_db() (
 	ansible-playbook dev_ops/update_db.yml -i ~/.ansible/inventories/testing -K
 )
 
+setup_debug() (
+	ansible-playbook dev_ops/debug_setup.yml
+)
+
 setup_schedules() (
 	ansible-playbook dev_ops/run_schedule_setup.yml -i ~/.ansible/inventories/space_habit_frontier  --ask-vault-pass -K
 )

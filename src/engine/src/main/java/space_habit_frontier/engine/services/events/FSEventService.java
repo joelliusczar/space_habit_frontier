@@ -205,7 +205,10 @@ public class FSEventService implements EventQueryer, EventLogger {
 			.build();
 		var json = mapper.writeValueAsString(record);
 		try {
-			Files.writeString(getEventLogPath(), json, StandardOpenOption.APPEND);
+			Files.writeString(getEventLogPath(),
+				json,
+				StandardOpenOption.APPEND,
+				StandardOpenOption.CREATE);
 		}
 		catch(IOException ioex) {
 			__logger.error("Error occured logging event: {}", ioex);
@@ -218,7 +221,12 @@ public class FSEventService implements EventQueryer, EventLogger {
 			.build();
 		var json = mapper.writeValueAsString(record);
 		try {
-			Files.writeString(getVisitLogPath(), json, StandardOpenOption.APPEND);
+			System.out.println(System.getProperty("user.dir"));
+			Files.writeString(getVisitLogPath(),
+				json,
+				StandardOpenOption.APPEND,
+				StandardOpenOption.CREATE
+			);
 		}
 		catch(IOException ioex) {
 			__logger.error("Error occured logging visit: {}", ioex);

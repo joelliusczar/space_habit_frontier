@@ -1,0 +1,20 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - vars/globals.yml
+    - vars/os_paths.yml
+
+  vars:
+    test_trunk: '../test_trash/{{app_details["name"]}}'
+    ansible_user: '{{lookup("env", "USER")}}'
+
+  tasks:
+    - name: Create directories
+      file:
+        path: '{{item}}'
+        state: directory
+      loop:
+        - '{{test_trunk}}/event_logs'
+        - '{{test_trunk}}/visit_logs'
