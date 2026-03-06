@@ -25,7 +25,8 @@ public class UserManagementService {
 
 	public UserDto addUser(UserCreationDto formData) {
 		var hashed = BCrypt.hashpw(formData.getPassword(),
-			BCrypt.gensalt(12)).getBytes();
+			BCrypt.gensalt(12))
+			.getBytes();
 		var id = Generators.timeBasedEpochRandomGenerator().generate();
 		var timestamp = __datetimeProvider.nowUtc().toEpochSecond();
 		__dbContext.transaction(configuration -> {
@@ -35,7 +36,9 @@ public class UserManagementService {
 				.set(Users.USERS.HASHEDPW, hashed)
 				.set(Users.USERS.USERNAME, formData.getUsername())
 				.set(Users.USERS.EMAIL, formData.getEmail())
-				.set(Users.USERS.CREATIONTIMESTAMP, BigDecimal.valueOf(timestamp));
+				.set(Users.USERS.CREATIONTIMESTAMP, BigDecimal.valueOf(timestamp))
+				.execute();
+			ctx.commit();
 		});
 
 		return new UserDto(id, formData.getUsername());

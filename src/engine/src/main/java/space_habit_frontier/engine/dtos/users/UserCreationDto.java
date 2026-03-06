@@ -4,9 +4,15 @@ import org.apache.commons.validator.routines.EmailValidator;
 import java.lang.instrument.IllegalClassFormatException;
 
 public class UserCreationDto {
-	private final String password;
-	private final String email;
-	private final String username;
+	private String password;
+	private String email;
+	private String username;
+
+	public UserCreationDto() {
+		this.password = "";
+		this.email = "";
+		this.username = "";
+	}
 
 	public UserCreationDto(String password,
 		String email,

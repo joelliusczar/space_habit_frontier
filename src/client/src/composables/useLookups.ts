@@ -1,5 +1,5 @@
 import { reactive } from "vue";
-import { fetchLookups } from "../api_calls/lookups";
+import { Calls } from "../api_calls/lookups";
 import { CallStatus, type ApiResult } from "../types/requests";
 import type { LookupsDto } from "../types/lookups";
 import { formatError } from "../helpers/errors"
@@ -11,7 +11,7 @@ const fetchResults = reactive<ApiResult<LookupsDto>>({
 });
 
 try {
-	const requestObj = fetchLookups();
+	const requestObj = Calls.get();
 	fetchResults.data = await requestObj.call();
 }
 catch (err) {

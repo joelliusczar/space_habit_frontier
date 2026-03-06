@@ -17,6 +17,7 @@ import space_habit_frontier.engine.services.events.InMemEventService;
 import space_habit_frontier.engine.services.events.VisitorService;
 import space_habit_frontier.engine.services.secrets_providers.db.EnvApiUserSecretsProvider;
 import space_habit_frontier.engine.services.users.BasicUserProvider;
+import space_habit_frontier.engine.services.users.UserManagementService;
 import space_habit_frontier.engine.services.web.VisitorTrackingService;
 
 import java.net.Inet4Address;
@@ -146,5 +147,13 @@ class AppDependencies {
 			inMemEventService,
 			fsEventService
 		);
+	}
+
+	@Bean
+	public UserManagementService getUserManagementService(
+		DataContextProvider dataContextProvider,
+		DatetimeProvider datetimeProvider) throws SQLException {
+		return new UserManagementService(dataContextProvider.getContext(),
+			datetimeProvider);
 	}
 }

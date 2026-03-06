@@ -1,7 +1,7 @@
 <script setup lang="ts">
 	import { reactive, watch, computed } from "vue";
 	import { useFormSubmit } from "../../composables/useFormSubmit";
-	import { createTodo } from "../../api_calls/todos";
+	import { Calls } from "../../api_calls/todos";
 	import { CycleRateTypes } from "../../types/todos";
 	import type { FormValues } from "../../types/todos";
 	import { monthNames } from "../../types/dates";
@@ -74,7 +74,7 @@
 		async () => {
 			console.log("submit");
 			console.log(formValues);
-			const requestObj = createTodo(formValues);
+			const requestObj = Calls.add(formValues);
 			await requestObj.call();
 		}
 	);
