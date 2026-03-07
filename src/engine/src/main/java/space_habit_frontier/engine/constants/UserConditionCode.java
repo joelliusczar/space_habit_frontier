@@ -2,7 +2,8 @@ package space_habit_frontier.engine.constants;
 
 public enum UserConditionCode {
 	ACTIVE(0),
-	DISABLED(1);
+	DISABLED(1),
+	OUTDATEDPASSWORD(2);
 
 	private int __conditionCode;
 

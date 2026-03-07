@@ -1,5 +1,6 @@
 package space_habit_frontier.app.controllers;
 
+import space_habit_frontier.app.dtos.LoginRequest;
 import space_habit_frontier.engine.dtos.users.UserCreationDto;
 import space_habit_frontier.engine.dtos.users.UserDto;
 import space_habit_frontier.engine.services.users.UserManagementService;
@@ -23,5 +24,11 @@ public class UsersController {
 	public ResponseEntity<UserDto> addUser(@RequestBody UserCreationDto userCreationDto) {
 		var createdUser = __userManagementService.addUser(userCreationDto);
 		return ResponseEntity.ok(createdUser);
+	}
+
+	@PostMapping("/open-signin")
+	public ResponseEntity<Void> signIn(LoginRequest loginRequest) {
+
+		return ResponseEntity.ok().build();
 	}
 }

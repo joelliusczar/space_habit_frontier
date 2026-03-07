@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import { useLookups } from "./composables/useLookups";
 import { RouterView } from "vue-router";
+import UserSigninProvider from "./components/users/UserSigninProvider.vue";
 
 
 useLookups();
@@ -15,7 +15,9 @@ useLookups();
 	</header>
 
 	<main class="grid">
-		<RouterView />
+		<UserSigninProvider>
+			<RouterView />
+		</UserSigninProvider>
 	</main>
 </template>
 
