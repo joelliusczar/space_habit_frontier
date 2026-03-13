@@ -7,7 +7,7 @@ export const Calls = {
 				abortController: abortController,
 				call: async () => {
 					const response = await fetch(
-						"/api/users/signup",
+						"/api/auth/signup",
 						{
 							method: "POST",
 							body: JSON.stringify(data),
@@ -30,7 +30,7 @@ export const Calls = {
 					formData.append("username", username);
 					formData.append("password", password);
 					const response = await fetch(
-						"/api/users/open-signin",
+						"/api/auth/open-signin",
 						{
 							method: "POST",
 							body: formData,

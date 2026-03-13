@@ -24,7 +24,7 @@
     //     "DSF_DB_PASS_OWNER": "ownerpass",
     //     "DSF_DB_PASS_API": "apipass",
     //     "DSF_DB_PASS_JANITOR": "janitorpass",
-    //     "DSF_AUTH_SECRET_KEY": "deadbeef",
+    //     "DSF_SECRET_KEY": "deadbeef",
     //     "DSF_APP_ROOT": "./test_trash",
     //     "DSF_DATABASE_NAME": "space_habit_frontier_db",
     //     "DSF_LIVE_CONFIG_PATH": "./live_config.json",

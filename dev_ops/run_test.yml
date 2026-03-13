@@ -59,7 +59,7 @@
         DSF_DATABASE_NAME: '{{app_details["db"]}}'
         DSF_APP_ROOT: '{{test_trunk}}'`
         DSF_TEMPLATES_DEST: '../{{test_trunk}}/files'
-        DSF_AUTH_SECRET_KEY: '{{keys["auth_secret_key"]}}'
+        DSF_SECRET_KEY: '{{keys["auth_secret_key"]}}'
         DSF_BACK_KEY: '{keys["back_key"]}'
         DSF_CONTENT_DIR: '../{{test_trunk}}/content'
         DSF_LIVE_CONFIG_PATH: '../{{test_trunk}}/app_conf.json'

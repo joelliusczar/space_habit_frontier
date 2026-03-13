@@ -1,7 +1,7 @@
 <script setup lang="ts">
 	import { reactive } from "vue";
 	import { useFormSubmit } from "../../composables/useFormSubmit";
-	import { Calls } from "../../api_calls/users";
+	import { Calls } from "../../api_calls/auth";
 
 	const props = defineProps<{
 		formName: string

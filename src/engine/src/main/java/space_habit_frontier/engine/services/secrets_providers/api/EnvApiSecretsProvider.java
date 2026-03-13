@@ -6,7 +6,7 @@ public class EnvApiSecretsProvider implements ApiSecretsProvider{
 
 	@Override
 	public String apiSecretKey() {
-		return System.getenv("DSF_AUTH_SECRET_KEY");
+		return System.getenv("DSF_SECRET_KEY");
 	}
 	
 }

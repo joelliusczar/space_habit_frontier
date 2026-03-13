@@ -9,4 +9,8 @@ public class EnvironmentWrapper {
 	public static String getVisitLogDirectory() {
 		return System.getenv("DSF_VISIT_LOGS_DIR");
 	}
+
+	public static String getAppSecretKey() {
+		return System.getenv("DSF_SECRET_KEY");
+	}
 }

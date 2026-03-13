@@ -2,7 +2,7 @@
 import { reactive } from "vue";
 import { useFormSubmit } from "../../composables/useFormSubmit";
 import type { UserCreationInfo } from "../../types/users";
-import { Calls } from "../../api_calls/users";
+import { Calls } from "../../api_calls/auth";
 const formName = "user-sign-up"
 
 const formValues = reactive<UserCreationInfo & { passwordconfirm: string }>({

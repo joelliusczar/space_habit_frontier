@@ -2,6 +2,7 @@ package space_habit_frontier.app;
 
 import space_habit_frontier.engine.services.LookupsService;
 import space_habit_frontier.engine.services.dates.DefaultDatetimeProvider;
+import space_habit_frontier.app.security.AppUserDetailsService;
 import space_habit_frontier.engine.dtos.web.GlobalStore;
 import space_habit_frontier.engine.dtos.web.IpAddressPair;
 import space_habit_frontier.engine.dtos.web.TrackingInfo;
@@ -17,6 +18,7 @@ import space_habit_frontier.engine.services.events.InMemEventService;
 import space_habit_frontier.engine.services.events.VisitorService;
 import space_habit_frontier.engine.services.secrets_providers.db.EnvApiUserSecretsProvider;
 import space_habit_frontier.engine.services.users.BasicUserProvider;
+import space_habit_frontier.engine.services.users.UserAccessService;
 import space_habit_frontier.engine.services.users.UserManagementService;
 import space_habit_frontier.engine.services.web.VisitorTrackingService;
 
@@ -28,6 +30,7 @@ import java.sql.SQLException;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
@@ -88,16 +91,18 @@ class AppDependencies {
 	}
 
 	@Bean
-	public VisitorService getVisitorService(GlobalStore globalStore, 
-		DataContextProvider dataContextProvider) throws SQLException {
+	public VisitorService getVisitorService(
+			GlobalStore globalStore, 
+			DataContextProvider dataContextProvider) throws SQLException {
 		return new VisitorService(globalStore.getVisitorIdMap(), 
 			dataContextProvider.getContext());
 	}
 
 	@Bean
 	@RequestScope
-	public TrackingInfoProvider getTrackingInfoProvider(TrackingInfo trackingInfo,
-		VisitorService visitorService) {
+	public TrackingInfoProvider getTrackingInfoProvider(
+			TrackingInfo trackingInfo,
+			VisitorService visitorService) {
 		return new VisitorTrackingService(trackingInfo, visitorService);
 	}
 
@@ -113,10 +118,9 @@ class AppDependencies {
 
 	@Bean
 	public InMemEventService getInMemEventService(GlobalStore globalStore,
-		DatetimeProvider datetimeProvider,
-		UserProvider userProvider,
-		TrackingInfoProvider trackingInfoProvider
-	) {
+			DatetimeProvider datetimeProvider,
+			UserProvider userProvider,
+			TrackingInfoProvider trackingInfoProvider) {
 		return new InMemEventService(globalStore.getVisitorVisitMap(),
 			globalStore.getUserIdEventMap(),
 			datetimeProvider, userProvider,
@@ -125,9 +129,8 @@ class AppDependencies {
 
 	@Bean
 	public FSEventService getFSEventService(DatetimeProvider datetimeProvider,
-		UserProvider userProvider,
-		TrackingInfoProvider trackingInfoProvider
-	) {
+			UserProvider userProvider,
+			TrackingInfoProvider trackingInfoProvider) {
 		return new FSEventService(datetimeProvider,
 			userProvider,
 			trackingInfoProvider);
@@ -135,11 +138,12 @@ class AppDependencies {
 
 	@Bean
 	@Primary
-	public EventLogger getDefaultEventLogger(DatetimeProvider datetimeProvider,
-		UserProvider userProvider,
-		TrackingInfoProvider trackingInfoProvider,
-		InMemEventService inMemEventService,
-		FSEventService fsEventService
+	public EventLogger getDefaultEventLogger(
+			DatetimeProvider datetimeProvider,
+			UserProvider userProvider,
+			TrackingInfoProvider trackingInfoProvider,
+			InMemEventService inMemEventService,
+			FSEventService fsEventService
 	) {
 		return new AggregateEventLogger(datetimeProvider,
 			userProvider,
@@ -151,9 +155,22 @@ class AppDependencies {
 
 	@Bean
 	public UserManagementService getUserManagementService(
-		DataContextProvider dataContextProvider,
-		DatetimeProvider datetimeProvider) throws SQLException {
+			DataContextProvider dataContextProvider,
+			DatetimeProvider datetimeProvider) throws SQLException {
 		return new UserManagementService(dataContextProvider.getContext(),
 			datetimeProvider);
+	}
+
+	@Bean
+	public UserAccessService getUserAccessService(
+			DataContextProvider dataContextProvider, 
+			DatetimeProvider datetimeProvider) throws SQLException {
+		return new UserAccessService(dataContextProvider.getContext(), datetimeProvider);
+	}
+
+	@Bean
+	public UserDetailsService userDetailsService(
+			UserAccessService userAccessService) {
+		return new AppUserDetailsService(userAccessService);
 	}
 }
