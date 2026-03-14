@@ -28,6 +28,7 @@ import space_habit_frontier.engine.db_generated.tables.Monsteritemdrops;
 import space_habit_frontier.engine.db_generated.tables.Todoevents;
 import space_habit_frontier.engine.db_generated.tables.Todos;
 import space_habit_frontier.engine.db_generated.tables.Users;
+import space_habit_frontier.engine.db_generated.tables.Usersessions;
 import space_habit_frontier.engine.db_generated.tables.Visitors;
 import space_habit_frontier.engine.db_generated.tables.records.ActioneventsRecord;
 import space_habit_frontier.engine.db_generated.tables.records.ActionsRecord;
@@ -47,6 +48,7 @@ import space_habit_frontier.engine.db_generated.tables.records.MonsteritemdropsR
 import space_habit_frontier.engine.db_generated.tables.records.TodoeventsRecord;
 import space_habit_frontier.engine.db_generated.tables.records.TodosRecord;
 import space_habit_frontier.engine.db_generated.tables.records.UsersRecord;
+import space_habit_frontier.engine.db_generated.tables.records.UsersessionsRecord;
 import space_habit_frontier.engine.db_generated.tables.records.VisitorsRecord;
 
 
@@ -78,6 +80,7 @@ public class Keys {
     public static final UniqueKey<UsersRecord> USERS_EMAIL_KEY = Internal.createUniqueKey(Users.USERS, DSL.name("users_email_key"), new TableField[] { Users.USERS.EMAIL }, true);
     public static final UniqueKey<UsersRecord> USERS_PKEY = Internal.createUniqueKey(Users.USERS, DSL.name("users_pkey"), new TableField[] { Users.USERS.ID }, true);
     public static final UniqueKey<UsersRecord> USERS_USERNAME_KEY = Internal.createUniqueKey(Users.USERS, DSL.name("users_username_key"), new TableField[] { Users.USERS.USERNAME }, true);
+    public static final UniqueKey<UsersessionsRecord> USERSESSIONS_PKEY = Internal.createUniqueKey(Usersessions.USERSESSIONS, DSL.name("usersessions_pkey"), new TableField[] { Usersessions.USERSESSIONS.ID }, true);
     public static final UniqueKey<VisitorsRecord> VISTORS_PKEY = Internal.createUniqueKey(Visitors.VISITORS, DSL.name("vistors_pkey"), new TableField[] { Visitors.VISITORS.ID }, true);
 
     // -------------------------------------------------------------------------
@@ -107,4 +110,6 @@ public class Keys {
     public static final ForeignKey<TodoeventsRecord, UsersRecord> TODOEVENTS__TODOEVENTS_USERID_FKEY = Internal.createForeignKey(Todoevents.TODOEVENTS, DSL.name("todoevents_userid_fkey"), new TableField[] { Todoevents.TODOEVENTS.USERID }, Keys.USERS_PKEY, new TableField[] { Users.USERS.ID }, true);
     public static final ForeignKey<TodosRecord, TodosRecord> TODOS__TODOS_PARENTTODOID_FKEY = Internal.createForeignKey(Todos.TODOS, DSL.name("todos_parenttodoid_fkey"), new TableField[] { Todos.TODOS.PARENTTODOID }, Keys.TODOS_PKEY, new TableField[] { Todos.TODOS.ID }, true);
     public static final ForeignKey<TodosRecord, UsersRecord> TODOS__TODOS_USERID_FKEY = Internal.createForeignKey(Todos.TODOS, DSL.name("todos_userid_fkey"), new TableField[] { Todos.TODOS.USERID }, Keys.USERS_PKEY, new TableField[] { Users.USERS.ID }, true);
+    public static final ForeignKey<UsersessionsRecord, UsersRecord> USERSESSIONS__USERSESSIONS_USERID_FKEY = Internal.createForeignKey(Usersessions.USERSESSIONS, DSL.name("usersessions_userid_fkey"), new TableField[] { Usersessions.USERSESSIONS.USERID }, Keys.USERS_PKEY, new TableField[] { Users.USERS.ID }, true);
+    public static final ForeignKey<UsersessionsRecord, VisitorsRecord> USERSESSIONS__USERSESSIONS_VISITORID_FKEY = Internal.createForeignKey(Usersessions.USERSESSIONS, DSL.name("usersessions_visitorid_fkey"), new TableField[] { Usersessions.USERSESSIONS.VISITORID }, Keys.VISTORS_PKEY, new TableField[] { Visitors.VISITORS.ID }, true);
 }

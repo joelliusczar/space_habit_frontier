@@ -29,6 +29,7 @@ import space_habit_frontier.engine.db_generated.tables.Monsteritemdrops;
 import space_habit_frontier.engine.db_generated.tables.Todoevents;
 import space_habit_frontier.engine.db_generated.tables.Todos;
 import space_habit_frontier.engine.db_generated.tables.Users;
+import space_habit_frontier.engine.db_generated.tables.Usersessions;
 import space_habit_frontier.engine.db_generated.tables.Visitors;
 
 
@@ -136,6 +137,11 @@ public class Public extends SchemaImpl {
     public final Users USERS = Users.USERS;
 
     /**
+     * The table <code>public.usersessions</code>.
+     */
+    public final Usersessions USERSESSIONS = Usersessions.USERSESSIONS;
+
+    /**
      * The table <code>public.visitors</code>.
      */
     public final Visitors VISITORS = Visitors.VISITORS;
@@ -174,6 +180,7 @@ public class Public extends SchemaImpl {
             Todoevents.TODOEVENTS,
             Todos.TODOS,
             Users.USERS,
+            Usersessions.USERSESSIONS,
             Visitors.VISITORS
         );
     }

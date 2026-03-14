@@ -46,6 +46,8 @@
       vars:
         runat: localhost
         gradle_install: true
+        java_user: '{{ansible_user}}'
+        java_group: '{{ansible_user}}'
     - name: Create directories for logged in user
       file:
         state: directory
@@ -64,9 +66,9 @@
         argv:
           - './gradlew'
           - shadowJar
-        environment:
-          DSF_DB_OWNER_NAME: '{{app_details["db_owner"]}}'
-          DSF_DB_OWNER_PASS: '{{keys["db_pass_owner"]}}'
+      environment:
+        DSF_DB_OWNER_NAME: '{{app_details["db_owner"]}}'
+        DSF_DB_OWNER_PASS: '{{keys["db_pass_owner"]}}'
       register: jarred
       changed_when: '"executed" in jarred.stdout and "BUILD SUCCESSFUL" in jarred.stdout'
     - name: Copy migration jar
@@ -81,8 +83,13 @@
           - '-cp'
           - '/usr/local/share/{{app_details["name"]}}/migrations/migrations.jar'
           - 'space_habit_frontier.db_migrate.App'
-        environment:
-          DSF_DB_OWNER_NAME: '{{app_details["db_owner"]}}'
-          DSF_DB_OWNER_PASS: '{{keys["db_pass_owner"]}}'
+      environment:
+        DSF_DB_OWNER_NAME: '{{app_details["db_owner"]}}'
+        DSF_DB_OWNER_PASS: '{{keys["db_pass_owner"]}}'
+      register: migration_result
+      when: copied.changed
+    - name: Print migration result
+      debug:
+        var: migration_result.stdout
       when: copied.changed
 

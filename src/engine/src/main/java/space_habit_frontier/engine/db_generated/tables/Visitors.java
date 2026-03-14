@@ -8,10 +8,14 @@ import java.util.Collection;
 
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.ForeignKey;
 import org.jooq.Identity;
+import org.jooq.InverseForeignKey;
 import org.jooq.Name;
+import org.jooq.Path;
 import org.jooq.PlainSQL;
 import org.jooq.QueryPart;
+import org.jooq.Record;
 import org.jooq.SQL;
 import org.jooq.Schema;
 import org.jooq.Select;
@@ -107,6 +111,37 @@ public class Visitors extends TableImpl<VisitorsRecord> {
      */
     public Visitors() {
         this(DSL.name("visitors"), null);
+    }
+
+    public <O extends Record> Visitors(Table<O> path, ForeignKey<O, VisitorsRecord> childPath, InverseForeignKey<O, VisitorsRecord> parentPath) {
+        super(path, childPath, parentPath, VISITORS);
+    }
+
+    /**
+     * A subtype implementing {@link Path} for simplified path-based joins.
+     */
+    public static class VisitorsPath extends Visitors implements Path<VisitorsRecord> {
+        public <O extends Record> VisitorsPath(Table<O> path, ForeignKey<O, VisitorsRecord> childPath, InverseForeignKey<O, VisitorsRecord> parentPath) {
+            super(path, childPath, parentPath);
+        }
+        private VisitorsPath(Name alias, Table<VisitorsRecord> aliased) {
+            super(alias, aliased);
+        }
+
+        @Override
+        public VisitorsPath as(String alias) {
+            return new VisitorsPath(DSL.name(alias), this);
+        }
+
+        @Override
+        public VisitorsPath as(Name alias) {
+            return new VisitorsPath(alias, this);
+        }
+
+        @Override
+        public VisitorsPath as(Table<?> alias) {
+            return new VisitorsPath(alias.getQualifiedName(), this);
+        }
     }
 
     @Override

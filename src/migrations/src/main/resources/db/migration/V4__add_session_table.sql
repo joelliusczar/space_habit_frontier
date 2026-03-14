@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS usersessions (
+	id UUID PRIMARY KEY,
+	username TEXT NOT NULL,
+	creationtimestamp TIMESTAMPTZ NOT NULL,
+	expirationtimestamp TIMESTAMPTZ NOT NULL,
+	userid UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+	visitorid BIGINT NOT NULL REFERENCES visitors (id) ON DELETE CASCADE
+);

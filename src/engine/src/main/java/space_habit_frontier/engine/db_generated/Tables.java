@@ -22,6 +22,7 @@ import space_habit_frontier.engine.db_generated.tables.Monsteritemdrops;
 import space_habit_frontier.engine.db_generated.tables.Todoevents;
 import space_habit_frontier.engine.db_generated.tables.Todos;
 import space_habit_frontier.engine.db_generated.tables.Users;
+import space_habit_frontier.engine.db_generated.tables.Usersessions;
 import space_habit_frontier.engine.db_generated.tables.Visitors;
 
 
@@ -120,6 +121,11 @@ public class Tables {
      * The table <code>public.users</code>.
      */
     public static final Users USERS = Users.USERS;
+
+    /**
+     * The table <code>public.usersessions</code>.
+     */
+    public static final Usersessions USERSESSIONS = Usersessions.USERSESSIONS;
 
     /**
      * The table <code>public.visitors</code>.
