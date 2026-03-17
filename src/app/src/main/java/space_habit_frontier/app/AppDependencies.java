@@ -20,6 +20,7 @@ import space_habit_frontier.engine.services.secrets_providers.db.EnvApiUserSecre
 import space_habit_frontier.engine.services.users.BasicUserProvider;
 import space_habit_frontier.engine.services.users.UserAccessService;
 import space_habit_frontier.engine.services.users.UserManagementService;
+import space_habit_frontier.engine.services.web.UserSessionService;
 import space_habit_frontier.engine.services.web.VisitorTrackingService;
 
 import java.net.Inet4Address;
@@ -172,5 +173,18 @@ class AppDependencies {
 	public UserDetailsService userDetailsService(
 			UserAccessService userAccessService) {
 		return new AppUserDetailsService(userAccessService);
+	}
+
+	@Bean
+	public UserSessionService getUserSessionService(
+			DataContextProvider dataContextProvider,
+			DatetimeProvider datetimeProvider,
+			TrackingInfoProvider trackingInfoProvider,
+			UserAccessService accessService) throws SQLException {
+		return new UserSessionService(
+			dataContextProvider.getContext(),
+			datetimeProvider,
+			trackingInfoProvider,
+			accessService);
 	}
 }

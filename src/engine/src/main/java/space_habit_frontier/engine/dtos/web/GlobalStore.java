@@ -9,16 +9,18 @@ import space_habit_frontier.engine.dtos.events.event_maps.VisitorVisitMap;
 
 public class GlobalStore {
 	private static GlobalStore instance;
-	private ConcurrentMap<String, Map<String, Long>> visitorIdMap;
-	private ConcurrentMap<Integer, Map<String, Double>> timeoutBucket;
-	private VisitorVisitMap visitorVisitMap;
-	private UserIdEventMap userIdEventMap;
+	private final ConcurrentMap<String, Map<String, Long>> __visitorIdMap;
+	private final ConcurrentMap<Integer, Map<String, Double>> __timeoutBucket;
+	private final VisitorVisitMap __visitorVisitMap;
+	private final UserIdEventMap __userIdEventMap;
+	private final ConcurrentMap<String, UserSessionDto> __userSessionMap;;
 
 	private GlobalStore() {
-		this.visitorIdMap = new ConcurrentHashMap<>();
-		this.timeoutBucket = new ConcurrentHashMap<>();
-		this.visitorVisitMap = new VisitorVisitMap();
-		this.userIdEventMap = new UserIdEventMap();
+		this.__visitorIdMap = new ConcurrentHashMap<>();
+		this.__timeoutBucket = new ConcurrentHashMap<>();
+		this.__visitorVisitMap = new VisitorVisitMap();
+		this.__userIdEventMap = new UserIdEventMap();
+		this.__userSessionMap = new ConcurrentHashMap<>();
 		// Private constructor to prevent instantiation
 	}
 
@@ -30,18 +32,22 @@ public class GlobalStore {
 	}
 
 	public ConcurrentMap<String, Map<String, Long>> getVisitorIdMap() {
-		return visitorIdMap;
+		return __visitorIdMap;
 	}
 
 	public ConcurrentMap<Integer, Map<String, Double>> getTimeoutBucket() {
-		return timeoutBucket;
+		return __timeoutBucket;
 	}
 
 	public VisitorVisitMap getVisitorVisitMap() {
-		return visitorVisitMap;
+		return __visitorVisitMap;
 	}
 
 	public UserIdEventMap getUserIdEventMap() {
-		return userIdEventMap;
+		return __userIdEventMap;
+	}
+
+	public ConcurrentMap<String, UserSessionDto> getUserSessionMap() {
+		return __userSessionMap;
 	}
 }

@@ -1,10 +1,10 @@
 package space_habit_frontier.app.controllers;
 
 import space_habit_frontier.app.dtos.LoginRequest;
-import space_habit_frontier.app.security.JwtService;
 import space_habit_frontier.engine.dtos.users.UserCreationDto;
 import space_habit_frontier.engine.dtos.users.UserDto;
 import space_habit_frontier.engine.services.users.UserManagementService;
+import space_habit_frontier.engine.services.web.UserSessionService;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -20,12 +21,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class AuthController {
 	private final UserManagementService __userManagementService;
 	private final AuthenticationManager __authenticationManager;
+	private final UserSessionService __userSessionService;
 
 	public AuthController(
 			UserManagementService userManagementService,
-			AuthenticationManager authenticationManager) {
+			AuthenticationManager authenticationManager,
+			UserSessionService userSessionService) {
 		__userManagementService = userManagementService;
 		__authenticationManager = authenticationManager;
+		__userSessionService = userSessionService;
 	}
 
 	@PostMapping("/signup")
@@ -42,8 +46,10 @@ public class AuthController {
 		);
 		var authentication = __authenticationManager.authenticate(token);
 		if (authentication.isAuthenticated()) {
+			var userSessionDto = __userSessionService
+				.addSessionForUser(loginRequest.username());
 			return ResponseEntity
-				.ok(JwtService.generateToken(loginRequest.username()));
+				.ok(userSessionDto.getSessionId().toString());
 		}
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 	}

@@ -10,3 +10,7 @@ export interface IdItem {
 };
 
 export interface NamedIdItem extends IdItem, Named {}
+
+export interface StringObject {
+	[key: string]: string
+};

@@ -16,7 +16,8 @@ public class AppUserDetailsService implements UserDetailsService {
 	}
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String username) 
+			throws UsernameNotFoundException {
 		var user = __userAccessService.getUserForLogin(username);
 		if (user == null || user.isEmpty()) {
 			throw new UsernameNotFoundException("User not found");

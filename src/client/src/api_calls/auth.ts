@@ -1,4 +1,5 @@
 import type { UserCreationInfo } from "../types/users";
+import { sharedHeaders } from "./overrides"
 
 export const Calls = {
 	signup: (data: UserCreationInfo) => {
@@ -37,7 +38,14 @@ export const Calls = {
 							signal: abortController.signal
 						}
 					);
-					return await response.json();
+					if (response.ok) {
+						const sessionId = await response.text();
+						sharedHeaders["Authorization"] = `Session ${sessionId}`;
+						return sessionId;
+					}
+					else {
+						throw new Error(`Signin failed: ${response.status} ${response.statusText}`);
+					}
 				},
 			};
 	}

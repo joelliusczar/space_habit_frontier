@@ -1,13 +1,15 @@
 <script setup lang="ts">
-	import { reactive } from "vue";
+	import { ref } from "vue";
 	import { useFormSubmit } from "../../composables/useFormSubmit";
-	import { Calls } from "../../api_calls/auth";
+	import { useSignin } from "@/composables/useSignin";
 
 	const props = defineProps<{
 		formName: string
 	}>();
 
-	const formValues = reactive({
+	const [ signin ] = useSignin();
+
+	const formValues = ref({
 		username: "",
 		password: "",
 	});
@@ -15,11 +17,7 @@
 	useFormSubmit(
 		props.formName,
 		async () => {
-			const requestObj = Calls.signin(
-				formValues.username,
-				formValues.password
-			);
-			await requestObj.call();
+			await signin(formValues.value.username, formValues.value.password);
 		}
 	);
 

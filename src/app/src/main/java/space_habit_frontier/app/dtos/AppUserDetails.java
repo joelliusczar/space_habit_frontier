@@ -1,6 +1,5 @@
 package space_habit_frontier.app.dtos;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
