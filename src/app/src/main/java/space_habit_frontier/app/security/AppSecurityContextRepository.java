@@ -33,6 +33,11 @@ public class AppSecurityContextRepository implements SecurityContextRepository {
 	private SecurityContext loadContextInternal(HttpServletRequest request) {
 		var authorizationHeader = request.getHeader("authorization");
 		UserSessionDto userSessionDto = null;
+		var context = this.__securityContextHolderStrategy.getContext();
+
+		if (context.getAuthentication() != null) {
+			return context;
+		}
 
 		if (authorizationHeader != null 
 			&& authorizationHeader.startsWith("Session ")) {
@@ -56,7 +61,6 @@ public class AppSecurityContextRepository implements SecurityContextRepository {
 					userSessionDto.getUser(),
 					null,
 					List.of());
-					var context = this.__securityContextHolderStrategy.createEmptyContext();
 					context.setAuthentication(auth);
 					return context;
 		}

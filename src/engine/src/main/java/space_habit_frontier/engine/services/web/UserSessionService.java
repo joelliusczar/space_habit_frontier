@@ -43,6 +43,15 @@ public class UserSessionService {
 			.execute();
 	}
 
+	public void deleteSession(UUID sessionId) {
+		__dbContext.transaction(configuration -> {
+			var ctx = configuration.dsl();
+			ctx.deleteFrom(Usersessions.USERSESSIONS)
+			.where(Usersessions.USERSESSIONS.ID.eq(sessionId))
+			.execute();
+		});
+	}
+
 	public UserSessionDto addSessionForUser(
 			UserDto user,
 			long visitorId,

@@ -3,16 +3,55 @@ import TodosList from "./components/todos/TodosList.vue";
 import TodoEdit from "./components/todos/TodoEdit.vue";
 import Home from "./components/home/StartingPlace.vue";
 import UserSignUp from "./components/users/UserSignup.vue";
+import { useCredentials } from "./composables/useSignin";
+
+
+
 
 const routes = [
-	{ name: "todoEdit", path: "/todo/edit", component: TodoEdit },
-	{ name: "todoAdd", path: "/todo/add", component: TodoEdit },
-	{ name: "todos", path: "/todo/list", component: TodosList },
-	{ name: "userSignup", path: "/user/sign-up", component: UserSignUp },
-	{ name: "home", path: "/", component: Home },
+	{ 
+		name: "todoEdit", 
+		path: "/todo/edit", 
+		component: TodoEdit
+	},
+	{ 
+		name: "todoAdd", 
+		path: "/todo/add", 
+		component: TodoEdit
+	},
+	{ 
+		name: "todos", 
+		path: "/todo/list", 
+		component: TodosList
+	},
+	{ 
+		name: "userSignup", 
+		path: "/user/sign-up", 
+		component: UserSignUp
+	},
+	{ 
+		name: "home", 
+		path: "/", 
+		component: Home,
+		meta: {
+			public: true
+		}
+	},
 ];
 
-export default createRouter({
+const router = createRouter({
 	history: createWebHistory(),
 	routes
 });
+
+router.beforeEach((to) => {
+	console.log(to);
+	const credentials = useCredentials();
+	console.log(credentials.value);
+	if (credentials.value.isSignedIn || to.meta.public) {
+		return true;
+	}
+	return { name: "home"};
+});
+
+export default router

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useLookups } from "./composables/useLookups";
-import { RouterView } from "vue-router";
+import { RouterView, RouterLink } from "vue-router";
 import UserSigninProvider from "./components/users/UserSigninProvider.vue";
 
 
@@ -15,9 +15,10 @@ useLookups();
 	</header>
 
 	<main class="grid">
-		<UserSigninProvider>
-			<RouterView />
-		</UserSigninProvider>
+		<router-link to="/todo/list">Todos</router-link>
+		<user-signin-provider>
+			<router-view />
+		</user-signin-provider>
 	</main>
 </template>
 

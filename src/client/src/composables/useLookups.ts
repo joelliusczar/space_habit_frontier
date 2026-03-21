@@ -14,6 +14,7 @@ const fetchResults = ref<ApiResult<LookupsDto>>({
 const credentials = useCredentials();
 
 watch(() => credentials.value.isSignedIn, async (isSignedIn) => {
+	console.log(credentials.value);
 	if (isSignedIn) {
 		try {
 			const requestObj = Calls.get();

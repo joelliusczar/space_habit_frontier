@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import { Calls } from "../../api_calls/todos";
 import TodoEdit from "./TodoEdit.vue";
 
 const router = useRouter();
 const data = ref(null);
 
-// onMounted(async () => {
-
-// });
+onMounted(async () => {
+	const requestObj = Calls.all();
+	await requestObj.call();
+});
 
 function openAddNew() {
 	router.push({ name: "todoAdd" });

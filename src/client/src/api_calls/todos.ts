@@ -20,6 +20,22 @@ export const Calls = {
 				return await response.json();
 			},
 		};
-	}
+	},
+	all: () => {
+		const abortController = new AbortController();
+		return {
+			abortController: abortController,
+			call: async () => {
+				const response = await fetch(
+					"/api/todos/all",
+					{
+						method: "GET",
+						signal: abortController.signal
+					}
+				);
+				return await response.json();
+			},
+		};
+	},
 };
 

@@ -1,8 +1,10 @@
 package space_habit_frontier.app;
 
 import space_habit_frontier.engine.services.LookupsService;
+import space_habit_frontier.engine.services.TodoService;
 import space_habit_frontier.engine.services.dates.DefaultDatetimeProvider;
 import space_habit_frontier.app.security.AppUserDetailsService;
+import space_habit_frontier.engine.dtos.users.InternalUserDto;
 import space_habit_frontier.engine.dtos.web.GlobalStore;
 import space_habit_frontier.engine.dtos.web.IpAddressPair;
 import space_habit_frontier.engine.dtos.web.TrackingInfo;
@@ -31,6 +33,8 @@ import java.sql.SQLException;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
@@ -79,7 +83,7 @@ class AppDependencies {
 	}
 
 	@Bean
-	@RequestScope
+	@RequestScope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 	public TrackingInfo getTrackingInfo(HttpServletRequest request) {
 		var ipAddresses = extractIpAddresses(request);
 		return new TrackingInfo(
@@ -100,7 +104,6 @@ class AppDependencies {
 	}
 
 	@Bean
-	@RequestScope
 	public TrackingInfoProvider getTrackingInfoProvider(
 			TrackingInfo trackingInfo,
 			VisitorService visitorService) {
@@ -113,7 +116,16 @@ class AppDependencies {
 	}
 
 	@Bean
-	public UserProvider getUserProvider() {
+	@RequestScope(proxyMode = ScopedProxyMode.TARGET_CLASS)
+	public UserProvider getUserProvider(
+			SecurityContextHolderStrategy securityContextHolderStrategy) {
+		var authentication = securityContextHolderStrategy
+			.getContext()
+			.getAuthentication();
+		if (authentication != null && authentication.isAuthenticated()) {
+			var user = (InternalUserDto)authentication.getPrincipal();
+			return new BasicUserProvider(user);
+		}
 		return new BasicUserProvider(null);
 	}
 
@@ -124,7 +136,8 @@ class AppDependencies {
 			TrackingInfoProvider trackingInfoProvider) {
 		return new InMemEventService(globalStore.getVisitorVisitMap(),
 			globalStore.getUserIdEventMap(),
-			datetimeProvider, userProvider,
+			datetimeProvider,
+			userProvider,
 			trackingInfoProvider);
 	}
 
@@ -186,5 +199,15 @@ class AppDependencies {
 			datetimeProvider,
 			trackingInfoProvider,
 			accessService);
+	}
+
+	@Bean
+	public TodoService getTodoService(
+			DataContextProvider dataContextProvider,
+			UserProvider userProvider
+	)  throws SQLException {
+		return new TodoService(
+			dataContextProvider,
+			userProvider);
 	}
 }
