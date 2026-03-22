@@ -9,8 +9,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import space_habit_frontier.engine.dtos.users.EphemeralUserDto;
+import space_habit_frontier.engine.dtos.users.InternalUserDto;
+import space_habit_frontier.engine.dtos.users.UserDto;
+import space_habit_frontier.engine.interfaces.users.ConvertableInternalUser;
 
-public class AppUserDetails implements UserDetails {
+public class AppUserDetails implements UserDetails, ConvertableInternalUser {
 
 	private final EphemeralUserDto __userDto;
 
@@ -31,6 +34,16 @@ public class AppUserDetails implements UserDetails {
 	@Override
 	public String getUsername() {
 		return __userDto.getUsername();
+	}
+
+	@Override
+	public UserDto toUserDto() {
+		return __userDto.toUserDto();
+	}
+
+	@Override
+	public InternalUserDto toInternalUserDto() {
+		return __userDto.toInternalUserDto();
 	}
 	
 }

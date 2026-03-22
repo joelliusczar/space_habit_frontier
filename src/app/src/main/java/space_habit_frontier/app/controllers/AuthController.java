@@ -1,6 +1,7 @@
 package space_habit_frontier.app.controllers;
 
 import space_habit_frontier.app.dtos.LoginRequest;
+import space_habit_frontier.app.security.AppCookieManager;
 import space_habit_frontier.engine.dtos.users.UserCreationDto;
 import space_habit_frontier.engine.dtos.users.UserDto;
 import space_habit_frontier.engine.dtos.web.UserSessionDto;
@@ -10,9 +11,7 @@ import space_habit_frontier.engine.services.web.UserSessionService;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,17 +24,17 @@ public class AuthController {
 	private final UserManagementService __userManagementService;
 	private final AuthenticationManager __authenticationManager;
 	private final UserSessionService __userSessionService;
-	private final DatetimeProvider __datetimeProvider;
+	private final AppCookieManager __appCookieManager;
 
 	public AuthController(
 			UserManagementService userManagementService,
 			AuthenticationManager authenticationManager,
 			UserSessionService userSessionService,
-			DatetimeProvider datetimeProvider) {
+			AppCookieManager appCookieManager) {
 		__userManagementService = userManagementService;
 		__authenticationManager = authenticationManager;
 		__userSessionService = userSessionService;
-		__datetimeProvider = datetimeProvider;
+		__appCookieManager = appCookieManager;
 	}
 
 	@PostMapping("/signup")
@@ -56,8 +55,7 @@ public class AuthController {
 		if (authentication.isAuthenticated()) {
 			var userSessionDto = __userSessionService
 				.addSessionForUser(loginRequest.username());
-			var headers = 
-				getHeaders(loginRequest, userSessionDto);
+			var headers = __appCookieManager.getLoginCookies(userSessionDto);
 			return ResponseEntity
 				.ok()
 				.headers(headers)
@@ -66,29 +64,4 @@ public class AuthController {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 	}
 
-	private HttpHeaders getHeaders(
-			LoginRequest loginRequest,
-			UserSessionDto userSessionDto) {
-		var tokenCookie = ResponseCookie.from(
-			"session_token",
-			userSessionDto.getSessionId().toString())
-			.httpOnly(true)
-			.path("/")
-			.build();
-		var usernameCookie = ResponseCookie.from(
-			"username",
-			loginRequest.username())
-			.path("/")
-			.build();
-		var loginTimestampCookie = ResponseCookie.from(
-			"login_timestamp",
-			__datetimeProvider.now().toString())
-			.path("/")
-			.build();
-		var headers = new HttpHeaders();
-		headers.add(HttpHeaders.SET_COOKIE, tokenCookie.toString());
-		headers.add(HttpHeaders.SET_COOKIE, usernameCookie.toString());
-		headers.add(HttpHeaders.SET_COOKIE, loginTimestampCookie.toString());
-		return headers;
-	}
 }

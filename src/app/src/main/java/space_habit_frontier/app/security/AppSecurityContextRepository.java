@@ -69,8 +69,8 @@ public class AppSecurityContextRepository implements SecurityContextRepository {
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public SecurityContext loadContext(
-			@SuppressWarnings("deprecation")
 			HttpRequestResponseHolder requestResponseHolder) {
 		return loadContextInternal(requestResponseHolder.getRequest());
 	}

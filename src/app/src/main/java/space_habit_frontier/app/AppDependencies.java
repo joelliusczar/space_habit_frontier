@@ -3,12 +3,15 @@ package space_habit_frontier.app;
 import space_habit_frontier.engine.services.LookupsService;
 import space_habit_frontier.engine.services.TodoService;
 import space_habit_frontier.engine.services.dates.DefaultDatetimeProvider;
+import space_habit_frontier.engine.services.dates.DefaultExpirationDatesProvider;
+import space_habit_frontier.app.dtos.AppUserDetails;
+import space_habit_frontier.app.security.AppCookieManager;
 import space_habit_frontier.app.security.AppUserDetailsService;
-import space_habit_frontier.engine.dtos.users.InternalUserDto;
 import space_habit_frontier.engine.dtos.web.GlobalStore;
 import space_habit_frontier.engine.dtos.web.IpAddressPair;
 import space_habit_frontier.engine.dtos.web.TrackingInfo;
 import space_habit_frontier.engine.interfaces.dates.DatetimeProvider;
+import space_habit_frontier.engine.interfaces.dates.ExpirationDatesProvider;
 import space_habit_frontier.engine.interfaces.db.DataContextProvider;
 import space_habit_frontier.engine.interfaces.events.EventLogger;
 import space_habit_frontier.engine.interfaces.users.UserProvider;
@@ -25,6 +28,7 @@ import space_habit_frontier.engine.services.users.UserManagementService;
 import space_habit_frontier.engine.services.web.UserSessionService;
 import space_habit_frontier.engine.services.web.VisitorTrackingService;
 
+import java.net.CookieManager;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -116,6 +120,11 @@ class AppDependencies {
 	}
 
 	@Bean
+	public ExpirationDatesProvider expirationDatesProvider() {
+		return new DefaultExpirationDatesProvider();
+	}
+
+	@Bean
 	@RequestScope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 	public UserProvider getUserProvider(
 			SecurityContextHolderStrategy securityContextHolderStrategy) {
@@ -123,8 +132,8 @@ class AppDependencies {
 			.getContext()
 			.getAuthentication();
 		if (authentication != null && authentication.isAuthenticated()) {
-			var user = (InternalUserDto)authentication.getPrincipal();
-			return new BasicUserProvider(user);
+			var user = (AppUserDetails)authentication.getPrincipal();
+			return new BasicUserProvider(user.toInternalUserDto());
 		}
 		return new BasicUserProvider(null);
 	}
@@ -193,12 +202,19 @@ class AppDependencies {
 			DataContextProvider dataContextProvider,
 			DatetimeProvider datetimeProvider,
 			TrackingInfoProvider trackingInfoProvider,
-			UserAccessService accessService) throws SQLException {
+			UserAccessService accessService,
+			ExpirationDatesProvider expirationDatesProvider) throws SQLException {
 		return new UserSessionService(
 			dataContextProvider.getContext(),
 			datetimeProvider,
 			trackingInfoProvider,
-			accessService);
+			accessService,
+			expirationDatesProvider);
+	}
+
+	@Bean
+	public AppCookieManager cookieManager(DatetimeProvider datetimeProvider) {
+		return new AppCookieManager(datetimeProvider);
 	}
 
 	@Bean

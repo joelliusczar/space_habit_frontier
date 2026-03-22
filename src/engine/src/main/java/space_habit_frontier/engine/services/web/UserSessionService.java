@@ -13,6 +13,7 @@ import space_habit_frontier.engine.db_generated.tables.Usersessions;
 import space_habit_frontier.engine.dtos.users.UserDto;
 import space_habit_frontier.engine.dtos.web.UserSessionDto;
 import space_habit_frontier.engine.interfaces.dates.DatetimeProvider;
+import space_habit_frontier.engine.interfaces.dates.ExpirationDatesProvider;
 import space_habit_frontier.engine.interfaces.web.TrackingInfoProvider;
 import space_habit_frontier.engine.services.users.UserAccessService;
 
@@ -22,17 +23,21 @@ public class UserSessionService {
 	private final DatetimeProvider __datetimeProvider;
 	private final TrackingInfoProvider __trackingInfoProvider;
 	private final UserAccessService __accessService;
+	private final ExpirationDatesProvider __expirationDatesProvider;
 	private final Logger __logger = LoggerFactory.getLogger(getClass());
 
 	public UserSessionService(
 			DSLContext dbContext,
 			DatetimeProvider datetimeProvider,
 			TrackingInfoProvider trackingInfoProvider,
-			UserAccessService accessService) {
+			UserAccessService accessService,
+			ExpirationDatesProvider expirationDatesProvider
+		) {
 		__dbContext = dbContext;
 		__datetimeProvider = datetimeProvider;
 		__trackingInfoProvider = trackingInfoProvider;
 		__accessService = accessService;
+		__expirationDatesProvider = expirationDatesProvider;
 	}
 
 	private void __deletePreviousSessions(
@@ -77,7 +82,7 @@ public class UserSessionService {
 	}
 
 	public UserSessionDto addSessionForUser(UserDto user) {
-		var expirationDateTime = __datetimeProvider.now();
+		var expirationDateTime = __expirationDatesProvider.getLoginExpiration();
 		try {
 			var visitorId = __trackingInfoProvider.getVisitorId();
 			return addSessionForUser(user, visitorId, expirationDateTime);
