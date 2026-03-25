@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+
 @RestControllerAdvice
 public class AppExceptionHandler {
 
@@ -20,6 +21,7 @@ public class AppExceptionHandler {
 	public ProblemDetail handleAuthFailure(BadCredentialsException ex) {
 		var problemDetail = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
 		problemDetail.setTitle("Incorrect username or password");
+		problemDetail.setDetail(ex.getMessage());
 		return problemDetail;
 	}
 

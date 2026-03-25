@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { useLookups } from "./composables/useLookups";
 import { RouterView, RouterLink } from "vue-router";
 import UserSigninProvider from "./components/users/UserSigninProvider.vue";
 
 
-useLookups();
 </script>
 
 <template>

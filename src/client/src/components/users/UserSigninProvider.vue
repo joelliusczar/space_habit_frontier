@@ -5,7 +5,6 @@ import { UserSigninKey } from "../../types/providers";
 const open = ref(false);
 
 const openSignin = () => {
-	console.log("Opening sign-in modal");
 	open.value = true;
 };
 
@@ -18,7 +17,7 @@ provide(UserSigninKey, {
 <template>
 	<main class="grid">
 		<slot />
-		<UserSigninModal :open="open" @close="open = false" />
+		<user-signin-modal :open="open" @close="open = false" />
 	</main>
 </template>
 

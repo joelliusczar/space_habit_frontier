@@ -9,12 +9,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.util.WebUtils;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import space_habit_frontier.app.helpers.RequestHelpers;
 import space_habit_frontier.app.security.AppCookieManager;
 import space_habit_frontier.engine.interfaces.dates.DatetimeProvider;
 import space_habit_frontier.engine.services.web.UserSessionService;
@@ -48,27 +48,18 @@ public class CookieFilter extends OncePerRequestFilter {
 			filterChain.doFilter(request, response);
 			return;
 		}
-		var sessionIdGuess = "";
-		var authHeader = request.getHeader("Authorization");
-		if (authHeader != null && authHeader.startsWith("Bearer ")) {
-			sessionIdGuess = authHeader.substring(8);
+		var sessionId = RequestHelpers.ExtractSessionId((request));
+		if (sessionId.isEmpty()) {
+			filterChain.doFilter(request, response);
+			return;
 		}
-		else {
-			var sessionIdCookie = WebUtils.getCookie(request, "session_token");
-			if (sessionIdCookie == null) {
-				filterChain.doFilter(request, response);
-				return;
-			}
-			sessionIdGuess = sessionIdCookie.getValue();
-		}
-
-		var sessionId = UUID.fromString(sessionIdGuess);
-		var userSessionDto = __userSessionService.getSessionDto(sessionId);
+		
+		var userSessionDto = __userSessionService.getSessionDto(sessionId.get());
 		if (userSessionDto != null) {
 			var isExpired = __datetimeProvider
 				.isBeforeNow(userSessionDto.getExpirationDateTime());
 			if (isExpired) {
-				__userSessionService.deleteSession(sessionId);
+				__userSessionService.deleteSession(sessionId.get());
 				var expiredCookies = __appCookieManager.expireLoginCookies();
 				expiredCookies.get(HttpHeaders.SET_COOKIE).forEach(cookie -> {
 					response.addHeader(HttpHeaders.SET_COOKIE, cookie);

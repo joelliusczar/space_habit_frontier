@@ -1,20 +1,24 @@
 package space_habit_frontier.app.controllers;
 
 import space_habit_frontier.app.dtos.LoginRequest;
+import space_habit_frontier.app.helpers.RequestHelpers;
 import space_habit_frontier.app.security.AppCookieManager;
 import space_habit_frontier.engine.dtos.users.UserCreationDto;
 import space_habit_frontier.engine.dtos.users.UserDto;
-import space_habit_frontier.engine.dtos.web.UserSessionDto;
-import space_habit_frontier.engine.interfaces.dates.DatetimeProvider;
 import space_habit_frontier.engine.services.users.UserManagementService;
 import space_habit_frontier.engine.services.web.UserSessionService;
 
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -62,6 +66,34 @@ public class AuthController {
 				.body(userSessionDto.getSessionId().toString());
 		}
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+	}
+
+	@DeleteMapping("/signout")
+	public ResponseEntity<Void> signout(HttpServletRequest request) {
+
+			var sessionId = RequestHelpers.ExtractSessionId((request));
+			if (sessionId.isEmpty()) {
+				throw HttpClientErrorException.create(
+					HttpStatus.UNPROCESSABLE_CONTENT, 
+					"Session Id is missing.", 
+					null, 
+					null, 
+					null);
+			}
+			var affected =__userSessionService.deleteSession(sessionId.get());
+			if (affected < 1) {
+				throw HttpClientErrorException.create(
+					HttpStatus.NOT_FOUND, 
+					"Session not found.", 
+					null, 
+					null, 
+					null);
+			}
+			var headers = __appCookieManager.expireLoginCookies();
+			return ResponseEntity
+				.ok()
+				.headers(headers)
+				.build();
 	}
 
 }

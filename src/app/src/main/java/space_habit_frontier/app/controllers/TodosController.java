@@ -19,7 +19,8 @@ public class TodosController {
 
 	@GetMapping("/all")
 	public List<String> getAll() {
-		return this.__todoService.getTodos();
+		var res = this.__todoService.getTodos();
+		return res;
 	}
 
 

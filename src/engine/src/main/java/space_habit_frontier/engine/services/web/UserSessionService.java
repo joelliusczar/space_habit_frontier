@@ -48,10 +48,10 @@ public class UserSessionService {
 			.execute();
 	}
 
-	public void deleteSession(UUID sessionId) {
-		__dbContext.transaction(configuration -> {
+	public int deleteSession(UUID sessionId) {
+		return __dbContext.transactionResult(configuration -> {
 			var ctx = configuration.dsl();
-			ctx.deleteFrom(Usersessions.USERSESSIONS)
+			return ctx.deleteFrom(Usersessions.USERSESSIONS)
 			.where(Usersessions.USERSESSIONS.ID.eq(sessionId))
 			.execute();
 		});

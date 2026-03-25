@@ -1,13 +1,13 @@
 <script setup lang="ts">
 	import { ref } from "vue";
 	import { useFormSubmit } from "../../composables/useFormSubmit";
-	import { useSignin } from "@/composables/useSignin";
+	import { useCredentialsStore } from "@/stores/credentials";
 
 	const props = defineProps<{
 		formName: string
 	}>();
 
-	const [ signin ] = useSignin();
+	const { signin } = useCredentialsStore();
 
 	const formValues = ref({
 		username: "",
