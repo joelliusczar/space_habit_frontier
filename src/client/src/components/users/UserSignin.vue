@@ -6,6 +6,8 @@
 	const props = defineProps<{
 		formName: string
 	}>();
+	const emit = defineEmits(["sign-in"]);
+
 
 	const { signin } = useCredentialsStore();
 
@@ -18,6 +20,7 @@
 		props.formName,
 		async () => {
 			await signin(formValues.value.username, formValues.value.password);
+			emit("sign-in");
 		}
 	);
 
@@ -26,7 +29,7 @@
 
 <template>
 	<div class="top">
-		<h1 class="">Sign Up</h1>
+		<h1 class="">Sign In</h1>
 		<fieldset class="txt-field">
 			<legend>Username:</legend>
 			<input

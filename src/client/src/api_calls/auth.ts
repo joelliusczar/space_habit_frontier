@@ -61,7 +61,7 @@ export const Calls = {
 						signal: abortController.signal
 					}
 				);
-				return await response.json();
+				return;
 			},
 		};
 	},

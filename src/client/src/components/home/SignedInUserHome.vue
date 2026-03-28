@@ -17,7 +17,6 @@ if (!UserSignin) {
 
 <template>
 	<div>
-		<DSFButton @click="fullSignout">Sign Out</DSFButton>
 		
 	</div>
 </template>

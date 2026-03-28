@@ -22,13 +22,13 @@ export const useCredentialsStore = defineStore("credentials", () => {
 	const signin =  async (username: string, password: string) => {
 		const requestObj = Calls.signin(username, password);
 		await requestObj.call();
-		credentials.value.username = username;
+		__credentials.value.username = username;
 	};
 
 	const fullSignout = async () => {
 		const requestObj = Calls.signout();
 		await requestObj.call();
-		credentials.value.username = "";
+		__credentials.value.username = "";
 	};
 
 	return { __credentials, credentials, signin, fullSignout };

@@ -5,7 +5,7 @@ import { Calls } from "../../api_calls/auth";
 import FormModal from "../shared/FormModal.vue";
 import UserSignin from "./UserSignin.vue";
 const formName = "user-sign-in"
-defineProps<{
+	defineProps<{
 		open: boolean
 	}>();
 	const emit = defineEmits(["close"]);
@@ -19,9 +19,9 @@ defineProps<{
 </script>
 
 <template>
-	<FormModal :formName="formName" :open="open" @close="handleClose">
-		<UserSignin :formName="formName" />
-	</FormModal>
+	<form-modal :formName="formName" :open="open" @close="handleClose">
+		<user-signin :formName="formName" @sign-in="handleClose" />
+	</form-modal>
 </template>
 
 <style scoped>

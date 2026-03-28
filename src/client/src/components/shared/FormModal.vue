@@ -16,12 +16,11 @@ import { Teleport } from 'vue';
 
 <template>
 	<teleport to="body">
-		<div v-if="open">
+		<div class="modal" v-if="open">
 			<div class="top">
 				<slot />
 			</div>
 			<footer class="bottom">
-				<button class="button" @click="handleClose">Close</button>
 				<form :id="formName" action="">
 					<button
 						class="button"
@@ -29,6 +28,7 @@ import { Teleport } from 'vue';
 					>
 						Submit
 					</button>
+					<button class="button" @click="handleClose">Close</button>
 				</form>
 			</footer>
 		</div>
@@ -36,4 +36,15 @@ import { Teleport } from 'vue';
 </template>
 
 <style scoped>
+.modal {
+	max-width: 20rem;
+	position: fixed;
+	left: 50%;
+}
+.button {
+	margin-inline-end: 10px;
+}
+.bottom {
+	margin-block-start: 5px;
+}
 </style>

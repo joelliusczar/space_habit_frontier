@@ -4,6 +4,9 @@ import TodosList from "./components/todos/TodosList.vue";
 import TodoEdit from "./components/todos/TodoEdit.vue";
 import Home from "./components/home/StartingPlace.vue";
 import UserSignUp from "./components/users/UserSignup.vue";
+import SettingsNav from "./components/user_settings/SettingsNav.vue";
+import ActionsList from "./components/actions/ActionsList.vue";
+import HeroInventory from "./components/item-store/HeroInventory.vue";
 import { useCredentialsStore } from "./stores/credentials";
 
 
@@ -12,23 +15,38 @@ import { useCredentialsStore } from "./stores/credentials";
 const routes = [
 	{ 
 		name: "todoEdit", 
-		path: "/todo/edit", 
+		path: "/todos/edit", 
 		component: TodoEdit
 	},
 	{ 
 		name: "todoAdd", 
-		path: "/todo/add", 
+		path: "/todos/add", 
 		component: TodoEdit
 	},
 	{ 
 		name: "todos", 
-		path: "/todo/list", 
+		path: "/todos/list", 
 		component: TodosList
 	},
 	{ 
 		name: "userSignup", 
 		path: "/user/sign-up", 
 		component: UserSignUp
+	},
+	{ 
+		name: "settingsNav", 
+		path: "/settings/nav", 
+		component: SettingsNav
+	},
+	{ 
+		name: "actions", 
+		path: "/actions/list", 
+		component: ActionsList
+	},
+	{ 
+		name: "inventory", 
+		path: "/hero/inventory", 
+		component: HeroInventory
 	},
 	{ 
 		name: "home", 

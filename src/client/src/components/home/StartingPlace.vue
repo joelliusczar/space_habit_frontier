@@ -6,12 +6,12 @@ import { useCredentialsStore } from "../../stores/credentials";
 
 const { credentials } = storeToRefs(useCredentialsStore());
 
+
 </script>
 
 <template>
 	<div>
-		<h1>Home</h1>
-		<guest-screen  />
+		<guest-screen v-if="!credentials.isSignedIn" />
 		<signed-in-user-home v-if="credentials.isSignedIn" />
 	</div>
 </template>
