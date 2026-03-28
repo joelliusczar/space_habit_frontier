@@ -4,7 +4,7 @@
 package space_habit_frontier.engine.db_generated.tables;
 
 
-import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -69,7 +69,7 @@ public class Todoevents extends TableImpl<TodoeventsRecord> {
     /**
      * The column <code>public.todoevents.creationtimestamp</code>.
      */
-    public final TableField<TodoeventsRecord, BigDecimal> CREATIONTIMESTAMP = createField(DSL.name("creationtimestamp"), SQLDataType.NUMERIC(16, 4).nullable(false), this, "");
+    public final TableField<TodoeventsRecord, OffsetDateTime> CREATIONTIMESTAMP = createField(DSL.name("creationtimestamp"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false), this, "");
 
     /**
      * The column <code>public.todoevents.todoid</code>.

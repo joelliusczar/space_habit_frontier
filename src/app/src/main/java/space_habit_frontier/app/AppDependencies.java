@@ -28,7 +28,6 @@ import space_habit_frontier.engine.services.users.UserManagementService;
 import space_habit_frontier.engine.services.web.UserSessionService;
 import space_habit_frontier.engine.services.web.VisitorTrackingService;
 
-import java.net.CookieManager;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;

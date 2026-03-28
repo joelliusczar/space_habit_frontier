@@ -4,7 +4,7 @@
 package space_habit_frontier.engine.db_generated.tables.records;
 
 
-import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import org.jooq.Record1;
@@ -94,15 +94,15 @@ public class UsersRecord extends UpdatableRecordImpl<UsersRecord> {
     /**
      * Setter for <code>public.users.creationtimestamp</code>.
      */
-    public void setCreationtimestamp(BigDecimal value) {
+    public void setCreationtimestamp(OffsetDateTime value) {
         set(5, value);
     }
 
     /**
      * Getter for <code>public.users.creationtimestamp</code>.
      */
-    public BigDecimal getCreationtimestamp() {
-        return (BigDecimal) get(5);
+    public OffsetDateTime getCreationtimestamp() {
+        return (OffsetDateTime) get(5);
     }
 
     /**
@@ -184,7 +184,7 @@ public class UsersRecord extends UpdatableRecordImpl<UsersRecord> {
     /**
      * Create a detached, initialised UsersRecord
      */
-    public UsersRecord(UUID id, String username, String email, byte[] hashedpw, Integer conditioncode, BigDecimal creationtimestamp, Short daystart, Integer deathgoldpenalty, Integer deathlvlpenalty, Integer adventuremode) {
+    public UsersRecord(UUID id, String username, String email, byte[] hashedpw, Integer conditioncode, OffsetDateTime creationtimestamp, Short daystart, Integer deathgoldpenalty, Integer deathlvlpenalty, Integer adventuremode) {
         super(Users.USERS);
 
         setId(id);

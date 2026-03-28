@@ -4,7 +4,7 @@
 package space_habit_frontier.engine.db_generated.tables.records;
 
 
-import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import org.jooq.Record1;
@@ -80,43 +80,43 @@ public class TodosRecord extends UpdatableRecordImpl<TodosRecord> {
     /**
      * Setter for <code>public.todos.duedatetimestamp</code>.
      */
-    public void setDuedatetimestamp(BigDecimal value) {
+    public void setDuedatetimestamp(OffsetDateTime value) {
         set(4, value);
     }
 
     /**
      * Getter for <code>public.todos.duedatetimestamp</code>.
      */
-    public BigDecimal getDuedatetimestamp() {
-        return (BigDecimal) get(4);
+    public OffsetDateTime getDuedatetimestamp() {
+        return (OffsetDateTime) get(4);
     }
 
     /**
      * Setter for <code>public.todos.effectivedatetimestamp</code>.
      */
-    public void setEffectivedatetimestamp(BigDecimal value) {
+    public void setEffectivedatetimestamp(OffsetDateTime value) {
         set(5, value);
     }
 
     /**
      * Getter for <code>public.todos.effectivedatetimestamp</code>.
      */
-    public BigDecimal getEffectivedatetimestamp() {
-        return (BigDecimal) get(5);
+    public OffsetDateTime getEffectivedatetimestamp() {
+        return (OffsetDateTime) get(5);
     }
 
     /**
      * Setter for <code>public.todos.streakstarttimestamp</code>.
      */
-    public void setStreakstarttimestamp(BigDecimal value) {
+    public void setStreakstarttimestamp(OffsetDateTime value) {
         set(6, value);
     }
 
     /**
      * Getter for <code>public.todos.streakstarttimestamp</code>.
      */
-    public BigDecimal getStreakstarttimestamp() {
-        return (BigDecimal) get(6);
+    public OffsetDateTime getStreakstarttimestamp() {
+        return (OffsetDateTime) get(6);
     }
 
     /**
@@ -192,15 +192,15 @@ public class TodosRecord extends UpdatableRecordImpl<TodosRecord> {
     /**
      * Setter for <code>public.todos.creationtimestamp</code>.
      */
-    public void setCreationtimestamp(BigDecimal value) {
+    public void setCreationtimestamp(OffsetDateTime value) {
         set(12, value);
     }
 
     /**
      * Getter for <code>public.todos.creationtimestamp</code>.
      */
-    public BigDecimal getCreationtimestamp() {
-        return (BigDecimal) get(12);
+    public OffsetDateTime getCreationtimestamp() {
+        return (OffsetDateTime) get(12);
     }
 
     /**
@@ -254,7 +254,7 @@ public class TodosRecord extends UpdatableRecordImpl<TodosRecord> {
     /**
      * Create a detached, initialised TodosRecord
      */
-    public TodosRecord(UUID id, String title, String note, Short risk, BigDecimal duedatetimestamp, BigDecimal effectivedatetimestamp, BigDecimal streakstarttimestamp, Short repeatcount, Short repeattype, Short repeatrate, String weekactivedays, Integer[] yearactivedays, BigDecimal creationtimestamp, UUID userid, UUID parenttodoid) {
+    public TodosRecord(UUID id, String title, String note, Short risk, OffsetDateTime duedatetimestamp, OffsetDateTime effectivedatetimestamp, OffsetDateTime streakstarttimestamp, Short repeatcount, Short repeattype, Short repeatrate, String weekactivedays, Integer[] yearactivedays, OffsetDateTime creationtimestamp, UUID userid, UUID parenttodoid) {
         super(Todos.TODOS);
 
         setId(id);

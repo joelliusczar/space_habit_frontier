@@ -1,7 +1,6 @@
 package space_habit_frontier.app.filters;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

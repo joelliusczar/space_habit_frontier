@@ -4,7 +4,7 @@
 package space_habit_frontier.engine.db_generated.tables.records;
 
 
-import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import org.jooq.Record1;
@@ -52,15 +52,15 @@ public class TodoeventsRecord extends UpdatableRecordImpl<TodoeventsRecord> {
     /**
      * Setter for <code>public.todoevents.creationtimestamp</code>.
      */
-    public void setCreationtimestamp(BigDecimal value) {
+    public void setCreationtimestamp(OffsetDateTime value) {
         set(2, value);
     }
 
     /**
      * Getter for <code>public.todoevents.creationtimestamp</code>.
      */
-    public BigDecimal getCreationtimestamp() {
-        return (BigDecimal) get(2);
+    public OffsetDateTime getCreationtimestamp() {
+        return (OffsetDateTime) get(2);
     }
 
     /**
@@ -114,7 +114,7 @@ public class TodoeventsRecord extends UpdatableRecordImpl<TodoeventsRecord> {
     /**
      * Create a detached, initialised TodoeventsRecord
      */
-    public TodoeventsRecord(UUID id, Integer damage, BigDecimal creationtimestamp, UUID todoid, UUID userid) {
+    public TodoeventsRecord(UUID id, Integer damage, OffsetDateTime creationtimestamp, UUID todoid, UUID userid) {
         super(Todoevents.TODOEVENTS);
 
         setId(id);

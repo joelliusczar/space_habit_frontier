@@ -4,7 +4,7 @@
 package space_habit_frontier.engine.db_generated.tables;
 
 
-import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -82,17 +82,17 @@ public class Todos extends TableImpl<TodosRecord> {
     /**
      * The column <code>public.todos.duedatetimestamp</code>.
      */
-    public final TableField<TodosRecord, BigDecimal> DUEDATETIMESTAMP = createField(DSL.name("duedatetimestamp"), SQLDataType.NUMERIC(16, 4), this, "");
+    public final TableField<TodosRecord, OffsetDateTime> DUEDATETIMESTAMP = createField(DSL.name("duedatetimestamp"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "");
 
     /**
      * The column <code>public.todos.effectivedatetimestamp</code>.
      */
-    public final TableField<TodosRecord, BigDecimal> EFFECTIVEDATETIMESTAMP = createField(DSL.name("effectivedatetimestamp"), SQLDataType.NUMERIC(16, 4), this, "");
+    public final TableField<TodosRecord, OffsetDateTime> EFFECTIVEDATETIMESTAMP = createField(DSL.name("effectivedatetimestamp"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "");
 
     /**
      * The column <code>public.todos.streakstarttimestamp</code>.
      */
-    public final TableField<TodosRecord, BigDecimal> STREAKSTARTTIMESTAMP = createField(DSL.name("streakstarttimestamp"), SQLDataType.NUMERIC(16, 4).nullable(false), this, "");
+    public final TableField<TodosRecord, OffsetDateTime> STREAKSTARTTIMESTAMP = createField(DSL.name("streakstarttimestamp"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false), this, "");
 
     /**
      * The column <code>public.todos.repeatcount</code>.
@@ -122,7 +122,7 @@ public class Todos extends TableImpl<TodosRecord> {
     /**
      * The column <code>public.todos.creationtimestamp</code>.
      */
-    public final TableField<TodosRecord, BigDecimal> CREATIONTIMESTAMP = createField(DSL.name("creationtimestamp"), SQLDataType.NUMERIC(16, 4).nullable(false), this, "");
+    public final TableField<TodosRecord, OffsetDateTime> CREATIONTIMESTAMP = createField(DSL.name("creationtimestamp"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false), this, "");
 
     /**
      * The column <code>public.todos.userid</code>.

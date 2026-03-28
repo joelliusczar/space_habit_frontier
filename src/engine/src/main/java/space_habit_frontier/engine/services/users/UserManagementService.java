@@ -1,7 +1,5 @@
 package space_habit_frontier.engine.services.users;
 
-import java.math.BigDecimal;
-
 import org.jooq.DSLContext;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -28,7 +26,7 @@ public class UserManagementService {
 			BCrypt.gensalt(12))
 			.getBytes();
 		var id = Generators.timeBasedEpochRandomGenerator().generate();
-		var timestamp = __datetimeProvider.nowUtc().toEpochSecond();
+		var timestamp = __datetimeProvider.now().toOffsetDateTime();
 		__dbContext.transaction(configuration -> {
 			var ctx = configuration.dsl();
 			ctx.insertInto(Users.USERS)
@@ -36,7 +34,7 @@ public class UserManagementService {
 				.set(Users.USERS.HASHEDPW, hashed)
 				.set(Users.USERS.USERNAME, formData.getUsername())
 				.set(Users.USERS.EMAIL, formData.getEmail())
-				.set(Users.USERS.CREATIONTIMESTAMP, BigDecimal.valueOf(timestamp))
+				.set(Users.USERS.CREATIONTIMESTAMP, timestamp)
 				.execute();
 			ctx.commit();
 		});

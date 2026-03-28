@@ -4,7 +4,7 @@
 package space_habit_frontier.engine.db_generated.tables;
 
 
-import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -85,7 +85,7 @@ public class Users extends TableImpl<UsersRecord> {
     /**
      * The column <code>public.users.creationtimestamp</code>.
      */
-    public final TableField<UsersRecord, BigDecimal> CREATIONTIMESTAMP = createField(DSL.name("creationtimestamp"), SQLDataType.NUMERIC(16, 4), this, "");
+    public final TableField<UsersRecord, OffsetDateTime> CREATIONTIMESTAMP = createField(DSL.name("creationtimestamp"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "");
 
     /**
      * The column <code>public.users.daystart</code>.
