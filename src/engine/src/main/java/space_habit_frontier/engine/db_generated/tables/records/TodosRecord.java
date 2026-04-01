@@ -231,6 +231,62 @@ public class TodosRecord extends UpdatableRecordImpl<TodosRecord> {
         return (UUID) get(14);
     }
 
+    /**
+     * Setter for <code>public.todos.monthactivedays</code>.
+     */
+    public void setMonthactivedays(Integer[] value) {
+        set(15, value);
+    }
+
+    /**
+     * Getter for <code>public.todos.monthactivedays</code>.
+     */
+    public Integer[] getMonthactivedays() {
+        return (Integer[]) get(15);
+    }
+
+    /**
+     * Setter for <code>public.todos.poisonous</code>.
+     */
+    public void setPoisonous(Boolean value) {
+        set(16, value);
+    }
+
+    /**
+     * Getter for <code>public.todos.poisonous</code>.
+     */
+    public Boolean getPoisonous() {
+        return (Boolean) get(16);
+    }
+
+    /**
+     * Setter for <code>public.todos.expirationdatetimestamp</code>.
+     */
+    public void setExpirationdatetimestamp(OffsetDateTime value) {
+        set(17, value);
+    }
+
+    /**
+     * Getter for <code>public.todos.expirationdatetimestamp</code>.
+     */
+    public OffsetDateTime getExpirationdatetimestamp() {
+        return (OffsetDateTime) get(17);
+    }
+
+    /**
+     * Setter for <code>public.todos.rateinversionflag</code>.
+     */
+    public void setRateinversionflag(Boolean value) {
+        set(18, value);
+    }
+
+    /**
+     * Getter for <code>public.todos.rateinversionflag</code>.
+     */
+    public Boolean getRateinversionflag() {
+        return (Boolean) get(18);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -254,7 +310,7 @@ public class TodosRecord extends UpdatableRecordImpl<TodosRecord> {
     /**
      * Create a detached, initialised TodosRecord
      */
-    public TodosRecord(UUID id, String title, String note, Short risk, OffsetDateTime duedatetimestamp, OffsetDateTime effectivedatetimestamp, OffsetDateTime streakstarttimestamp, Short repeatcount, Short repeattype, Short repeatrate, String weekactivedays, Integer[] yearactivedays, OffsetDateTime creationtimestamp, UUID userid, UUID parenttodoid) {
+    public TodosRecord(UUID id, String title, String note, Short risk, OffsetDateTime duedatetimestamp, OffsetDateTime effectivedatetimestamp, OffsetDateTime streakstarttimestamp, Short repeatcount, Short repeattype, Short repeatrate, String weekactivedays, Integer[] yearactivedays, OffsetDateTime creationtimestamp, UUID userid, UUID parenttodoid, Integer[] monthactivedays, Boolean poisonous, OffsetDateTime expirationdatetimestamp, Boolean rateinversionflag) {
         super(Todos.TODOS);
 
         setId(id);
@@ -272,6 +328,10 @@ public class TodosRecord extends UpdatableRecordImpl<TodosRecord> {
         setCreationtimestamp(creationtimestamp);
         setUserid(userid);
         setParenttodoid(parenttodoid);
+        setMonthactivedays(monthactivedays);
+        setPoisonous(poisonous);
+        setExpirationdatetimestamp(expirationdatetimestamp);
+        setRateinversionflag(rateinversionflag);
         resetChangedOnNotNull();
     }
 }

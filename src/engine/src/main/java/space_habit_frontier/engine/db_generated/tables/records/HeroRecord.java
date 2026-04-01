@@ -4,6 +4,7 @@
 package space_habit_frontier.engine.db_generated.tables.records;
 
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import org.jooq.JSON;
@@ -231,6 +232,20 @@ public class HeroRecord extends UpdatableRecordImpl<HeroRecord> {
         return (Long) get(14);
     }
 
+    /**
+     * Setter for <code>public.hero.touchedtimestamp</code>.
+     */
+    public void setTouchedtimestamp(OffsetDateTime value) {
+        set(15, value);
+    }
+
+    /**
+     * Getter for <code>public.hero.touchedtimestamp</code>.
+     */
+    public OffsetDateTime getTouchedtimestamp() {
+        return (OffsetDateTime) get(15);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -254,7 +269,7 @@ public class HeroRecord extends UpdatableRecordImpl<HeroRecord> {
     /**
      * Create a detached, initialised HeroRecord
      */
-    public HeroRecord(UUID id, Long xp, Long gold, JSON inventory, JSON monster, JSON dungeon, Long currenthp, Short[] activebonustypes, Short[] activepenaltytypes, Long weaponrightid, Long weaponleftid, Long frontarmorid, Long backarmorid, Long toparmorid, Long bottomarmorid) {
+    public HeroRecord(UUID id, Long xp, Long gold, JSON inventory, JSON monster, JSON dungeon, Long currenthp, Short[] activebonustypes, Short[] activepenaltytypes, Long weaponrightid, Long weaponleftid, Long frontarmorid, Long backarmorid, Long toparmorid, Long bottomarmorid, OffsetDateTime touchedtimestamp) {
         super(Hero.HERO);
 
         setId(id);
@@ -272,6 +287,7 @@ public class HeroRecord extends UpdatableRecordImpl<HeroRecord> {
         setBackarmorid(backarmorid);
         setToparmorid(toparmorid);
         setBottomarmorid(bottomarmorid);
+        setTouchedtimestamp(touchedtimestamp);
         resetChangedOnNotNull();
     }
 }

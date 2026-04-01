@@ -134,6 +134,26 @@ public class Todos extends TableImpl<TodosRecord> {
      */
     public final TableField<TodosRecord, UUID> PARENTTODOID = createField(DSL.name("parenttodoid"), SQLDataType.UUID, this, "");
 
+    /**
+     * The column <code>public.todos.monthactivedays</code>.
+     */
+    public final TableField<TodosRecord, Integer[]> MONTHACTIVEDAYS = createField(DSL.name("monthactivedays"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.field(DSL.raw("ARRAY[]::integer[]"), SQLDataType.INTEGER)).array(), this, "");
+
+    /**
+     * The column <code>public.todos.poisonous</code>.
+     */
+    public final TableField<TodosRecord, Boolean> POISONOUS = createField(DSL.name("poisonous"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "");
+
+    /**
+     * The column <code>public.todos.expirationdatetimestamp</code>.
+     */
+    public final TableField<TodosRecord, OffsetDateTime> EXPIRATIONDATETIMESTAMP = createField(DSL.name("expirationdatetimestamp"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "");
+
+    /**
+     * The column <code>public.todos.rateinversionflag</code>.
+     */
+    public final TableField<TodosRecord, Boolean> RATEINVERSIONFLAG = createField(DSL.name("rateinversionflag"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "");
+
     private Todos(Name alias, Table<TodosRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
     }

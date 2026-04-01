@@ -4,6 +4,7 @@
 package space_habit_frontier.engine.db_generated.tables;
 
 
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -131,6 +132,11 @@ public class Hero extends TableImpl<HeroRecord> {
      * The column <code>public.hero.bottomarmorid</code>.
      */
     public final TableField<HeroRecord, Long> BOTTOMARMORID = createField(DSL.name("bottomarmorid"), SQLDataType.BIGINT, this, "");
+
+    /**
+     * The column <code>public.hero.touchedtimestamp</code>.
+     */
+    public final TableField<HeroRecord, OffsetDateTime> TOUCHEDTIMESTAMP = createField(DSL.name("touchedtimestamp"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false), this, "");
 
     private Hero(Name alias, Table<HeroRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
