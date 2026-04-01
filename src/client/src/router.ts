@@ -7,12 +7,30 @@ import UserSignUp from "./components/users/UserSignup.vue";
 import SettingsNav from "./components/user_settings/SettingsNav.vue";
 import ActionsList from "./components/actions/ActionsList.vue";
 import HeroInventory from "./components/item-store/HeroInventory.vue";
+import QuestMain from "./components/quest/QuestMain.vue";
 import { useCredentialsStore } from "./stores/credentials";
 
 
 
 
 const routes = [
+	{ 
+		name: "quest", 
+		path: "/quest", 
+		component: QuestMain,
+		children: [
+			{ 
+				name: "todos", 
+				path: "/todos/list", 
+				component: TodosList
+			},
+			{ 
+				name: "actions", 
+				path: "/actions/list", 
+				component: ActionsList
+			},
+		]
+	},
 	{ 
 		name: "todoEdit", 
 		path: "/todos/edit", 
@@ -23,11 +41,7 @@ const routes = [
 		path: "/todos/add", 
 		component: TodoEdit
 	},
-	{ 
-		name: "todos", 
-		path: "/todos/list", 
-		component: TodosList
-	},
+	
 	{ 
 		name: "userSignup", 
 		path: "/user/sign-up", 
@@ -37,11 +51,6 @@ const routes = [
 		name: "settingsNav", 
 		path: "/settings/nav", 
 		component: SettingsNav
-	},
-	{ 
-		name: "actions", 
-		path: "/actions/list", 
-		component: ActionsList
 	},
 	{ 
 		name: "inventory", 
@@ -64,7 +73,6 @@ const router = createRouter({
 });
 
 router.beforeEach((to) => {
-	console.log(to);
 	const { credentials } = storeToRefs(useCredentialsStore());
 	if (credentials.value.isSignedIn || to.meta.public) {
 		return true;

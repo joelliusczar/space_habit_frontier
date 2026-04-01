@@ -1,10 +1,11 @@
 package space_habit_frontier.engine.dtos;
 
-public class NamedId {
+
+public class NamedIntId {
 	private long id;
 	private String name = "";
 
-	public NamedId(long id, String name) {
+	public NamedIntId(long id, String name) {
 		this.id = id;
 		this.name = name;
 	}

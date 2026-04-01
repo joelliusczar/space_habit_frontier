@@ -219,10 +219,12 @@ class AppDependencies {
 	@Bean
 	public TodoService getTodoService(
 			DataContextProvider dataContextProvider,
-			UserProvider userProvider
+			UserProvider userProvider,
+			DatetimeProvider datetimeProvider
 	)  throws SQLException {
 		return new TodoService(
 			dataContextProvider,
-			userProvider);
+			userProvider,
+			datetimeProvider);
 	}
 }

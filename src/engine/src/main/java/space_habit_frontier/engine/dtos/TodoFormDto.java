@@ -1,57 +1,62 @@
 package space_habit_frontier.engine.dtos;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-public class TodoFormDto extends NamedId {
+public class TodoFormDto extends TitledId {
 
 	private String note;
-	private int rateType;
-	private String dueDate;
-	private List<MonthDay> yearlyDueDays;
+	private int repeattype;
+	private ZonedDateTime duedatetimestamp;
+	private List<MonthDay> yearactivedays;
 	private boolean yearlySkipMod;
 	private List<Integer> monthlyDueDays;
 	private boolean monthlySkipMod;
-	private List<String> dueDaysOfWeek;
-	private int dailyRate;
+	private List<String> weekactivedays;
+	private int repeatrate;
 	private boolean poisonous;
-	private int risk;
-	private String activeFromDate;
+	private short risk;
+	private ZonedDateTime effectivedatetimestamp;
 	private String activeToDate;
 
 	public TodoFormDto() {
-		super(0, "");
+		super(new UUID(0, 0), "");
 	}
 
 	public TodoFormDto(
-		long id,
-		String name,
+		UUID id,
+		String title,
 		String note,
-		int rateType,
-		String dueDate,
-		List<MonthDay> yearlyDueDays,
+		int repeattype,
+		ZonedDateTime duedatetimestamp,
+		List<MonthDay> yearactivedays,
 		boolean yearlySkipMod,
 		List<Integer> monthlyDueDays,
 		boolean monthlySkipMod,
-		List<String> dueDaysOfWeek,
-		int dailyRate,
+		List<String> weekactivedays,
+		int repeatrate,
 		boolean poisonous,
-		int danger,
-		String activeFromDate,
-		String activeToDate
-	) {
-		super(id, name);
+		short risk,
+		ZonedDateTime effectivedatetimestamp,
+		String activeToDate) {
+		super(id, title);
 		this.note = note;
-		this.rateType = rateType;
-		this.dueDate = dueDate;
-		this.yearlyDueDays = yearlyDueDays;
+		this.repeattype = repeattype;
+		this.duedatetimestamp = duedatetimestamp;
+		this.yearactivedays = yearactivedays;
 		this.yearlySkipMod = yearlySkipMod;
 		this.monthlyDueDays = monthlyDueDays;
 		this.monthlySkipMod = monthlySkipMod;
-		this.dueDaysOfWeek = dueDaysOfWeek;
-		this.dailyRate = dailyRate;
+		this.weekactivedays = weekactivedays;
+		this.repeatrate = repeatrate;
 		this.poisonous = poisonous;
-		this.risk = danger;
-		this.activeFromDate = activeFromDate;
+		this.risk = risk;
+		this.effectivedatetimestamp = effectivedatetimestamp;
 		this.activeToDate = activeToDate;
 	}
 
@@ -63,31 +68,31 @@ public class TodoFormDto extends NamedId {
 		this.note = note;
 	}
 
-	// Getter and Setter for rateType
-	public int getRateType() {
-		return rateType;
+	// Getter and Setter for repeattype
+	public int getRepeattype() {
+		return repeattype;
 	}
 
-	public void setRateType(int rateType) {
-			this.rateType = rateType;
+	public void setRepeattype(int repeattype) {
+			this.repeattype = repeattype;
 	}
 
 	// Getter and Setter for dueDate
-	public String getDueDate() {
-			return dueDate;
+	public ZonedDateTime getDuedatetimestamp() {
+			return duedatetimestamp;
 	}
 
-	public void setDueDate(String dueDate) {
-			this.dueDate = dueDate;
+	public void setDuedatetimestamp(ZonedDateTime dueDate) {
+			this.duedatetimestamp = dueDate;
 	}
 
 	// Getter and Setter for yearlyDueDays
-	public List<MonthDay> getYearlyDueDays() {
-			return yearlyDueDays;
+	public List<MonthDay> getYearactivedays() {
+			return yearactivedays;
 	}
 
-	public void setYearlyDueDays(List<MonthDay> yearlyDueDays) {
-			this.yearlyDueDays = yearlyDueDays;
+	public void setYearactivedays(List<MonthDay> yearlyDueDays) {
+			this.yearactivedays = yearlyDueDays;
 	}
 
 	// Getter and Setter for yearlySkipMod
@@ -117,22 +122,22 @@ public class TodoFormDto extends NamedId {
 			this.monthlySkipMod = monthlySkipMod;
 	}
 
-	// Getter and Setter for dueDaysOfWeek
-	public List<String> getDueDaysOfWeek() {
-			return dueDaysOfWeek;
+	// Getter and Setter for weekactivedays
+	public List<String> getWeekactivedays() {
+			return weekactivedays;
 	}
 
-	public void setDueDaysOfWeek(List<String> dueDaysOfWeek) {
-			this.dueDaysOfWeek = dueDaysOfWeek;
+	public void setWeekactivedays(List<String> dueDaysOfWeek) {
+			this.weekactivedays = dueDaysOfWeek;
 	}
 
 	// Getter and Setter for dailyRate
-	public int getDailyRate() {
-			return dailyRate;
+	public int getRepeatrate() {
+			return repeatrate;
 	}
 
-	public void setDailyRate(int dailyRate) {
-			this.dailyRate = dailyRate;
+	public void setRepeatrate(int dailyRate) {
+			this.repeatrate = dailyRate;
 	}
 
 	// Getter and Setter for poisonous
@@ -145,21 +150,21 @@ public class TodoFormDto extends NamedId {
 	}
 
 	// Getter and Setter for danger
-	public int getRisk() {
+	public short getRisk() {
 			return risk;
 	}
 
-	public void setRisk(int risk) {
+	public void setRisk(short risk) {
 			this.risk = risk;
 	}
 
 	// Getter and Setter for activeFromDate
-	public String getActiveFromDate() {
-			return activeFromDate;
+	public ZonedDateTime getEffectivedatetimestamp() {
+			return effectivedatetimestamp;
 	}
 
-	public void setActiveFromDate(String activeFromDate) {
-			this.activeFromDate = activeFromDate;
+	public void setEffectivedatetimestamp(ZonedDateTime activeFromDate) {
+			this.effectivedatetimestamp = activeFromDate;
 	}
 
 	// Getter and Setter for activeToDate
@@ -170,6 +175,52 @@ public class TodoFormDto extends NamedId {
 	public void setActiveToDate(String activeToDate) {
 			this.activeToDate = activeToDate;
 	}
+
+	public String getWeekactivedaysByteString() {
+		var result = String.format("%d%d%d%d%d%d%d",
+			(weekactivedays.contains(DayOfWeek.MONDAY.name().toLowerCase())) 
+				? 1 : 0,
+			(weekactivedays.contains(DayOfWeek.TUESDAY.name().toLowerCase())) 
+				? 1 : 0,
+			(weekactivedays.contains(DayOfWeek.WEDNESDAY.name().toLowerCase())) 
+				? 1 : 0,
+			(weekactivedays.contains(DayOfWeek.THURSDAY.name().toLowerCase())) 
+				? 1 : 0,
+			(weekactivedays.contains(DayOfWeek.FRIDAY.name().toLowerCase())) 
+				? 1 : 0,
+			(weekactivedays.contains(DayOfWeek.SATURDAY.name().toLowerCase())) 
+				? 1 : 0,
+			(weekactivedays.contains(DayOfWeek.SUNDAY.name().toLowerCase())) 
+				? 1 : 0
+		);
+		return result;
+	}
+
+	public Integer[] getYearactivedaysIntegerArray() {
+		var monthMap = Map.ofEntries(
+			Map.entry(Month.JANUARY.name().toLowerCase(), Month.JANUARY),
+			Map.entry(Month.FEBRUARY.name().toLowerCase(), Month.FEBRUARY),
+			Map.entry(Month.MARCH.name().toLowerCase(), Month.MARCH),
+			Map.entry(Month.APRIL.name().toLowerCase(), Month.APRIL),
+			Map.entry(Month.MAY.name().toLowerCase(), Month.MAY),
+			Map.entry(Month.JUNE.name().toLowerCase(), Month.JUNE),
+			Map.entry(Month.JULY.name().toLowerCase(), Month.JULY),
+			Map.entry(Month.AUGUST.name().toLowerCase(), Month.AUGUST),
+			Map.entry(Month.SEPTEMBER.name().toLowerCase(), Month.SEPTEMBER),
+			Map.entry(Month.OCTOBER.name().toLowerCase(), Month.OCTOBER),
+			Map.entry(Month.NOVEMBER.name().toLowerCase(), Month.NOVEMBER),
+			Map.entry(Month.DECEMBER.name().toLowerCase(), Month.DECEMBER)
+		);
+		var result = yearactivedays.stream().map(d -> {
+			//use leap year so that all dates are captured
+			var date = LocalDate.of(2000, monthMap.get(d.month()), d.day());
+			return Integer.valueOf(date.getDayOfYear());
+		}).toArray(Integer[]::new);
+
+		return result;
+	}
+
+
 }
 
 /*

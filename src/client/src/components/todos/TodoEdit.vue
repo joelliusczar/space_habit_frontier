@@ -19,16 +19,16 @@
 	const formName = "todo-edit"
 
 	const formValues = reactive<FormValues>({
-		id: 0,
-		name: "",
+		id: "00000000-0000-0000-0000-000000000000",
+		title: "",
 		note: "",
-		rateType: CycleRateTypes.NEVER,
-		dueDate: null,
-		yearlyDueDays: [],
+		repeattype: CycleRateTypes.NEVER,
+		duedatetimestamp: null,
+		yearactivedays: [],
 		yearlySkipMod: false,
 		monthlyDueDays: [],
 		monthlySkipMod: false,
-		dueDaysOfWeek: [
+		weekactivedays: [
 			"monday",
 			"tuesday",
 			"wednesday",
@@ -37,10 +37,10 @@
 			"saturday",
 			"sunday",
 		],
-		dailyRate: 1,
+		repeatrate: 1,
 		poisonous: true,
-		danger: 5,
-		activeFromDate: dayjs().format("YYYY-MM-DD"),
+		risk: 5,
+		effectivedatetimestamp: new Date(),
 		activeToDate: null
 	});
 
@@ -59,14 +59,14 @@
 	});
 
 	const addYearlyDueDate = () => {
-		formValues.yearlyDueDays.push({
+		formValues.yearactivedays.push({
 			month: "January",
 			day: 1,
 		});
 	};
 
 	const removeYearlyDueDate = (_: Event, idx: number) => {
-		formValues.yearlyDueDays.splice(idx, 1);
+		formValues.yearactivedays.splice(idx, 1);
 	};
 
 	useFormSubmit(
@@ -93,8 +93,8 @@
 				<fieldset class="txt-field">
 					<legend>Name:</legend>
 					<input
-						name="name"
-						v-model="formValues.name"
+						name="title"
+						v-model="formValues.title"
 						:form="formName"
 					/>
 				</fieldset>
@@ -106,19 +106,19 @@
 						:form="formName"
 					></textarea>
 				</fieldset>
-				<fieldset v-show="formValues.rateType === CycleRateTypes.NEVER">
-					<legend for="dueDate">Date</legend>
+				<fieldset v-show="formValues.repeattype === CycleRateTypes.NEVER">
+					<legend for="duedatetimestamp">Date</legend>
 					<input
-						name="dueDate"
+						name="duedatetimestamp"
 						type="datetime-local"
-						v-model="formValues.dueDate"
+						v-model="formValues.duedatetimestamp"
 					/>
 				</fieldset>
 				<fieldset>
-					<legend for="rateType">Repeats</legend>
+					<legend for="repeattype">Repeats</legend>
 					<select
-						name="rateType"
-						v-model="formValues.rateType"
+						name="repeattype"
+						v-model="formValues.repeattype"
 						:form="formName"
 					>
 						<option
@@ -131,60 +131,60 @@
 						</option>
 					</select>
 				</fieldset>
-				<fieldset v-show="formValues.rateType === CycleRateTypes.WEEKLY">
+				<fieldset v-show="formValues.repeattype === CycleRateTypes.WEEKLY">
 					<legend >Days of the Week</legend>
 					<input
 						name="monday"
 						value="monday"
 						type="checkbox"
-						v-model="formValues.dueDaysOfWeek"
+						v-model="formValues.weekactivedays"
 					/>
 					<label for="monday" >Monday</label>
 					<input
 						name="tuesday"
 						value="tuesday"
 						type="checkbox"
-						v-model="formValues.dueDaysOfWeek"
+						v-model="formValues.weekactivedays"
 					/>
 					<label for="tuesday" >Tuesday</label>
 					<input
 						name="wednesday"
 						value="wednesday"
 						type="checkbox"
-						v-model="formValues.dueDaysOfWeek"
+						v-model="formValues.weekactivedays"
 					/>
 					<label for="wednesday" >Wednesday</label>
 					<input
 						name="thursday"
 						value="thursday"
 						type="checkbox"
-						v-model="formValues.dueDaysOfWeek"
+						v-model="formValues.weekactivedays"
 					/>
 					<label for="hursday" >Thursday</label>
 					<input
 						name="friday"
 						value="friday"
 						type="checkbox"
-						v-model="formValues.dueDaysOfWeek"
+						v-model="formValues.weekactivedays"
 					/>
 					<label for="friday" >Friday</label>
 					<input
 						name="saturday"
 						value="saturday"
 						type="checkbox"
-						v-model="formValues.dueDaysOfWeek"
+						v-model="formValues.weekactivedays"
 					/>
 					<label for="saturday" >Saturday</label>
 					<input
 						name="sunday"
 						value="sunday"
 						type="checkbox"
-						v-model="formValues.dueDaysOfWeek"
+						v-model="formValues.weekactivedays"
 					/>
 					<label for="sunday" >Sunday</label>
 				</fieldset>
 				<div>
-					<fieldset v-show="formValues.rateType === CycleRateTypes.MONTHLY" >
+					<fieldset v-show="formValues.repeattype === CycleRateTypes.MONTHLY" >
 							<legend for="monthlyDueDays">Due every...</legend>
 							<Listbox
 								multiple
@@ -213,7 +213,7 @@
 					</fieldset>
 				</div>
 				<div>
-					<fieldset v-show="formValues.rateType === CycleRateTypes.YEARLY">
+					<fieldset v-show="formValues.repeattype === CycleRateTypes.YEARLY">
 						<legend for="yearlyDueDays">Due every...</legend>
 						<button
 							@click="addYearlyDueDate"
@@ -222,7 +222,7 @@
 							+
 						</button>
 						<div
-							v-for="(item, idx) in formValues.yearlyDueDays"
+							v-for="(item, idx) in formValues.yearactivedays"
 							:key="idx"
 						>
 							<button
@@ -232,14 +232,14 @@
 								-
 							</button>
 							<Listbox
-								v-model="formValues.yearlyDueDays[idx].month"
+								v-model="formValues.yearactivedays[idx].month"
 								class="select-parent"
 								as="span"
 							>
 								<ListboxButton
 									class="button yearly-fields"
 								>
-									{{formValues.yearlyDueDays[idx].month}}
+									{{formValues.yearactivedays[idx].month}}
 								</ListboxButton>
 								<ListboxOptions class="select-option-box">
 									<ListboxOption
@@ -253,18 +253,18 @@
 								</ListboxOptions>
 							</Listbox>
 							<Listbox
-								v-model="formValues.yearlyDueDays[idx].day"
+								v-model="formValues.yearactivedays[idx].day"
 								class="select-parent"
 								as="span"
 							>
 								<ListboxButton
 									class="button"
 								>
-									{{formatOrdinal(formValues.yearlyDueDays[idx].day)}}
+									{{formatOrdinal(formValues.yearactivedays[idx].day)}}
 								</ListboxButton>
 								<ListboxOptions class="select-option-box yearly-fields">
 									<ListboxOption
-										v-for="n in monthDays[formValues.yearlyDueDays[idx].month]"
+										v-for="n in monthDays[formValues.yearactivedays[idx].month]"
 										:key="n"
 										:value="n"
 										class="select-option"
@@ -276,13 +276,13 @@
 						</div>
 					</fieldset>
 				</div>
-				<fieldset v-show="formValues.rateType == CycleRateTypes.DAILY">
-						<legend for="dailyRate">Rate</legend>
+				<fieldset v-show="formValues.repeattype == CycleRateTypes.DAILY">
+						<legend for="repeatrate">Rate</legend>
 						<span> Every </span>
 						<input
-							name="dailyRate"
+							name="repeatrate"
 							type="number"
-							v-model="formValues.dailyRate"
+							v-model="formValues.repeatrate"
 						/>
 						<span> days</span>
 				</fieldset>
@@ -291,12 +291,12 @@
 				<summary class="summary-button">Extra</summary>
 				<div>
 					<fieldset>
-						<legend for="danger">Danger</legend>
+						<legend for="risk">Danger</legend>
 						<input
-							name="danger"
+							name="risk"
 							type="range"
 							min="0" max="10"
-							v-model="formValues.danger"
+							v-model="formValues.risk"
 						>
 					</fieldset>
 					<fieldset>
@@ -304,18 +304,18 @@
 						<input name="startTime" type="time"/>
 					</fieldset>
 					<fieldset>
-						<legend for="activeFromDate">Active Since</legend>
+						<legend for="effectivedatetimestamp">Active Since</legend>
 						<input
-							name="activeFromDate"
-							type="date"
-							v-model="formValues.activeFromDate"
+							name="effectivedatetimestamp"
+							type="datetime-local"
+							v-model="formValues.effectivedatetimestamp"
 						/>
 					</fieldset>
 					<fieldset>
 						<legend for="activeToDate">Active till</legend>
 						<input
 							name="activeToDate"
-							type="date"
+							type="datetime-local"
 							v-model="formValues.activeToDate"
 						/>
 					</fieldset>

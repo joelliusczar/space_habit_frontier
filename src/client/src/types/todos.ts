@@ -9,19 +9,19 @@ export const CycleRateTypes = {
 };
 
 export type FormValues = {
-	id: number,
-	name: string,
+	id: string,
+	title: string,
 	note: string,
-	rateType: number,
-	dueDate: string | null,
-	yearlyDueDays: MonthDay[],
+	repeattype: number,
+	duedatetimestamp: Date | null,
+	yearactivedays: MonthDay[],
 	yearlySkipMod: boolean,
 	monthlyDueDays: number[],
 	monthlySkipMod: boolean,
-	dueDaysOfWeek: string[],
-	dailyRate: number,
+	weekactivedays: string[],
+	repeatrate: number,
 	poisonous: boolean,
-	danger: number,
-	activeFromDate: string,
-	activeToDate: string | null
+	risk: number,
+	effectivedatetimestamp: Date,
+	activeToDate: Date | null
 };
