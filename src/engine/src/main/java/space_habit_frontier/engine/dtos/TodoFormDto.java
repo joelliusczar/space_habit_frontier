@@ -11,18 +11,18 @@ import java.util.UUID;
 public class TodoFormDto extends TitledId {
 
 	private String note;
-	private int repeattype;
+	private short repeattype;
+	private short repeatcount;
 	private ZonedDateTime duedatetimestamp;
 	private List<MonthDay> yearactivedays;
-	private boolean yearlySkipMod;
-	private List<Integer> monthlyDueDays;
-	private boolean monthlySkipMod;
+	private Integer[] monthactivedays;
+	private boolean rateinversionflag;
 	private List<String> weekactivedays;
-	private int repeatrate;
+	private short repeatrate;
 	private boolean poisonous;
 	private short risk;
 	private ZonedDateTime effectivedatetimestamp;
-	private String activeToDate;
+	private ZonedDateTime expirationdatetimestamp;
 
 	public TodoFormDto() {
 		super(new UUID(0, 0), "");
@@ -32,32 +32,32 @@ public class TodoFormDto extends TitledId {
 		UUID id,
 		String title,
 		String note,
-		int repeattype,
+		short repeattype,
+		short repeatcount,
 		ZonedDateTime duedatetimestamp,
 		List<MonthDay> yearactivedays,
-		boolean yearlySkipMod,
-		List<Integer> monthlyDueDays,
-		boolean monthlySkipMod,
+		Integer[] monthactivedays,
+		boolean rateinversionflag,
 		List<String> weekactivedays,
-		int repeatrate,
+		short repeatrate,
 		boolean poisonous,
 		short risk,
 		ZonedDateTime effectivedatetimestamp,
-		String activeToDate) {
+		ZonedDateTime expirationdatetimestamp) {
 		super(id, title);
 		this.note = note;
 		this.repeattype = repeattype;
 		this.duedatetimestamp = duedatetimestamp;
 		this.yearactivedays = yearactivedays;
-		this.yearlySkipMod = yearlySkipMod;
-		this.monthlyDueDays = monthlyDueDays;
-		this.monthlySkipMod = monthlySkipMod;
+		this.monthactivedays = monthactivedays;
+		this.rateinversionflag = rateinversionflag;
 		this.weekactivedays = weekactivedays;
 		this.repeatrate = repeatrate;
+		this.repeatcount = repeatcount;
 		this.poisonous = poisonous;
 		this.risk = risk;
 		this.effectivedatetimestamp = effectivedatetimestamp;
-		this.activeToDate = activeToDate;
+		this.expirationdatetimestamp = expirationdatetimestamp;
 	}
 
 	public String getNote() {
@@ -69,11 +69,11 @@ public class TodoFormDto extends TitledId {
 	}
 
 	// Getter and Setter for repeattype
-	public int getRepeattype() {
+	public short getRepeattype() {
 		return repeattype;
 	}
 
-	public void setRepeattype(int repeattype) {
+	public void setRepeattype(short repeattype) {
 			this.repeattype = repeattype;
 	}
 
@@ -95,31 +95,22 @@ public class TodoFormDto extends TitledId {
 			this.yearactivedays = yearlyDueDays;
 	}
 
-	// Getter and Setter for yearlySkipMod
-	public boolean isYearlySkipMod() {
-			return yearlySkipMod;
-	}
-
-	public void setYearlySkipMod(boolean yearlySkipMod) {
-			this.yearlySkipMod = yearlySkipMod;
-	}
-
 	// Getter and Setter for monthlyDueDays
-	public List<Integer> getMonthlyDueDays() {
-			return monthlyDueDays;
+	public Integer[] getMonthactivedays() {
+			return monthactivedays;
 	}
 
-	public void setMonthlyDueDays(List<Integer> monthlyDueDays) {
-			this.monthlyDueDays = monthlyDueDays;
+	public void setMonthlyDueDays(Integer[] monthactivedays) {
+			this.monthactivedays = monthactivedays;
 	}
 
 	// Getter and Setter for monthlySkipMod
-	public boolean isMonthlySkipMod() {
-			return monthlySkipMod;
+	public boolean isRateinversionflag() {
+			return rateinversionflag;
 	}
 
-	public void setMonthlySkipMod(boolean monthlySkipMod) {
-			this.monthlySkipMod = monthlySkipMod;
+	public void setRateinversionflag(boolean monthlySkipMod) {
+			this.rateinversionflag = monthlySkipMod;
 	}
 
 	// Getter and Setter for weekactivedays
@@ -132,12 +123,21 @@ public class TodoFormDto extends TitledId {
 	}
 
 	// Getter and Setter for dailyRate
-	public int getRepeatrate() {
+	public short getRepeatrate() {
 			return repeatrate;
 	}
 
-	public void setRepeatrate(int dailyRate) {
-			this.repeatrate = dailyRate;
+	public void setRepeatrate(short repeatrate) {
+			this.repeatrate = repeatrate;
+	}
+
+	// Getter and Setter for dailyRate
+	public short getRepeatcount() {
+			return repeatcount;
+	}
+
+	public void setRepeatcount(short repeatcount) {
+			this.repeatcount = repeatcount;
 	}
 
 	// Getter and Setter for poisonous
@@ -168,12 +168,12 @@ public class TodoFormDto extends TitledId {
 	}
 
 	// Getter and Setter for activeToDate
-	public String getActiveToDate() {
-			return activeToDate;
+	public ZonedDateTime getExpirationdatetimestamp() {
+			return expirationdatetimestamp;
 	}
 
-	public void setActiveToDate(String activeToDate) {
-			this.activeToDate = activeToDate;
+	public void setActiveToDate(ZonedDateTime activeToDate) {
+			this.expirationdatetimestamp = activeToDate;
 	}
 
 	public String getWeekactivedaysByteString() {

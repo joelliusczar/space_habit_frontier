@@ -97,7 +97,7 @@ public class Todos extends TableImpl<TodosRecord> {
     /**
      * The column <code>public.todos.repeatcount</code>.
      */
-    public final TableField<TodosRecord, Short> REPEATCOUNT = createField(DSL.name("repeatcount"), SQLDataType.SMALLINT.nullable(false).defaultValue(DSL.field(DSL.raw("1"), SQLDataType.SMALLINT)), this, "");
+    public final TableField<TodosRecord, Short> REPEATCOUNT = createField(DSL.name("repeatcount"), SQLDataType.SMALLINT.defaultValue(DSL.field(DSL.raw("1"), SQLDataType.SMALLINT)), this, "");
 
     /**
      * The column <code>public.todos.repeattype</code>.

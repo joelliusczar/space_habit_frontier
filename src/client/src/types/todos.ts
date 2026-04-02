@@ -13,15 +13,15 @@ export type FormValues = {
 	title: string,
 	note: string,
 	repeattype: number,
+	repeatcount: number,
 	duedatetimestamp: Date | null,
 	yearactivedays: MonthDay[],
-	yearlySkipMod: boolean,
-	monthlyDueDays: number[],
-	monthlySkipMod: boolean,
+	monthactivedays: number[],
+	rateinversionflag: boolean,
 	weekactivedays: string[],
 	repeatrate: number,
 	poisonous: boolean,
 	risk: number,
 	effectivedatetimestamp: Date,
-	activeToDate: Date | null
+	expirationdatetimestamp: Date | null
 };

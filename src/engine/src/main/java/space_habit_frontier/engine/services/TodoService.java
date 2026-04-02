@@ -42,20 +42,43 @@ public class TodoService {
 			var ctx = configuration.dsl();
 			ctx.insertInto(Todos.TODOS)
 				.set(Todos.TODOS.ID, id)
-				.set(Todos.TODOS.USERID, userId)
 				.set(Todos.TODOS.TITLE, formDto.getTitle())
 				.set(Todos.TODOS.NOTE, formDto.getNote())
 				.set(Todos.TODOS.RISK, formDto.getRisk())
 				.set(
 					Todos.TODOS.DUEDATETIMESTAMP, 
-					formDto.getDuedatetimestamp().toOffsetDateTime())
+					formDto.getDuedatetimestamp() != null 
+						? formDto.getDuedatetimestamp().toOffsetDateTime()
+						: null)
+				.set(
+					Todos.TODOS.EFFECTIVEDATETIMESTAMP,
+					formDto.getEffectivedatetimestamp() != null
+						? formDto.getEffectivedatetimestamp().toOffsetDateTime()
+						: null)
+						
 				.set(Todos.TODOS.STREAKSTARTTIMESTAMP, timestamp)
-				// .set(Todos.TODOS.REPEATCOUNT, formDto)
-				.set(Todos.TODOS.CREATIONTIMESTAMP, timestamp)
+				.set(Todos.TODOS.REPEATCOUNT, formDto.getRepeatcount())
+				.set(Todos.TODOS.REPEATTYPE, formDto.getRepeattype())
+				.set(Todos.TODOS.REPEATRATE, formDto.getRepeatrate())
 				.set(Todos.TODOS.WEEKACTIVEDAYS, formDto.getWeekactivedaysByteString())
 				.set(
 					Todos.TODOS.YEARACTIVEDAYS,
 					formDto.getYearactivedaysIntegerArray())
+				.set(
+						Todos.TODOS.MONTHACTIVEDAYS,
+						formDto.getMonthactivedays())
+				.set(Todos.TODOS.CREATIONTIMESTAMP, timestamp)
+				.set(Todos.TODOS.USERID, userId)
+				.set(
+					Todos.TODOS.POISONOUS,
+					formDto.isPoisonous())
+				.set(Todos.TODOS.EXPIRATIONDATETIMESTAMP,
+					formDto.getExpirationdatetimestamp() != null 
+						? formDto.getExpirationdatetimestamp().toOffsetDateTime()
+						: null)
+				.set(
+					Todos.TODOS.RATEINVERSIONFLAG,
+					formDto.isRateinversionflag())
 				.execute();
 		});
 	}

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-	import { reactive, watch, computed } from "vue";
+	import { reactive, computed } from "vue";
+	import { useRouter } from "vue-router";
 	import { useFormSubmit } from "../../composables/useFormSubmit";
 	import { Calls } from "../../api_calls/todos";
 	import { CycleRateTypes } from "../../types/todos";
@@ -14,7 +15,8 @@
 	} from "@headlessui/vue"
 	import { formatOrdinal } from "../../helpers/numbers";
 	import { monthDays } from "../../helpers/dates";
-	import dayjs from "dayjs"
+import router from "@/router";
+	
 
 	const formName = "todo-edit"
 
@@ -23,11 +25,11 @@
 		title: "",
 		note: "",
 		repeattype: CycleRateTypes.NEVER,
+		repeatcount: 1,
 		duedatetimestamp: null,
 		yearactivedays: [],
-		yearlySkipMod: false,
-		monthlyDueDays: [],
-		monthlySkipMod: false,
+		rateinversionflag: false,
+		monthactivedays: [],
 		weekactivedays: [
 			"monday",
 			"tuesday",
@@ -41,21 +43,44 @@
 		poisonous: true,
 		risk: 5,
 		effectivedatetimestamp: new Date(),
-		activeToDate: null
+		expirationdatetimestamp: null
 	});
 
 
 
 	const monthlySelectLabel = computed(() => {
-		if (!formValues.monthlyDueDays.length) return "Open";
-		if (formValues.monthlyDueDays.length === 1) {
-			return `${formatOrdinal(formValues.monthlyDueDays[0])} of the month`;
+		if (!formValues.monthactivedays.length) return "Open";
+		if (formValues.monthactivedays.length === 1) {
+			return `${formatOrdinal(formValues.monthactivedays[0])} of the month`;
 		}
-		const sorted = [...formValues.monthlyDueDays];
+		const sorted = [...formValues.monthactivedays];
 		sorted.sort();
 		const last = formatOrdinal(sorted.splice(-1, 1)[0]);
 		const joined = sorted.map(n => formatOrdinal(n)).join(", ");
 		return `${joined}, and ${last} of the month`;
+	});
+
+	const shouldShowSkip = computed(() => {
+		return formValues.repeattype === CycleRateTypes.MONTHLY
+			|| formValues.repeattype === CycleRateTypes.YEARLY;
+	});
+
+	const dueLabel = computed(() => shouldShowSkip && formValues.rateinversionflag
+		? "Skip every..." 
+		: "Due every...")
+
+	const repeatCountMessage = computed(() => {
+		if (! formValues.repeatcount) {
+			return "Repeats forever";
+		}
+		const repeatcount = formValues.repeatcount * 1;
+		if (repeatcount < 0) {
+			return "Repeats forever";
+		}
+		if (repeatcount === 1) {
+			return "Ends after 1 occurance.";
+		}
+		return `Ends after ${repeatcount} occurances.`;
 	});
 
 	const addYearlyDueDate = () => {
@@ -72,17 +97,12 @@
 	useFormSubmit(
 		formName,
 		async () => {
-			console.log("submit");
-			console.log(formValues);
 			const requestObj = Calls.add(formValues);
 			await requestObj.call();
+			router.push({ name: "todos" });
 		}
 	);
 
-
-	watch(formValues, (value) => {
-		console.log(value);
-	});
 </script>
 
 <template>
@@ -131,6 +151,14 @@
 						</option>
 					</select>
 				</fieldset>
+				<fieldset v-show="shouldShowSkip">
+						<legend for="rateinversionflag">Skip...</legend>
+						<input
+							name="rateinversionflag"
+							type="checkbox"
+							v-model="formValues.rateinversionflag"
+						/>
+					</fieldset>
 				<fieldset v-show="formValues.repeattype === CycleRateTypes.WEEKLY">
 					<legend >Days of the Week</legend>
 					<input
@@ -185,10 +213,10 @@
 				</fieldset>
 				<div>
 					<fieldset v-show="formValues.repeattype === CycleRateTypes.MONTHLY" >
-							<legend for="monthlyDueDays">Due every...</legend>
+							<legend for="monthactivedays">{{dueLabel}}</legend>
 							<Listbox
 								multiple
-								v-model="formValues.monthlyDueDays"
+								v-model="formValues.monthactivedays"
 								class="select-parent"
 								as="div"
 							>
@@ -214,7 +242,7 @@
 				</div>
 				<div>
 					<fieldset v-show="formValues.repeattype === CycleRateTypes.YEARLY">
-						<legend for="yearlyDueDays">Due every...</legend>
+						<legend for="yearlyDueDays">{{dueLabel}}</legend>
 						<button
 							@click="addYearlyDueDate"
 							class="button add-button"
@@ -312,11 +340,28 @@
 						/>
 					</fieldset>
 					<fieldset>
-						<legend for="activeToDate">Active till</legend>
+						<legend for="expirationdatetimestamp">Active till</legend>
 						<input
-							name="activeToDate"
+							name="expirationdatetimestamp"
 							type="datetime-local"
-							v-model="formValues.activeToDate"
+							v-model="formValues.expirationdatetimestamp"
+						/>
+					</fieldset>
+					<fieldset class="txt-field" v-if="formValues.repeattype !== CycleRateTypes.NEVER">
+						<legend for="repeatcount">{{repeatCountMessage}}</legend>
+						<input
+							name="repeatcount"
+							type="numeric"
+							v-model="formValues.repeatcount"
+							:form="formName"
+						/>
+					</fieldset>
+					<fieldset>
+						<legend for="poisonous">Poisonous</legend>
+						<input
+							name="poisonous"
+							type="checkbox"
+							v-model="formValues.poisonous"
 						/>
 					</fieldset>
 				</div>

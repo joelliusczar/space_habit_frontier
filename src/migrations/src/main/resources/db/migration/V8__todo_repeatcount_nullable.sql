@@ -1,0 +1,2 @@
+ALTER TABLE todos 
+ALTER COLUMN repeatcount DROP NOT NULL;
