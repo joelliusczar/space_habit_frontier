@@ -5,7 +5,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import com.fasterxml.uuid.Generators;
 
-import space_habit_frontier.engine.db_generated.tables.Users;
+import space_habit_frontier.data_model.db_generated.tables.Users;
 import space_habit_frontier.engine.dtos.users.UserCreationDto;
 import space_habit_frontier.engine.dtos.users.UserDto;
 import space_habit_frontier.engine.interfaces.dates.DatetimeProvider;

@@ -9,7 +9,7 @@ import org.jooq.DSLContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import space_habit_frontier.engine.db_generated.tables.Usersessions;
+import space_habit_frontier.data_model.db_generated.tables.Usersessions;
 import space_habit_frontier.engine.dtos.users.UserDto;
 import space_habit_frontier.engine.dtos.web.UserSessionDto;
 import space_habit_frontier.engine.interfaces.dates.DatetimeProvider;

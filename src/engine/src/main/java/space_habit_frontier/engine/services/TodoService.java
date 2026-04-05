@@ -7,7 +7,7 @@ import org.jooq.DSLContext;
 
 import com.fasterxml.uuid.Generators;
 
-import space_habit_frontier.engine.db_generated.tables.Todos;
+import space_habit_frontier.data_model.db_generated.tables.Todos;
 import space_habit_frontier.engine.dtos.TodoFormDto;
 import space_habit_frontier.engine.interfaces.dates.DatetimeProvider;
 import space_habit_frontier.engine.interfaces.db.DataContextProvider;

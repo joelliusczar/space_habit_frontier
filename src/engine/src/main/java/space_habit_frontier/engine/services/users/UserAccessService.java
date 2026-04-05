@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.jooq.DSLContext;
 
 import space_habit_frontier.engine.constants.UserConditionCode;
-import space_habit_frontier.engine.db_generated.tables.Users;
+import space_habit_frontier.data_model.db_generated.tables.Users;
 import space_habit_frontier.engine.dtos.users.EphemeralUserDto;
 import space_habit_frontier.engine.interfaces.dates.DatetimeProvider;
 

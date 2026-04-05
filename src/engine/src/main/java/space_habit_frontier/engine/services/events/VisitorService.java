@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.jooq.DSLContext;
 
-import space_habit_frontier.engine.db_generated.tables.Visitors;
+import space_habit_frontier.data_model.db_generated.tables.Visitors;
 import space_habit_frontier.engine.dtos.web.TrackingInfo;
 
 public class VisitorService {
