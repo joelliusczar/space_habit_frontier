@@ -26,13 +26,15 @@ jooq {
             database {
                 org.jooq.meta.postgres.PostgresDatabase
                 inputSchema = "public"
-                // forcedTypes {
-                //     forcedType {
-                //         userType = "java.util.BitSet"
-                //         binding = "space_habit_frontier.data_model.VaryingBitBinding"
-                //         includeTypes = "BIT(7)"
-                //     }
-                // }
+                forcedTypes {
+                    forcedType {
+                        userType = "java.util.BitSet"
+                        binding = "space_habit_frontier.data_model.VaryingBitBinding"
+                        includeTypes = "bit"
+                        includeExpression = ".*weekactivedays"
+                        objectType = "COLUMN"
+                    }
+                }
             }
 
             generate {

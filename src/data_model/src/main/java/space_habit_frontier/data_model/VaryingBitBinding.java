@@ -44,7 +44,7 @@ public class VaryingBitBinding implements Binding<String, BitSet> {
 			@Override
 			public String to(BitSet userObject) {
 				var sb = new StringBuilder();
-				for (int i = 0; i < userObject.length(); i++) {
+				for (int i = 0; i < 7; i++) {
 					sb.append(userObject.get(i) ? '1' : '0');
 				}
 				return sb.toString();
@@ -68,13 +68,13 @@ public class VaryingBitBinding implements Binding<String, BitSet> {
 		if (ctx.render().paramType() == ParamType.INLINED) {
 			ctx.render()
 				.visit(DSL.inline(ctx.convert(converter()).value()))
-				.sql("::bit");
+				.sql("::bit(7)");
 		}
 		else {
 			ctx
 				.render()
 				.sql(ctx.variable())
-				.sql("::bit");
+				.sql("::bit(7)");
 		}
 	}
 

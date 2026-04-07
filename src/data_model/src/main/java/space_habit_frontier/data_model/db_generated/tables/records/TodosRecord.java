@@ -5,6 +5,7 @@ package space_habit_frontier.data_model.db_generated.tables.records;
 
 
 import java.time.OffsetDateTime;
+import java.util.BitSet;
 import java.util.UUID;
 
 import org.jooq.Record1;
@@ -164,15 +165,15 @@ public class TodosRecord extends UpdatableRecordImpl<TodosRecord> {
     /**
      * Setter for <code>public.todos.weekactivedays</code>.
      */
-    public void setWeekactivedays(String value) {
+    public void setWeekactivedays(BitSet value) {
         set(10, value);
     }
 
     /**
      * Getter for <code>public.todos.weekactivedays</code>.
      */
-    public String getWeekactivedays() {
-        return (String) get(10);
+    public BitSet getWeekactivedays() {
+        return (BitSet) get(10);
     }
 
     /**
@@ -310,7 +311,7 @@ public class TodosRecord extends UpdatableRecordImpl<TodosRecord> {
     /**
      * Create a detached, initialised TodosRecord
      */
-    public TodosRecord(UUID id, String title, String note, Short risk, OffsetDateTime duedatetimestamp, OffsetDateTime effectivedatetimestamp, OffsetDateTime streakstarttimestamp, Short repeatcount, Short repeattype, Short repeatrate, String weekactivedays, Integer[] yearactivedays, OffsetDateTime creationtimestamp, UUID userid, UUID parenttodoid, Integer[] monthactivedays, Boolean poisonous, OffsetDateTime expirationdatetimestamp, Boolean rateinversionflag) {
+    public TodosRecord(UUID id, String title, String note, Short risk, OffsetDateTime duedatetimestamp, OffsetDateTime effectivedatetimestamp, OffsetDateTime streakstarttimestamp, Short repeatcount, Short repeattype, Short repeatrate, BitSet weekactivedays, Integer[] yearactivedays, OffsetDateTime creationtimestamp, UUID userid, UUID parenttodoid, Integer[] monthactivedays, Boolean poisonous, OffsetDateTime expirationdatetimestamp, Boolean rateinversionflag) {
         super(Todos.TODOS);
 
         setId(id);

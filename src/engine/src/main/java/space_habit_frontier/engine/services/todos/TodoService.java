@@ -1,14 +1,17 @@
-package space_habit_frontier.engine.services;
+package space_habit_frontier.engine.services.todos;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.UUID;
 
 import org.jooq.DSLContext;
 
 import com.fasterxml.uuid.Generators;
 
+import space_habit_frontier.data_model.db_generated.tables.Todoevents;
 import space_habit_frontier.data_model.db_generated.tables.Todos;
-import space_habit_frontier.engine.dtos.TodoFormDto;
+import space_habit_frontier.engine.dtos.todos.TodoFormDto;
+import space_habit_frontier.engine.dtos.todos.TodoListDto;
 import space_habit_frontier.engine.interfaces.dates.DatetimeProvider;
 import space_habit_frontier.engine.interfaces.db.DataContextProvider;
 import space_habit_frontier.engine.interfaces.users.UserProvider;
@@ -26,12 +29,6 @@ public class TodoService {
 		__context = dataContextProvider.getContext();
 		__userProvider = userProvider;
 		__datetimeProvider = datetimeProvider;
-	}
-
-	public List<String> getTodos() {
-
-		var user = __userProvider.getSessionUserRequired();
-		return List.of(user.getUsername());
 	}
 
 	public void Add(TodoFormDto formDto) {
@@ -82,4 +79,31 @@ public class TodoService {
 				.execute();
 		});
 	}
+
+	public List<TodoListDto> getTodos() {
+		var user = __userProvider.getSessionUserRequired();
+		var res = __context.select(
+				Todos.TODOS.ID, 
+				Todos.TODOS.TITLE)
+			.from(Todos.TODOS)
+			.where(Todos.TODOS.USERID.eq(user.getId()))
+			.fetch(r -> new TodoListDto(
+				r.get(Todos.TODOS.ID), 
+				r.get(Todos.TODOS.TITLE)));
+		return res;
+	}
+
+	public void completeTodo(UUID todoId) {
+			var timestamp = __datetimeProvider.now().toOffsetDateTime();
+			__context.transaction(configuration -> {
+				var ctx = configuration.dsl();
+				var id = Generators.timeBasedEpochRandomGenerator().generate();
+				ctx.insertInto(Todoevents.TODOEVENTS)
+					.set(Todoevents.TODOEVENTS.ID, id)
+					.set(Todoevents.TODOEVENTS.TODOID, todoId)
+					.set(Todoevents.TODOEVENTS.CREATIONTIMESTAMP, timestamp)
+					.execute();
+			});
+	}
+	
 }

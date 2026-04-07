@@ -1,4 +1,7 @@
 import type { MonthDay }  from "./dates";
+import type { TitledTokenItem } from "./generics";
+
+export interface TodoListItemDto extends TitledTokenItem {};
 
 export const CycleRateTypes = {
 	DAILY: 0,

@@ -1,15 +1,18 @@
 package space_habit_frontier.app.controllers;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import space_habit_frontier.engine.dtos.TodoFormDto;
-import space_habit_frontier.engine.services.TodoService;
+import space_habit_frontier.engine.dtos.todos.TodoFormDto;
+import space_habit_frontier.engine.dtos.todos.TodoListDto;
+import space_habit_frontier.engine.services.todos.TodoService;
 
 @RestController
 @RequestMapping("api/todos")
@@ -21,7 +24,7 @@ public class TodosController {
 	}
 
 	@GetMapping("/all")
-	public List<String> getAll() {
+	public List<TodoListDto> getAll() {
 		var res = this.__todoService.getTodos();
 		return res;
 	}
@@ -29,6 +32,11 @@ public class TodosController {
 	@PostMapping()
 	public void add(@RequestBody TodoFormDto formDto) {
 		this.__todoService.Add(formDto);
+	}
+
+	@PostMapping("/complete/{todoId}")
+	public void complete(@PathVariable String todoId) {
+		this.__todoService.completeTodo(UUID.fromString(todoId));
 	}
 
 }

@@ -1,4 +1,4 @@
-import type { FormValues } from "../types/todos";
+import type { FormValues, TodoListItemDto } from "../types/todos";
 
 export const Calls = {
 	add: (data: FormValues) => {
@@ -33,7 +33,7 @@ export const Calls = {
 						signal: abortController.signal
 					}
 				);
-				return await response.json();
+				return await response.json() as TodoListItemDto[];
 			},
 		};
 	},

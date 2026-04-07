@@ -2,14 +2,16 @@
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { Calls } from "../../api_calls/todos";
-import TodoEdit from "./TodoEdit.vue";
+import TodoListItem from "./TodoListItem.vue";
+import type { TodoListItemDto } from "../../types/todos";
 
 const router = useRouter();
-const data = ref(null);
+const data = ref<TodoListItemDto[] | null>(null);
 
 onMounted(async () => {
 	const requestObj = Calls.all();
-	await requestObj.call();
+	const response = await requestObj.call();
+	data.value = response;
 });
 
 function openAddNew() {
@@ -23,6 +25,9 @@ function openAddNew() {
 		<div>
 			<input type="text" />
 			<button @click="openAddNew">+</button>
+		</div>
+		<div v-for="value in data" :key="value.id">
+			<todo-list-item :todo="value"/>
 		</div>
 	</div>
 </template>

@@ -1,12 +1,17 @@
-package space_habit_frontier.engine.dtos;
+package space_habit_frontier.engine.dtos.todos;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZonedDateTime;
+import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import space_habit_frontier.engine.dtos.MonthDay;
+import space_habit_frontier.engine.dtos.TitledId;
+import space_habit_frontier.engine.utilities.SHFEnumUtils;
 
 public class TodoFormDto extends TitledId {
 
@@ -176,23 +181,13 @@ public class TodoFormDto extends TitledId {
 			this.expirationdatetimestamp = activeToDate;
 	}
 
-	public String getWeekactivedaysByteString() {
-		var result = String.format("%d%d%d%d%d%d%d",
-			(weekactivedays.contains(DayOfWeek.MONDAY.name().toLowerCase())) 
-				? 1 : 0,
-			(weekactivedays.contains(DayOfWeek.TUESDAY.name().toLowerCase())) 
-				? 1 : 0,
-			(weekactivedays.contains(DayOfWeek.WEDNESDAY.name().toLowerCase())) 
-				? 1 : 0,
-			(weekactivedays.contains(DayOfWeek.THURSDAY.name().toLowerCase())) 
-				? 1 : 0,
-			(weekactivedays.contains(DayOfWeek.FRIDAY.name().toLowerCase())) 
-				? 1 : 0,
-			(weekactivedays.contains(DayOfWeek.SATURDAY.name().toLowerCase())) 
-				? 1 : 0,
-			(weekactivedays.contains(DayOfWeek.SUNDAY.name().toLowerCase())) 
-				? 1 : 0
-		);
+	public BitSet getWeekactivedaysByteString() {
+		var result = new BitSet(7);
+		SHFEnumUtils.loopEnum(DayOfWeek.class, day -> {
+			result.set(
+				day.getValue() % 7, 
+				weekactivedays.contains(day.name().toLowerCase()));
+		});
 		return result;
 	}
 
@@ -213,7 +208,10 @@ public class TodoFormDto extends TitledId {
 		);
 		var result = yearactivedays.stream().map(d -> {
 			//use leap year so that all dates are captured
-			var date = LocalDate.of(2000, monthMap.get(d.month()), d.day());
+			var date = LocalDate.of(
+				2000,
+				monthMap.get(d.month().toLowerCase()),
+				d.day());
 			return Integer.valueOf(date.getDayOfYear());
 		}).toArray(Integer[]::new);
 

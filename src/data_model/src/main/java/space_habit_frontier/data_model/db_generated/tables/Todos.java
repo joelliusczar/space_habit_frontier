@@ -6,6 +6,7 @@ package space_habit_frontier.data_model.db_generated.tables;
 
 import java.time.OffsetDateTime;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -31,6 +32,7 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
+import space_habit_frontier.data_model.VaryingBitBinding;
 import space_habit_frontier.data_model.db_generated.Keys;
 import space_habit_frontier.data_model.db_generated.Public;
 import space_habit_frontier.data_model.db_generated.tables.Todos.TodosPath;
@@ -112,7 +114,7 @@ public class Todos extends TableImpl<TodosRecord> {
     /**
      * The column <code>public.todos.weekactivedays</code>.
      */
-    public final TableField<TodosRecord, String> WEEKACTIVEDAYS = createField(DSL.name("weekactivedays"), SQLDataType.CHAR(7).nullable(false).defaultValue(DSL.field(DSL.raw("'1111111'::\"bit\""), SQLDataType.CHAR)), this, "");
+    public final TableField<TodosRecord, BitSet> WEEKACTIVEDAYS = createField(DSL.name("weekactivedays"), SQLDataType.CHAR(7).nullable(false).defaultValue(DSL.field(DSL.raw("'1111111'::\"bit\""), SQLDataType.CHAR)), this, "", new VaryingBitBinding());
 
     /**
      * The column <code>public.todos.yearactivedays</code>.

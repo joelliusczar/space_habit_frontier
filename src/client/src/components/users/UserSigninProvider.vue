@@ -22,4 +22,7 @@ provide(UserSigninKey, {
 </template>
 
 <style scoped>
+	.grid {
+		background-color: #f7f7f7;
+	}
 </style>

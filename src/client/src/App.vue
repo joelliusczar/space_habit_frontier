@@ -13,7 +13,7 @@ import NavFooter from "./NavFooter.vue";
 			<div class="wrapper">
 			</div>
 		</header>
-		<main class="grid">
+		<main class="center">
 			<user-signin-provider>
 				<router-view />
 			</user-signin-provider>
@@ -29,6 +29,11 @@ import NavFooter from "./NavFooter.vue";
 		display: grid;
 		grid-template-rows: 50px 1fr 50px;
 		height: 100vh;
+	}
+
+	.center {
+		width: 50%;
+		margin: 0 auto;
 	}
 
 	header {
