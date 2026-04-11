@@ -31,7 +31,7 @@ public class TodosController {
 
 	@PostMapping()
 	public void add(@RequestBody TodoFormDto formDto) {
-		this.__todoService.Add(formDto);
+		this.__todoService.add(formDto);
 	}
 
 	@PostMapping("/complete/{todoId}")

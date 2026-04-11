@@ -8,7 +8,7 @@ import org.jooq.DSLContext;
 
 import com.fasterxml.uuid.Generators;
 
-import space_habit_frontier.data_model.db_generated.tables.Todoevents;
+
 import space_habit_frontier.data_model.db_generated.tables.Todos;
 import space_habit_frontier.engine.dtos.todos.TodoFormDto;
 import space_habit_frontier.engine.dtos.todos.TodoListDto;
@@ -31,7 +31,7 @@ public class TodoService {
 		__datetimeProvider = datetimeProvider;
 	}
 
-	public void Add(TodoFormDto formDto) {
+	public void add(TodoFormDto formDto) {
 		var id = Generators.timeBasedEpochRandomGenerator().generate();
 		var timestamp = __datetimeProvider.now().toOffsetDateTime();
 		var userId = __userProvider.getSessionUserRequired().getId();
@@ -94,16 +94,7 @@ public class TodoService {
 	}
 
 	public void completeTodo(UUID todoId) {
-			var timestamp = __datetimeProvider.now().toOffsetDateTime();
-			__context.transaction(configuration -> {
-				var ctx = configuration.dsl();
-				var id = Generators.timeBasedEpochRandomGenerator().generate();
-				ctx.insertInto(Todoevents.TODOEVENTS)
-					.set(Todoevents.TODOEVENTS.ID, id)
-					.set(Todoevents.TODOEVENTS.TODOID, todoId)
-					.set(Todoevents.TODOEVENTS.CREATIONTIMESTAMP, timestamp)
-					.execute();
-			});
+			
 	}
 	
 }
