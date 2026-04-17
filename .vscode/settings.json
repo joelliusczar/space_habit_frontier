@@ -32,4 +32,5 @@
     "DSF_EVENT_LOGS_DIR": "${workspaceFolder}/test_trash/space_habit_frontier/event_logs",
     "DSF_VISIT_LOGS_DIR": "${workspaceFolder}/test_trash/space_habit_frontier/visit_logs",
   },
+  "java.debug.settings.onBuildFailureProceed": true,
 }

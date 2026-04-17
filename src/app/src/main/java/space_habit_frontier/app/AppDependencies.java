@@ -1,7 +1,6 @@
 package space_habit_frontier.app;
 
 import space_habit_frontier.engine.services.LookupsService;
-import space_habit_frontier.engine.services.TodoService;
 import space_habit_frontier.engine.services.dates.DefaultDatetimeProvider;
 import space_habit_frontier.engine.services.dates.DefaultExpirationDatesProvider;
 import space_habit_frontier.app.dtos.AppUserDetails;
@@ -22,6 +21,7 @@ import space_habit_frontier.engine.services.events.FSEventService;
 import space_habit_frontier.engine.services.events.InMemEventService;
 import space_habit_frontier.engine.services.events.VisitorService;
 import space_habit_frontier.engine.services.secrets_providers.db.EnvApiUserSecretsProvider;
+import space_habit_frontier.engine.services.todos.TodoService;
 import space_habit_frontier.engine.services.users.BasicUserProvider;
 import space_habit_frontier.engine.services.users.UserAccessService;
 import space_habit_frontier.engine.services.users.UserManagementService;

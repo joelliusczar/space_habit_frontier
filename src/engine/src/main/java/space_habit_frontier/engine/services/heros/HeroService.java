@@ -7,6 +7,7 @@ import org.jooq.DSLContext;
 import org.jooq.JSON;
 
 import space_habit_frontier.data_model.db_generated.tables.Hero;
+import space_habit_frontier.engine.dtos.heros.HeroDto;
 import space_habit_frontier.engine.interfaces.dates.DatetimeProvider;
 import space_habit_frontier.engine.interfaces.db.DataContextProvider;
 import space_habit_frontier.engine.interfaces.users.UserProvider;
@@ -37,6 +38,20 @@ public class HeroService {
 				.set(Hero.HERO.DUNGEON, JSON.valueOf("{}"))
 				.set(Hero.HERO.CURRENTHP, 100L)
 				.execute();
+		});
+	}
+
+	public HeroDto get(UUID userId) {
+		return __context.transactionResult(configuration -> {
+			var ctx = configuration.dsl();
+			return ctx.selectFrom(Hero.HERO)
+				.where(Hero.HERO.ID.eq(userId))
+				.fetchOne(r -> new HeroDto()
+					.setId(userId)
+					.setXp(r.getXp())
+					.setGold(r.getGold())
+					.setCurrentHp(r.getCurrenthp())
+				);
 		});
 	}
 }

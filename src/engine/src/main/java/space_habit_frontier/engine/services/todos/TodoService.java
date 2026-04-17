@@ -5,10 +5,11 @@ import java.util.List;
 import java.util.UUID;
 
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 
 import com.fasterxml.uuid.Generators;
 
-
+import space_habit_frontier.data_model.db_generated.tables.Todoevents;
 import space_habit_frontier.data_model.db_generated.tables.Todos;
 import space_habit_frontier.engine.dtos.todos.TodoFormDto;
 import space_habit_frontier.engine.dtos.todos.TodoListDto;
@@ -82,19 +83,49 @@ public class TodoService {
 
 	public List<TodoListDto> getTodos() {
 		var user = __userProvider.getSessionUserRequired();
-		var res = __context.select(
-				Todos.TODOS.ID, 
-				Todos.TODOS.TITLE)
-			.from(Todos.TODOS)
-			.where(Todos.TODOS.USERID.eq(user.getId()))
-			.fetch(r -> new TodoListDto(
-				r.get(Todos.TODOS.ID), 
-				r.get(Todos.TODOS.TITLE)));
-		return res;
+		return __context.transactionResult(configuration -> {
+			var ctx = configuration.dsl();
+			var rowNum = DSL.rowNumber().over(
+				DSL.orderBy(Todoevents.TODOEVENTS.CREATIONTIMESTAMP.desc()))
+				.as("row_num");
+
+			var cte_joinKey = Todoevents.TODOEVENTS.TODOID.as("join_key");
+
+			var res = ctx.with("completed_todos").as(
+				ctx.select(
+					Todoevents.TODOEVENTS.ID,
+					cte_joinKey, 
+					Todoevents.TODOEVENTS.CREATIONTIMESTAMP,
+					rowNum)
+				.from(Todoevents.TODOEVENTS)
+				.where(Todos.TODOS.USERID.eq(user.getId()))
+				.and(rowNum.eq(1))
+				).selectFrom(Todos.TODOS.leftJoin(
+					DSL.table(DSL.name("completed_todos")))
+					.on(cte_joinKey.eq(Todos.TODOS.ID)))
+					.where(Todos.TODOS.USERID.eq(user.getId()))
+					.or(Todos.TODOS.EFFECTIVEDATETIMESTAMP
+						.lessOrEqual(__datetimeProvider.now().toOffsetDateTime())
+					.or(Todos.TODOS.EXPIRATIONDATETIMESTAMP
+						.greaterOrEqual(__datetimeProvider.now().toOffsetDateTime()))
+					.or(Todos.TODOS.EFFECTIVEDATETIMESTAMP.isNull()))
+				.fetch(r -> new TodoListDto(
+					r.get(Todos.TODOS.ID), 
+					r.get(Todos.TODOS.TITLE)));
+
+			return res;
+		});
 	}
 
 	public void completeTodo(UUID todoId) {
-			
+			// var user = __userProvider.getSessionUserRequired();
+			// return __context.transactionResult(configuration -> {
+			// 	var res = __context.selectFrom(Todos.TODOS)
+			// 		.where(Todos.TODOS.USERID.eq(user.getId()))
+			// 		.and(Todos.TODOS.ID.eq(todoId))
+			// 		.fetchOne();
+				
+			// });
 	}
 	
 }

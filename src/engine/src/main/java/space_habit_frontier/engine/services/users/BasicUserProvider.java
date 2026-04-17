@@ -2,10 +2,12 @@ package space_habit_frontier.engine.services.users;
 
 import java.util.Optional;
 
+import space_habit_frontier.engine.dtos.heros.HeroDto;
 import space_habit_frontier.engine.dtos.users.InternalUserDto;
+import space_habit_frontier.engine.interfaces.quests.HeroProvider;
 import space_habit_frontier.engine.interfaces.users.UserProvider;
 
-public class BasicUserProvider implements UserProvider {
+public class BasicUserProvider implements UserProvider, HeroProvider {
 	private InternalUserDto sessionUser;
 
 	public BasicUserProvider(InternalUserDto initialUser) {
@@ -44,6 +46,12 @@ public class BasicUserProvider implements UserProvider {
 		} finally {
 			this.sessionUser = previousUser;
 		}
+	}
+
+	@Override
+	public HeroDto getSessionHero() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'getSessionHero'");
 	}
 
 }

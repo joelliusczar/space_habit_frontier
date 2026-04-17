@@ -5,11 +5,11 @@ import java.util.UUID;
 
 import space_habit_frontier.engine.constants.BonusTypes;
 import space_habit_frontier.engine.constants.PenaltyTypes;
+import space_habit_frontier.engine.dtos.monsters.Monster;
 import space_habit_frontier.engine.interfaces.dungeons.Dungeon;
 import space_habit_frontier.engine.interfaces.items.Armor;
 import space_habit_frontier.engine.interfaces.items.Item;
 import space_habit_frontier.engine.interfaces.items.Weapon;
-import space_habit_frontier.engine.interfaces.monsters.Monster;
 
 public class HeroDto {
 	private UUID id;
@@ -55,7 +55,7 @@ public class HeroDto {
 		return gold;
 	}
 
-	public HeroDto setgold(long value) {
+	public HeroDto setGold(long value) {
 		gold = value;
 		return this;
 	}
@@ -91,7 +91,7 @@ public class HeroDto {
 		return currenthp;
 	}
 
-	public HeroDto setCurrenthp(long value) {
+	public HeroDto setCurrentHp(long value) {
 		currenthp = value;
 		return this;
 	}

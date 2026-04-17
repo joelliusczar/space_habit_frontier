@@ -14,16 +14,18 @@ public class NamedIntId {
 		return this.id;
 	}
 
-	public void setId(long id) {
+	public NamedIntId setId(long id) {
 		this.id = id;
+		return this;
 	}
 
 	public String getName() {
 		return this.name;
 	}
 
-	public void setName(String name) {
+	public NamedIntId setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 }
