@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -49,16 +50,14 @@ public class WeeklyDueDateTest {
 				18	19	20	21	22	23	24
 				25	26	27	28	29	30	31		2
 		*/
-
-		var baselineDate = ZonedDateTime.of(
+		var baselineDate = LocalDateTime.of(
 			2018, 
 			1, 
 			10, 
 			0, 
 			0, 
 			0, 
-			0,
-			ZoneId.of("UTC"));
+			0);
 
 		var weeklyDueDate = new WeeklyDueDate(
 				Set.of(DayOfWeek.WEDNESDAY),

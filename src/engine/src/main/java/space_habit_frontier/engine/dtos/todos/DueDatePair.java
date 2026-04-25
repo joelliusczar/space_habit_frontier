@@ -1,7 +1,8 @@
 package space_habit_frontier.engine.dtos.todos;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
-public record DueDatePair(ZonedDateTime previous, ZonedDateTime next) {
+
+public record DueDatePair(LocalDateTime previous, LocalDateTime next) {
 	
 }
