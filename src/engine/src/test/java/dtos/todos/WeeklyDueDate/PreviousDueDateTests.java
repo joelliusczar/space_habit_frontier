@@ -9,13 +9,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import space_habit_frontier.engine.dtos.todos.DueDateCalculator;
 import space_habit_frontier.engine.dtos.todos.WeeklyDueDate;
 
 public class PreviousDueDateTests {
@@ -41,7 +42,7 @@ public class PreviousDueDateTests {
 			28	29	30	31
 		*/
 
-		var baselineDate = LocalDateTime.of(
+		var baselineDateTime = LocalDateTime.of(
 			2018, 
 			1, 
 			7, 
@@ -49,18 +50,21 @@ public class PreviousDueDateTests {
 			0, 
 			0, 
 			0);
+		var baselineDate = baselineDateTime.toLocalDate();
 		var expectedDate = baselineDate;
-		var previousCheckinDate = baselineDate;
+		var previousCheckinDate = baselineDateTime;
 
 		var weeklyDueDate = new WeeklyDueDate(
-				Set.of(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY),
-				baselineDate)
+				Set.of(
+					WeeklyDueDate.idx(DayOfWeek.MONDAY),
+					WeeklyDueDate.idx(DayOfWeek.WEDNESDAY)),
+				baselineDateTime)
 			.setIntervalSize(3);
 
-		var testDate = baselineDate;
+		var testDate = baselineDateTime;
 
 		assertThrows(IllegalArgumentException.class, () -> {
-			var testDate1 = baselineDate;
+			var testDate1 = baselineDateTime;
 			weeklyDueDate.calculatePreviousDueDate(testDate1);	
 		});
 
@@ -72,114 +76,114 @@ public class PreviousDueDateTests {
 		var actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(65);
+		testDate = baselineDateTime.plusDays(65);
 		expectedDate = baselineDate.plusDays(64);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(66);
+		testDate = baselineDateTime.plusDays(66);
 		expectedDate = baselineDate.plusDays(64);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(64);
+		testDate = baselineDateTime.plusDays(64);
 		expectedDate = baselineDate.plusDays(45);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(72);
+		testDate = baselineDateTime.plusDays(72);
 		expectedDate = baselineDate.plusDays(66);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(5);
+		testDate = baselineDateTime.plusDays(5);
 		expectedDate = baselineDate.plusDays(3);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(2);
+		testDate = baselineDateTime.plusDays(2);
 		expectedDate = baselineDate.plusDays(1);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(24);
+		testDate = baselineDateTime.plusDays(24);
 		expectedDate = baselineDate.plusDays(22);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(22);
+		testDate = baselineDateTime.plusDays(22);
 		expectedDate = baselineDate.plusDays(3);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(50);
+		testDate = baselineDateTime.plusDays(50);
 		expectedDate = baselineDate.plusDays(45);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
 
-		previousCheckinDate = baselineDate.plusDays(1);
+		previousCheckinDate = baselineDateTime.plusDays(1);
 		weeklyDueDate.setPreviousCheckinDate(previousCheckinDate);
 		weeklyDueDate.setIntervalSize(1);
 
-		testDate = baselineDate.plusDays(81);
+		testDate = baselineDateTime.plusDays(81);
 		expectedDate = baselineDate.plusDays(80);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(65);
+		testDate = baselineDateTime.plusDays(65);
 		expectedDate = baselineDate.plusDays(64);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(66);
+		testDate = baselineDateTime.plusDays(66);
 		expectedDate = baselineDate.plusDays(64);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(64);
+		testDate = baselineDateTime.plusDays(64);
 		expectedDate = baselineDate.plusDays(59);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(72);
+		testDate = baselineDateTime.plusDays(72);
 		expectedDate = baselineDate.plusDays(71);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(5);
+		testDate = baselineDateTime.plusDays(5);
 		expectedDate = baselineDate.plusDays(3);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(2);
+		testDate = baselineDateTime.plusDays(2);
 		expectedDate = baselineDate.plusDays(1);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(24);
+		testDate = baselineDateTime.plusDays(24);
 		expectedDate = baselineDate.plusDays(22);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(22);
+		testDate = baselineDateTime.plusDays(22);
 		expectedDate = baselineDate.plusDays(17);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
 
-		previousCheckinDate = baselineDate.plusDays(5);
+		previousCheckinDate = baselineDateTime.plusDays(5);
 		weeklyDueDate
 			.setPreviousCheckinDate(previousCheckinDate)
-			.setActiveDaysMap(Set.of(DayOfWeek.FRIDAY))
+			.setActiveDays(Set.of(WeeklyDueDate.idx(DayOfWeek.FRIDAY)))
 			.setIntervalSize(3);
 
-		testDate = baselineDate.plusDays(81);
+		testDate = baselineDateTime.plusDays(81);
 		expectedDate = baselineDate.plusDays(68);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(6);
+		testDate = baselineDateTime.plusDays(6);
 		expectedDate = baselineDate.plusDays(5);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
@@ -187,34 +191,34 @@ public class PreviousDueDateTests {
 
 		weeklyDueDate.setIntervalSize(1);
 
-		testDate = baselineDate.plusDays(81);
+		testDate = baselineDateTime.plusDays(81);
 		expectedDate = baselineDate.plusDays(75);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(6);
+		testDate = baselineDateTime.plusDays(6);
 		expectedDate = baselineDate.plusDays(5);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
 
-		previousCheckinDate = baselineDate;
+		previousCheckinDate = baselineDateTime;
 		weeklyDueDate
 			.setPreviousCheckinDate(previousCheckinDate)
-			.setActiveDaysMap(Set.of(DayOfWeek.SUNDAY))
+			.setActiveDays(Set.of(WeeklyDueDate.idx(DayOfWeek.SUNDAY)))
 			.setIntervalSize(3);
 
-		testDate = baselineDate.plusDays(81);
+		testDate = baselineDateTime.plusDays(81);
 		expectedDate = baselineDate.plusDays(63);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(62);
+		testDate = baselineDateTime.plusDays(62);
 		expectedDate = baselineDate.plusDays(42);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(1);
+		testDate = baselineDateTime.plusDays(1);
 		expectedDate = baselineDate.plusDays(0);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
@@ -222,200 +226,205 @@ public class PreviousDueDateTests {
 
 		weeklyDueDate.setIntervalSize(1);
 
-		testDate = baselineDate.plusDays(81);
+		testDate = baselineDateTime.plusDays(81);
 		expectedDate = baselineDate.plusDays(77);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(62);
+		testDate = baselineDateTime.plusDays(62);
 		expectedDate = baselineDate.plusDays(56);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(1);
+		testDate = baselineDateTime.plusDays(1);
 		expectedDate = baselineDate.plusDays(0);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(7);
+		testDate = baselineDateTime.plusDays(7);
 		expectedDate = baselineDate.plusDays(0);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
 
-		previousCheckinDate = baselineDate.plusDays(6);
+		previousCheckinDate = baselineDateTime.plusDays(6);
 		weeklyDueDate
 			.setPreviousCheckinDate(previousCheckinDate)
-			.setActiveDaysMap(Set.of(DayOfWeek.SATURDAY))
+			.setActiveDays(Set.of(WeeklyDueDate.idx(DayOfWeek.SATURDAY)))
 			.setIntervalSize(3);
 
-		testDate = baselineDate.plusDays(81);
+		testDate = baselineDateTime.plusDays(81);
 		expectedDate = baselineDate.plusDays(69);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(13);
+		testDate = baselineDateTime.plusDays(13);
 		expectedDate = baselineDate.plusDays(6);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(20);
+		testDate = baselineDateTime.plusDays(20);
 		expectedDate = baselineDate.plusDays(6);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(26);
+		testDate = baselineDateTime.plusDays(26);
 		expectedDate = baselineDate.plusDays(6);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(34);
+		testDate = baselineDateTime.plusDays(34);
 		expectedDate = baselineDate.plusDays(27);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(68);
+		testDate = baselineDateTime.plusDays(68);
 		expectedDate = baselineDate.plusDays(48);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(7);
+		testDate = baselineDateTime.plusDays(7);
 		expectedDate = baselineDate.plusDays(6);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
 
-		previousCheckinDate = baselineDate.plusDays(6);
+		previousCheckinDate = baselineDateTime.plusDays(6);
 		weeklyDueDate
 			.setPreviousCheckinDate(previousCheckinDate)
 			.setIntervalSize(1);
 		
-		testDate = baselineDate.plusDays(81);
+		testDate = baselineDateTime.plusDays(81);
 		expectedDate = baselineDate.plusDays(76);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(13);
+		testDate = baselineDateTime.plusDays(13);
 		expectedDate = baselineDate.plusDays(6);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(20);
+		testDate = baselineDateTime.plusDays(20);
 		expectedDate = baselineDate.plusDays(13);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(26);
+		testDate = baselineDateTime.plusDays(26);
 		expectedDate = baselineDate.plusDays(20);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(34);
+		testDate = baselineDateTime.plusDays(34);
 		expectedDate = baselineDate.plusDays(27);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(7);
+		testDate = baselineDateTime.plusDays(7);
 		expectedDate = baselineDate.plusDays(6);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
 
-		previousCheckinDate = baselineDate.plusDays(6);
+		previousCheckinDate = baselineDateTime.plusDays(6);
 		weeklyDueDate
 			.setPreviousCheckinDate(previousCheckinDate)
-			.setActiveDaysMap(Set.of(DayOfWeek.values()))
+			.setActiveDays(new HashSet<Integer>(
+				Arrays.stream(DayOfWeek.values()).map(WeeklyDueDate::idx).toList()))
 			.setIntervalSize(3);
 
-		testDate = baselineDate.plusDays(81);
+
+
+		testDate = baselineDateTime.plusDays(81);
 		expectedDate = baselineDate.plusDays(69);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(13);
+		testDate = baselineDateTime.plusDays(13);
 		expectedDate = baselineDate.plusDays(6);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(20);
+		testDate = baselineDateTime.plusDays(20);
 		expectedDate = baselineDate.plusDays(6);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(7);
+		testDate = baselineDateTime.plusDays(7);
 		expectedDate = baselineDate.plusDays(6);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(34);
+		testDate = baselineDateTime.plusDays(34);
 		expectedDate = baselineDate.plusDays(27);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(68);
+		testDate = baselineDateTime.plusDays(68);
 		expectedDate = baselineDate.plusDays(67);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
 
-		previousCheckinDate = baselineDate.plusDays(3);
+		previousCheckinDate = baselineDateTime.plusDays(3);
 		weeklyDueDate
 			.setPreviousCheckinDate(previousCheckinDate)
 			.setIntervalSize(2);
 
-		testDate = baselineDate.plusDays(4);
+		testDate = baselineDateTime.plusDays(4);
 		expectedDate = baselineDate.plusDays(3);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		previousCheckinDate = baselineDate.plusDays(6);
+		previousCheckinDate = baselineDateTime.plusDays(6);
 		weeklyDueDate
 			.setPreviousCheckinDate(previousCheckinDate)
 			.setIntervalSize(1);
 
 
-		testDate = baselineDate.plusDays(81);
+		testDate = baselineDateTime.plusDays(81);
 		expectedDate = baselineDate.plusDays(80);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(13);
+		testDate = baselineDateTime.plusDays(13);
 		expectedDate = baselineDate.plusDays(12);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 		
-		testDate = baselineDate.plusDays(20);
+		testDate = baselineDateTime.plusDays(20);
 		expectedDate = baselineDate.plusDays(19);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(7);
+		testDate = baselineDateTime.plusDays(7);
 		expectedDate = baselineDate.plusDays(6);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(34);
+		testDate = baselineDateTime.plusDays(34);
 		expectedDate = baselineDate.plusDays(33);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(68);
+		testDate = baselineDateTime.plusDays(68);
 		expectedDate = baselineDate.plusDays(67);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		previousCheckinDate = baselineDate.plusDays(1);
+		previousCheckinDate = baselineDateTime.plusDays(1);
 		weeklyDueDate
 			.setPreviousCheckinDate(previousCheckinDate)
-			.setActiveDaysMap(Set.of(DayOfWeek.SUNDAY, DayOfWeek.MONDAY))
+			.setActiveDays(Set.of(
+				WeeklyDueDate.idx(DayOfWeek.SUNDAY),
+				WeeklyDueDate.idx(DayOfWeek.MONDAY)))
 			.setIntervalSize(3);
 
-		testDate = baselineDate.plusDays(7);
+		testDate = baselineDateTime.plusDays(7);
 		expectedDate = baselineDate.plusDays(1);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
-		testDate = baselineDate.plusDays(7);
+		testDate = baselineDateTime.plusDays(7);
 		expectedDate = baselineDate.plusDays(1);
 		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
@@ -428,40 +437,69 @@ public class PreviousDueDateTests {
 			IllegalAccessException,
 			InvocationTargetException {
 		var weeklyDueDate = new WeeklyDueDate(
-				Set.of(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY),
+				Set.of(
+					WeeklyDueDate.idx(DayOfWeek.MONDAY),
+					WeeklyDueDate.idx(DayOfWeek.WEDNESDAY)),
 				LocalDateTime.now());
-		var method = WeeklyDueDate.class
+		var method = DueDateCalculator.class
 			.getDeclaredMethod(
-				"__findPrevDayOfWeek",
-				DayOfWeek.class,
+				"__findPrevDayOfPeriod",
+				int.class,
 				boolean.class);
 		method.setAccessible(true);
-		var result = method.invoke(weeklyDueDate, DayOfWeek.MONDAY, true);
-		assertEquals(DayOfWeek.WEDNESDAY, result);
+		var result = method.invoke(
+			weeklyDueDate, 
+			WeeklyDueDate.idx(DayOfWeek.MONDAY), 
+			true);
+		assertEquals(WeeklyDueDate.idx(DayOfWeek.WEDNESDAY), result);
 
-		result = method.invoke(weeklyDueDate, DayOfWeek.TUESDAY, true);
-		assertEquals(DayOfWeek.MONDAY, result);
+		result = method.invoke(
+			weeklyDueDate, 
+			WeeklyDueDate.idx(DayOfWeek.TUESDAY), 
+			true);
+		assertEquals(WeeklyDueDate.idx(DayOfWeek.MONDAY), result);
 
-		result = method.invoke(weeklyDueDate, DayOfWeek.WEDNESDAY, true);
-		assertEquals(DayOfWeek.MONDAY, result);
+		result = method.invoke(
+			weeklyDueDate, 
+			WeeklyDueDate.idx(DayOfWeek.WEDNESDAY), 
+			true);
+		assertEquals(WeeklyDueDate.idx(DayOfWeek.MONDAY), result);
 
-		result = method.invoke(weeklyDueDate, DayOfWeek.THURSDAY, true);
-		assertEquals(DayOfWeek.WEDNESDAY, result);
+		result = method.invoke(
+			weeklyDueDate, 
+			WeeklyDueDate.idx(DayOfWeek.THURSDAY), 
+			true);
+		assertEquals(WeeklyDueDate.idx(DayOfWeek.WEDNESDAY), result);
 
-		result = method.invoke(weeklyDueDate, DayOfWeek.SUNDAY, true);
-		assertEquals(DayOfWeek.WEDNESDAY, result);
+		result = method.invoke(
+			weeklyDueDate, 
+			WeeklyDueDate.idx(DayOfWeek.SUNDAY), 
+			true);
+		assertEquals(WeeklyDueDate.idx(DayOfWeek.WEDNESDAY), result);
 
-		result = method.invoke(weeklyDueDate, DayOfWeek.MONDAY, false);
-		assertEquals(DayOfWeek.WEDNESDAY, result);
+		result = method.invoke(
+			weeklyDueDate, 
+			WeeklyDueDate.idx(DayOfWeek.MONDAY), 
+			false);
+		assertEquals(WeeklyDueDate.idx(DayOfWeek.WEDNESDAY), result);
 
-		result = method.invoke(weeklyDueDate, DayOfWeek.WEDNESDAY, false);
-		assertEquals(DayOfWeek.WEDNESDAY, result);
+		result = method.invoke(
+			weeklyDueDate, 
+			WeeklyDueDate.idx(DayOfWeek.WEDNESDAY), 
+			false);
+		assertEquals(WeeklyDueDate.idx(DayOfWeek.WEDNESDAY), result);
 
-		result = method.invoke(weeklyDueDate, DayOfWeek.SATURDAY, false);
-		assertEquals(DayOfWeek.WEDNESDAY, result);
+		result = method.invoke(
+			weeklyDueDate, 
+			WeeklyDueDate.idx(DayOfWeek.SATURDAY), 
+			false);
+		assertEquals(WeeklyDueDate.idx(DayOfWeek.WEDNESDAY), result);
 
-		result = method.invoke(weeklyDueDate, DayOfWeek.SUNDAY, false);
-		assertEquals(DayOfWeek.WEDNESDAY, result);
+		result = method.invoke(
+			weeklyDueDate, 
+			WeeklyDueDate.idx(DayOfWeek.SUNDAY), 
+			false);
+		assertEquals(WeeklyDueDate.idx(DayOfWeek.WEDNESDAY), result);
 	}
 
 	@Test
@@ -490,7 +528,9 @@ public class PreviousDueDateTests {
 			).toLocalDateTime();
 
 			var weeklyDueDate = new WeeklyDueDate(
-					Set.of(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY),
+					Set.of(
+						WeeklyDueDate.idx(DayOfWeek.MONDAY), 
+						WeeklyDueDate.idx(DayOfWeek.WEDNESDAY)),
 					previousCheckinDate)
 				.setIntervalSize(3);
 
@@ -504,7 +544,7 @@ public class PreviousDueDateTests {
 				LocalDate.of(2018, 1, 10),
 				LocalTime.MIN,
 				ZoneOffset.ofTotalSeconds(-36000)
-			).toLocalDateTime();
+			).toLocalDate();
 
 			var actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 			assertEquals(actualPreviousDueDate, expectedDate);

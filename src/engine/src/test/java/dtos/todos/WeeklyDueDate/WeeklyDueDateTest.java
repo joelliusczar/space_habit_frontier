@@ -60,7 +60,7 @@ public class WeeklyDueDateTest {
 			0);
 
 		var weeklyDueDate = new WeeklyDueDate(
-				Set.of(DayOfWeek.WEDNESDAY),
+				Set.of(WeeklyDueDate.idx(DayOfWeek.WEDNESDAY)),
 				baselineDate)
 			.setIntervalSize(3);
 			
