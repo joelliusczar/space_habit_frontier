@@ -13,9 +13,9 @@ public class WeeklyDueDate extends DueDateCalculator{
 	public static final int WEEK_LEN = 7;
 
 	public WeeklyDueDate(
-		Set<Integer> activeDaysMap,
+		Set<Integer> activeDays,
 		LocalDateTime previousCheckinDate) {
-		super(activeDaysMap, previousCheckinDate);
+		super(activeDays, previousCheckinDate);
 	}
 
 	@Override
@@ -24,23 +24,13 @@ public class WeeklyDueDate extends DueDateCalculator{
 	}
 
 	@Override
-	protected int dayOfPeriod(LocalDateTime date, int offset) {
-		return idx(date.getDayOfWeek(), offset);
-	}
-
-	@Override
 	protected int dayOfPeriod(LocalDateTime date) {
-		return dayOfPeriod(date, periodOffset());
-	}
-
-	@Override
-	protected int dayOfPeriod(LocalDate date, int offset) {
-		return idx(date.getDayOfWeek(), offset);
+		return idx(date.getDayOfWeek());
 	}
 
 	@Override
 	protected int dayOfPeriod(LocalDate date) {
-		return dayOfPeriod(date, periodOffset());
+		return idx(date.getDayOfWeek());
 	}
 
 	@Override
@@ -52,13 +42,8 @@ public class WeeklyDueDate extends DueDateCalculator{
 				exclusive);
 	}
 
-	public static int idx(DayOfWeek dayOfWeek, int offset) {
-		var day = dayOfWeek.getValue() % WEEK_LEN;
-		return (day + WEEK_LEN - offset) % WEEK_LEN;
-	}
-
 	public static int idx(DayOfWeek day) {
-		return idx(day, 0);
+		return day.getValue() % WEEK_LEN;
 	}	
 
 }

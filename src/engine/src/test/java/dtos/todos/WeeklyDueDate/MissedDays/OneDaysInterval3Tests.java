@@ -17,7 +17,7 @@ import java.util.Set;
 class MissedDays1ActiveDaysInterval3Tests {
 
     @Test
-    void testMissedDays1ActiveDaysInterval3() {
+    void testMissedDaysLaterinWeekDavedDate() {
 
 			var baselineDate = OffsetDateTime.of(
 				LocalDate.of(2018, 1, 10),

@@ -13,7 +13,6 @@ public abstract class DueDateCalculator {
 	private LocalDate __preparedPreviousCheckinDate;
 	private int __intervalSize;
 	private LocalTime __dayStartHour;
-	private int __periodOffset;
 
 	public DueDateCalculator(
 		Set<Integer> activeDays,
@@ -22,7 +21,6 @@ public abstract class DueDateCalculator {
 		this.__previousCheckinDate = previousCheckinDate;
 		this.__intervalSize = 1;
 		this.__dayStartHour = LocalTime.MIDNIGHT;
-		this.__periodOffset = 0;
 	}
 
 	public LocalDateTime previousCheckinDate() {
@@ -78,24 +76,11 @@ public abstract class DueDateCalculator {
 		return this;
 	}
 
-	public int periodOffset() {
-		return __periodOffset;
-	}
-
-	public DueDateCalculator setPeriodOffset(short periodOffset) {
-		this.__periodOffset = periodOffset;
-		return this;
-	}
-
 	protected abstract int periodLength();
 
 	protected abstract int dayOfPeriod(LocalDate date);
 
-	protected abstract int dayOfPeriod(LocalDate date, int offset);
-
 	protected abstract int dayOfPeriod(LocalDateTime date);
-
-	protected abstract int dayOfPeriod(LocalDateTime date, int offset);
 
 	public abstract long periodsBetween(
 		Temporal inclusive,
@@ -176,8 +161,7 @@ public abstract class DueDateCalculator {
 				"Checkin date should be after previous checkin date");
 		}
 		
-		var previousCheckinDayOfPeriod = dayOfPeriod(previousCheckinDatePrepared)
-			+ (periodOffset() % periodLength());
+		var previousCheckinDayOfPeriod = dayOfPeriod(previousCheckinDatePrepared);
 
 		if (!activeDays().contains(previousCheckinDayOfPeriod)) {
 			throw new IllegalStateException(
@@ -224,14 +208,14 @@ public abstract class DueDateCalculator {
 	private DueDatePair __calculateBothDueDates(LocalDateTime checkinDate) {
 		var previousDueDate = calculatePreviousDueDate(
 			checkinDate);
-		var prevDay = dayOfPeriod(previousDueDate) + periodOffset();
+		var prevDay = dayOfPeriod(previousDueDate);
 		var firstDayOfPreviousPeriod = previousDueDate.minusDays(prevDay);
 
 		var daySpan = ChronoUnit.DAYS.between(
 			firstDayOfPreviousPeriod,
 			checkinDate);
 
-		var checkinDay = dayOfPeriod(checkinDate) + periodOffset();
+		var checkinDay = dayOfPeriod(checkinDate);
 
 		var prevSunToThisSunSpan = daySpan - checkinDay;
 
@@ -308,8 +292,8 @@ public abstract class DueDateCalculator {
 			.count();
 
 		var fullWeekCount = Math.abs(periodsBetween(
-			__nextPeriodStart(previousCheckinDate.plusDays(periodOffset())),
-			__periodStart(checkinDate.plusDays(periodOffset()))));
+			__nextPeriodStart(previousCheckinDate),
+			__periodStart(checkinDate)));
 
 		return new MissedDaysDto(
 			firstPartialWeekCount, 
@@ -341,7 +325,7 @@ public abstract class DueDateCalculator {
 		}
 
 		var periodBounds = __constructPeriodBounds(
-			checkinDatePrepared.plusDays(periodOffset()));
+			checkinDatePrepared);
 		
 		if (periodBounds.isWithinPeriod(preparedPreviousCheckinDate())) {
 			return __missedDaysSamePeriod(checkinDatePrepared);
@@ -353,7 +337,7 @@ public abstract class DueDateCalculator {
 		}
 
 		var previousPeriodBounds = __constructPeriodBounds(
-			previousDueDate.plusDays(periodOffset()));
+			previousDueDate);
 		
 		if (previousPeriodBounds.isWithinPeriod(preparedPreviousCheckinDate())) {
 			//I think the +1 is an offset to include previousDueDate itself

@@ -1,10 +1,13 @@
 package dtos.todos.WeeklyDueDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -74,10 +77,51 @@ public class WeeklyDueDateTest {
 			0,
 			0,
 			ZoneOffset.ofTotalSeconds(-18000)
-		).toZonedDateTime();
+		).toLocalDateTime();
 		
-		// var result = weeklyDueDate.isDateADueDate(testDate);
-		// assertEquals(true, result);
+		var result = weeklyDueDate.isDateADueDate(testDate);
+		assertTrue(result);
+
+//testDate = \(struct SHDatetime\)\{\.year = (\d+), \.month = (\d+), \.day = (\d+), \.timezoneOffset = (-?\d+)\}
+
+//testDate = OffsetDateTime.of(\n\t\t\tLocalDate.of($1, $2, $3),\n\t\t\tLocalTime.MIN,\n\t\t\tZoneOffset.ofTotalSeconds($4))\n\t\t.toLocalDateTime()
+
+		testDate = OffsetDateTime.of(
+			LocalDate.of(2018, 1, 31),
+			LocalTime.MIN,
+			ZoneOffset.ofTotalSeconds(18000))
+		.toLocalDateTime();
+		result = weeklyDueDate.isDateADueDate(testDate);
+		assertTrue(result);
+
+		weeklyDueDate.setDayStartHour(LocalTime.of(6, 0));
+
+		testDate = OffsetDateTime.of(
+			LocalDate.of(2018, 1, 31),
+			LocalTime.MIN,
+			ZoneOffset.ofTotalSeconds(18000))
+		.toLocalDateTime();
+		result = weeklyDueDate.isDateADueDate(testDate);
+		assertTrue(result);
+		
+		weeklyDueDate.setPreviousCheckinDate(
+			LocalDateTime.of(
+			LocalDate.of(2018,1,11),
+			LocalTime.MIN));
+		var _testDate0 = testDate;
+		assertThrows(IllegalStateException.class, () -> {
+			weeklyDueDate.isDateADueDate(_testDate0);
+		});
+		
+		
+		assertThrows(IllegalStateException.class, () -> {
+			var _testDate = OffsetDateTime.of(
+				LocalDate.of(2018, 2, 1),
+				LocalTime.MIN,
+				ZoneOffset.ofTotalSeconds(18000))
+			.toLocalDateTime();
+			weeklyDueDate.isDateADueDate(_testDate);
+		});
 
 	}
 }
