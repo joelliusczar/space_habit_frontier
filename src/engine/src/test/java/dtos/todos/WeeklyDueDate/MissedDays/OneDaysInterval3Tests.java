@@ -2,7 +2,8 @@ package dtos.todos.WeeklyDueDate.MissedDays;
 
 import org.junit.jupiter.api.Test;
 
-import space_habit_frontier.engine.dtos.todos.WeeklyDueDate;
+import space_habit_frontier.engine.dtos.todos.DueDateCalculator;
+import space_habit_frontier.engine.dtos.todos.active_days.WeeklyActiveDaysCollection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -25,8 +26,8 @@ class MissedDays1ActiveDaysInterval3Tests {
 				ZoneOffset.UTC
 			).toLocalDateTime();
 
-			var dueDate = new WeeklyDueDate(Set.of(
-					WeeklyDueDate.idx(DayOfWeek.WEDNESDAY)),
+			var dueDate = new DueDateCalculator(new WeeklyActiveDaysCollection(Set.of(
+					WeeklyActiveDaysCollection.idx(DayOfWeek.WEDNESDAY))),
 				baselineDate)
 			.setIntervalSize(3);
 			

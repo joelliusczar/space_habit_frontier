@@ -15,7 +15,8 @@ import space_habit_frontier.engine.utilities.SHFEnumUtils;
 
 public class TodoActiveDaysConverters {
 	
-	public static BitSet getWeekactivedaysByteString(Collection<String> weekactivedays) {
+	public static BitSet getWeekactivedaysByteString(
+			Collection<String> weekactivedays) {
 		var result = new BitSet(7);
 		SHFEnumUtils.loopEnum(DayOfWeek.class, day -> {
 			result.set(
@@ -24,6 +25,26 @@ public class TodoActiveDaysConverters {
 		});
 		return result;
 	}
+
+	public static String getWeekActiveDaysString(
+				Collection<String> weekactivedays) {
+			return "%d%d%d%d%d%d%d".formatted(
+				weekactivedays.contains(
+					DayOfWeek.SUNDAY.name().toLowerCase()) ? 1 : 0,
+				weekactivedays.contains(
+					DayOfWeek.MONDAY.name().toLowerCase()) ? 1 : 0,
+				weekactivedays.contains(
+					DayOfWeek.TUESDAY.name().toLowerCase()) ? 1 : 0,
+				weekactivedays.contains(
+					DayOfWeek.WEDNESDAY.name().toLowerCase()) ? 1 : 0,
+				weekactivedays.contains(
+					DayOfWeek.THURSDAY.name().toLowerCase()) ? 1 : 0,
+				weekactivedays.contains(
+					DayOfWeek.FRIDAY.name().toLowerCase()) ? 1 : 0,
+				weekactivedays.contains(
+					DayOfWeek.SATURDAY.name().toLowerCase()) ? 1 : 0
+				);
+		}
 
 	public static Set<Integer> weekActiveDaysSet(String bits) {
 		var result = new HashSet<Integer>();
@@ -71,4 +92,6 @@ public class TodoActiveDaysConverters {
 
 		return result;
 	}
+	
+	
 }

@@ -181,9 +181,9 @@ public class TodoFormDto extends TitledId {
 			this.expirationdatetimestamp = activeToDate;
 	}
 
-	public BitSet getWeekActivedaysByteString() {
+	public String getWeekActivedaysByteString() {
 		return TodoActiveDaysConverters
-			.getWeekactivedaysByteString(this.weekactivedays);
+			.getWeekActiveDaysString(this.weekactivedays);
 	}
 
 	public Integer[] getYearActivedaysIntegerArray() {

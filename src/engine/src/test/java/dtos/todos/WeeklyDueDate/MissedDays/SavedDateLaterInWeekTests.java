@@ -2,7 +2,8 @@ package dtos.todos.WeeklyDueDate.MissedDays;
 
 import org.junit.jupiter.api.Test;
 
-import space_habit_frontier.engine.dtos.todos.WeeklyDueDate;
+import space_habit_frontier.engine.dtos.todos.DueDateCalculator;
+import space_habit_frontier.engine.dtos.todos.active_days.WeeklyActiveDaysCollection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -88,14 +89,14 @@ class SavedDateLaterInWeekTests {
 			ZoneOffset.UTC
 		).toLocalDateTime();
 
-		var dueDate = new WeeklyDueDate(Set.of(
-				WeeklyDueDate.idx(DayOfWeek.SUNDAY),
-				WeeklyDueDate.idx(DayOfWeek.MONDAY),
-				WeeklyDueDate.idx(DayOfWeek.TUESDAY),
-				WeeklyDueDate.idx(DayOfWeek.WEDNESDAY),
-				WeeklyDueDate.idx(DayOfWeek.THURSDAY),
-				WeeklyDueDate.idx(DayOfWeek.FRIDAY),
-				WeeklyDueDate.idx(DayOfWeek.SATURDAY)),
+		var dueDate = new DueDateCalculator(new WeeklyActiveDaysCollection(Set.of(
+				WeeklyActiveDaysCollection.idx(DayOfWeek.SUNDAY),
+				WeeklyActiveDaysCollection.idx(DayOfWeek.MONDAY),
+				WeeklyActiveDaysCollection.idx(DayOfWeek.TUESDAY),
+				WeeklyActiveDaysCollection.idx(DayOfWeek.WEDNESDAY),
+				WeeklyActiveDaysCollection.idx(DayOfWeek.THURSDAY),
+				WeeklyActiveDaysCollection.idx(DayOfWeek.FRIDAY),
+				WeeklyActiveDaysCollection.idx(DayOfWeek.SATURDAY))),
 			baselineDate)
 		.setIntervalSize(2);
 		

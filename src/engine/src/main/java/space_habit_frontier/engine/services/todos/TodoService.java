@@ -2,6 +2,7 @@ package space_habit_frontier.engine.services.todos;
 
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,12 +13,11 @@ import com.fasterxml.uuid.Generators;
 
 import space_habit_frontier.data_model.db_generated.tables.Todoevents;
 import space_habit_frontier.data_model.db_generated.tables.Todos;
-import space_habit_frontier.engine.constants.CycleRateType;
-import space_habit_frontier.engine.dtos.todos.RepeatingDueDateCalculatorFactory;
+import space_habit_frontier.engine.constants.RepeatType;
+import space_habit_frontier.engine.dtos.todos.DueDateCalculator;
 import space_habit_frontier.engine.dtos.todos.TodoActiveDaysConverters;
 import space_habit_frontier.engine.dtos.todos.TodoFormDto;
 import space_habit_frontier.engine.dtos.todos.TodoListDto;
-import space_habit_frontier.engine.dtos.todos.WeeklyDueDate;
 import space_habit_frontier.engine.interfaces.dates.DatetimeProvider;
 import space_habit_frontier.engine.interfaces.db.DataContextProvider;
 import space_habit_frontier.engine.interfaces.users.UserProvider;
@@ -123,7 +123,7 @@ public class TodoService {
 						.setLastCompletedDatetime(
 							r.get(Todoevents.TODOEVENTS.CREATIONTIMESTAMP))
 						.setCycleRateType(
-							CycleRateType.valueOf(r.get(Todos.TODOS.REPEATTYPE)))
+							RepeatType.valueOf(r.get(Todos.TODOS.REPEATTYPE)))
 						.setWeekActiveDaysSet(
 							TodoActiveDaysConverters
 								.weekActiveDaysSet(r.get(Todos.TODOS.WEEKACTIVEDAYS)))
@@ -131,7 +131,7 @@ public class TodoService {
 				)
 				.stream()
 				.filter(t -> {
-					if (t.cycleRateType() == CycleRateType.DATE) {
+					if (t.cycleRateType() == RepeatType.DATE) {
 						return t.lastCompletedDatetime().isEmpty();
 					}
 					//filter out todos that are have been completed today.
@@ -141,11 +141,10 @@ public class TodoService {
 				.map(t -> {
 
 					var previousCompletion = t.lastCompletedDatetime()
-						.orElse(OffsetDateTime.MIN)
+						.orElse(t.weekActiveDays().minActiveDate().atTime(OffsetTime.MIN))
 						.toLocalDateTime();
-					var calculator = RepeatingDueDateCalculatorFactory.build(
-						t.cycleRateType(),
-						t.weekActiveDaysSet(),
+					var calculator = new DueDateCalculator(
+						t.weekActiveDays(),
 						previousCompletion);
 					var dueDate = calculator
 						.calculateNextDueDate(

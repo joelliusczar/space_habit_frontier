@@ -8,14 +8,15 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import space_habit_frontier.engine.constants.CycleRateType;
+import space_habit_frontier.engine.constants.RepeatType;
 import space_habit_frontier.engine.dtos.TitledId;
+import space_habit_frontier.engine.dtos.todos.active_days.WeeklyActiveDaysCollection;
 
 public class TodoListDto extends TitledId implements DateAligner {
 
 	private Optional<OffsetDateTime> __lastCompletedDatetime;
 	private Optional<LocalDate> __nextDueDate;
-	private CycleRateType __cycleRateType;
+	private RepeatType __cycleRateType;
 	private Set<Integer> __weekActiveDaysSet;
 	private LocalTime __dayStartHour;
 	
@@ -42,11 +43,11 @@ public class TodoListDto extends TitledId implements DateAligner {
 		return this;
 	}
 
-	public CycleRateType cycleRateType() {
+	public RepeatType cycleRateType() {
 		return __cycleRateType;
 	}
 
-	public TodoListDto setCycleRateType(CycleRateType value) {
+	public TodoListDto setCycleRateType(RepeatType value) {
 		__cycleRateType = value;
 		return this;
 	}
@@ -58,6 +59,10 @@ public class TodoListDto extends TitledId implements DateAligner {
 	public TodoListDto setWeekActiveDaysSet(Set<Integer> value) {
 		__weekActiveDaysSet = value;
 		return this;
+	}
+
+	public WeeklyActiveDaysCollection weekActiveDays() {
+		return new WeeklyActiveDaysCollection(weekActiveDaysSet());
 	}
 
 	public TodoListDto setWeekActiveDaysSet(BitSet bits) {

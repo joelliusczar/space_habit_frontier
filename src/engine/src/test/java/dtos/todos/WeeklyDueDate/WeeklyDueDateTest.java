@@ -17,7 +17,8 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import space_habit_frontier.engine.dtos.todos.WeeklyDueDate;
+import space_habit_frontier.engine.dtos.todos.active_days.WeeklyActiveDaysCollection;
+import space_habit_frontier.engine.dtos.todos.DueDateCalculator;
 
 public class WeeklyDueDateTest {
 
@@ -62,8 +63,9 @@ public class WeeklyDueDateTest {
 			0, 
 			0);
 
-		var weeklyDueDate = new WeeklyDueDate(
-				Set.of(WeeklyDueDate.idx(DayOfWeek.WEDNESDAY)),
+		var weeklyDueDate = new DueDateCalculator(
+				new WeeklyActiveDaysCollection(Set.of(
+					WeeklyActiveDaysCollection.idx(DayOfWeek.WEDNESDAY))),
 				baselineDate)
 			.setIntervalSize(3);
 			

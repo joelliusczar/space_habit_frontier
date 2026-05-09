@@ -17,7 +17,8 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import space_habit_frontier.engine.dtos.todos.DueDateCalculator;
-import space_habit_frontier.engine.dtos.todos.WeeklyDueDate;
+import space_habit_frontier.engine.dtos.todos.active_days.ActiveDaysCollection;
+import space_habit_frontier.engine.dtos.todos.active_days.WeeklyActiveDaysCollection;
 
 public class PreviousDueDateTests {
 	
@@ -54,11 +55,11 @@ public class PreviousDueDateTests {
 		var expectedDate = baselineDate;
 		var previousCheckinDate = baselineDateTime;
 
-		var weeklyDueDate = new WeeklyDueDate(
-				Set.of(
-					WeeklyDueDate.idx(DayOfWeek.MONDAY),
-					WeeklyDueDate.idx(DayOfWeek.WEDNESDAY)),
-				baselineDateTime)
+		var weeklyDueDate = new DueDateCalculator(new WeeklyActiveDaysCollection(Set.of(
+				WeeklyActiveDaysCollection.idx(DayOfWeek.MONDAY),
+				WeeklyActiveDaysCollection.idx(DayOfWeek.WEDNESDAY)
+			)),
+			baselineDateTime)
 			.setIntervalSize(3);
 
 		var testDate = baselineDateTime;
@@ -175,7 +176,8 @@ public class PreviousDueDateTests {
 		previousCheckinDate = baselineDateTime.plusDays(5);
 		weeklyDueDate
 			.setPreviousCheckinDate(previousCheckinDate)
-			.setActiveDays(Set.of(WeeklyDueDate.idx(DayOfWeek.FRIDAY)))
+			.setActiveDays(new WeeklyActiveDaysCollection(
+				Set.of(WeeklyActiveDaysCollection.idx(DayOfWeek.FRIDAY))))
 			.setIntervalSize(3);
 
 		testDate = baselineDateTime.plusDays(81);
@@ -205,7 +207,8 @@ public class PreviousDueDateTests {
 		previousCheckinDate = baselineDateTime;
 		weeklyDueDate
 			.setPreviousCheckinDate(previousCheckinDate)
-			.setActiveDays(Set.of(WeeklyDueDate.idx(DayOfWeek.SUNDAY)))
+			.setActiveDays(new WeeklyActiveDaysCollection(
+				Set.of(WeeklyActiveDaysCollection.idx(DayOfWeek.SUNDAY))))
 			.setIntervalSize(3);
 
 		testDate = baselineDateTime.plusDays(81);
@@ -250,7 +253,8 @@ public class PreviousDueDateTests {
 		previousCheckinDate = baselineDateTime.plusDays(6);
 		weeklyDueDate
 			.setPreviousCheckinDate(previousCheckinDate)
-			.setActiveDays(Set.of(WeeklyDueDate.idx(DayOfWeek.SATURDAY)))
+			.setActiveDays(new WeeklyActiveDaysCollection(
+				Set.of(WeeklyActiveDaysCollection.idx(DayOfWeek.SATURDAY))))
 			.setIntervalSize(3);
 
 		testDate = baselineDateTime.plusDays(81);
@@ -328,8 +332,7 @@ public class PreviousDueDateTests {
 		previousCheckinDate = baselineDateTime.plusDays(6);
 		weeklyDueDate
 			.setPreviousCheckinDate(previousCheckinDate)
-			.setActiveDays(new HashSet<Integer>(
-				Arrays.stream(DayOfWeek.values()).map(WeeklyDueDate::idx).toList()))
+			.setActiveDays(WeeklyActiveDaysCollection.fullWeek())
 			.setIntervalSize(3);
 
 
@@ -414,9 +417,9 @@ public class PreviousDueDateTests {
 		previousCheckinDate = baselineDateTime.plusDays(1);
 		weeklyDueDate
 			.setPreviousCheckinDate(previousCheckinDate)
-			.setActiveDays(Set.of(
-				WeeklyDueDate.idx(DayOfWeek.SUNDAY),
-				WeeklyDueDate.idx(DayOfWeek.MONDAY)))
+			.setActiveDays(new WeeklyActiveDaysCollection(Set.of(
+				WeeklyActiveDaysCollection.idx(DayOfWeek.SUNDAY),
+				WeeklyActiveDaysCollection.idx(DayOfWeek.MONDAY))))
 			.setIntervalSize(3);
 
 		testDate = baselineDateTime.plusDays(7);
@@ -436,70 +439,69 @@ public class PreviousDueDateTests {
 		throws NoSuchMethodException,
 			IllegalAccessException,
 			InvocationTargetException {
-		var weeklyDueDate = new WeeklyDueDate(
-				Set.of(
-					WeeklyDueDate.idx(DayOfWeek.MONDAY),
-					WeeklyDueDate.idx(DayOfWeek.WEDNESDAY)),
-				LocalDateTime.now());
-		var method = DueDateCalculator.class
+		var weeklyActiveDays = 
+				new WeeklyActiveDaysCollection(Set.of(
+					WeeklyActiveDaysCollection.idx(DayOfWeek.MONDAY),
+					WeeklyActiveDaysCollection.idx(DayOfWeek.WEDNESDAY)));
+		var method = ActiveDaysCollection.class
 			.getDeclaredMethod(
-				"__findPrevDayOfPeriod",
+				"findPrevDayOfPeriod",
 				int.class,
 				boolean.class);
 		method.setAccessible(true);
 		var result = method.invoke(
-			weeklyDueDate, 
-			WeeklyDueDate.idx(DayOfWeek.MONDAY), 
+			weeklyActiveDays, 
+			WeeklyActiveDaysCollection.idx(DayOfWeek.MONDAY), 
 			true);
-		assertEquals(WeeklyDueDate.idx(DayOfWeek.WEDNESDAY), result);
+		assertEquals(WeeklyActiveDaysCollection.idx(DayOfWeek.WEDNESDAY), result);
 
 		result = method.invoke(
-			weeklyDueDate, 
-			WeeklyDueDate.idx(DayOfWeek.TUESDAY), 
+			weeklyActiveDays, 
+			WeeklyActiveDaysCollection.idx(DayOfWeek.TUESDAY), 
 			true);
-		assertEquals(WeeklyDueDate.idx(DayOfWeek.MONDAY), result);
+		assertEquals(WeeklyActiveDaysCollection.idx(DayOfWeek.MONDAY), result);
 
 		result = method.invoke(
-			weeklyDueDate, 
-			WeeklyDueDate.idx(DayOfWeek.WEDNESDAY), 
+			weeklyActiveDays, 
+			WeeklyActiveDaysCollection.idx(DayOfWeek.WEDNESDAY), 
 			true);
-		assertEquals(WeeklyDueDate.idx(DayOfWeek.MONDAY), result);
+		assertEquals(WeeklyActiveDaysCollection.idx(DayOfWeek.MONDAY), result);
 
 		result = method.invoke(
-			weeklyDueDate, 
-			WeeklyDueDate.idx(DayOfWeek.THURSDAY), 
+			weeklyActiveDays, 
+			WeeklyActiveDaysCollection.idx(DayOfWeek.THURSDAY), 
 			true);
-		assertEquals(WeeklyDueDate.idx(DayOfWeek.WEDNESDAY), result);
+		assertEquals(WeeklyActiveDaysCollection.idx(DayOfWeek.WEDNESDAY), result);
 
 		result = method.invoke(
-			weeklyDueDate, 
-			WeeklyDueDate.idx(DayOfWeek.SUNDAY), 
+			weeklyActiveDays, 
+			WeeklyActiveDaysCollection.idx(DayOfWeek.SUNDAY), 
 			true);
-		assertEquals(WeeklyDueDate.idx(DayOfWeek.WEDNESDAY), result);
+		assertEquals(WeeklyActiveDaysCollection.idx(DayOfWeek.WEDNESDAY), result);
 
 		result = method.invoke(
-			weeklyDueDate, 
-			WeeklyDueDate.idx(DayOfWeek.MONDAY), 
+			weeklyActiveDays, 
+			WeeklyActiveDaysCollection.idx(DayOfWeek.MONDAY), 
 			false);
-		assertEquals(WeeklyDueDate.idx(DayOfWeek.WEDNESDAY), result);
+		assertEquals(WeeklyActiveDaysCollection.idx(DayOfWeek.WEDNESDAY), result);
 
 		result = method.invoke(
-			weeklyDueDate, 
-			WeeklyDueDate.idx(DayOfWeek.WEDNESDAY), 
+			weeklyActiveDays, 
+			WeeklyActiveDaysCollection.idx(DayOfWeek.WEDNESDAY), 
 			false);
-		assertEquals(WeeklyDueDate.idx(DayOfWeek.WEDNESDAY), result);
+		assertEquals(WeeklyActiveDaysCollection.idx(DayOfWeek.WEDNESDAY), result);
 
 		result = method.invoke(
-			weeklyDueDate, 
-			WeeklyDueDate.idx(DayOfWeek.SATURDAY), 
+			weeklyActiveDays, 
+			WeeklyActiveDaysCollection.idx(DayOfWeek.SATURDAY), 
 			false);
-		assertEquals(WeeklyDueDate.idx(DayOfWeek.WEDNESDAY), result);
+		assertEquals(WeeklyActiveDaysCollection.idx(DayOfWeek.WEDNESDAY), result);
 
 		result = method.invoke(
-			weeklyDueDate, 
-			WeeklyDueDate.idx(DayOfWeek.SUNDAY), 
+			weeklyActiveDays, 
+			WeeklyActiveDaysCollection.idx(DayOfWeek.SUNDAY), 
 			false);
-		assertEquals(WeeklyDueDate.idx(DayOfWeek.WEDNESDAY), result);
+		assertEquals(WeeklyActiveDaysCollection.idx(DayOfWeek.WEDNESDAY), result);
 	}
 
 	@Test
@@ -527,10 +529,10 @@ public class PreviousDueDateTests {
 				ZoneOffset.ofTotalSeconds(-18000)
 			).toLocalDateTime();
 
-			var weeklyDueDate = new WeeklyDueDate(
-					Set.of(
-						WeeklyDueDate.idx(DayOfWeek.MONDAY), 
-						WeeklyDueDate.idx(DayOfWeek.WEDNESDAY)),
+			var weeklyDueDate = new DueDateCalculator(
+					new WeeklyActiveDaysCollection(Set.of(
+						WeeklyActiveDaysCollection.idx(DayOfWeek.MONDAY),
+						WeeklyActiveDaysCollection.idx(DayOfWeek.WEDNESDAY))),
 					previousCheckinDate)
 				.setIntervalSize(3);
 

@@ -4,18 +4,19 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.Temporal;
-import java.util.Set;
 
-public abstract class DueDateCalculator implements DateAligner {
-	private Set<Integer> __activeDays;
+
+import space_habit_frontier.engine.dtos.todos.active_days.ActiveDaysCollection;
+
+public class DueDateCalculator implements DateAligner {
+	private ActiveDaysCollection __activeDays;
 	private LocalDateTime __previousCheckinDate;
 	private LocalDate __preparedPreviousCheckinDate;
 	private int __intervalSize;
 	private LocalTime __dayStartHour;
 
 	public DueDateCalculator(
-		Set<Integer> activeDays,
+		ActiveDaysCollection activeDays,
 		LocalDateTime previousCheckinDate) {
 		this.__activeDays = activeDays;
 		this.__previousCheckinDate = previousCheckinDate;
@@ -42,11 +43,11 @@ public abstract class DueDateCalculator implements DateAligner {
 		return __preparedPreviousCheckinDate;
 	}
 
-	public Set<Integer> activeDays() {
+	public ActiveDaysCollection activeDays() {
 		return __activeDays;
 	}
 
-	public DueDateCalculator setActiveDays(Set<Integer> activeDays) {
+	public DueDateCalculator setActiveDays(ActiveDaysCollection activeDays) {
 		if (activeDays.isEmpty()) {
 			throw new IllegalArgumentException(
 				"Active days must have at least one element.");
@@ -78,69 +79,6 @@ public abstract class DueDateCalculator implements DateAligner {
 		return this;
 	}
 
-	protected abstract int periodLength();
-
-	protected abstract int dayOfPeriod(LocalDate date);
-
-	protected abstract int dayOfPeriod(LocalDateTime date);
-
-	public abstract long periodsBetween(
-		Temporal inclusive,
-		Temporal exclusive);
-
-	private int __findPrevDayOfPeriod(
-			int checkinDay,
-			boolean isActiveWeek) {
-		var previousDay = 0;
-
-		for (int i = 0; i < periodLength(); i++) {
-			if (isActiveWeek) {
-				var dayValue = ((periodLength() + checkinDay - i - 1) % periodLength());
-				
-				if (__activeDays.contains(dayValue)) {
-					return dayValue;
-				}
-			}
-			else {
-				var day = periodLength() - i - 1;
-				if (__activeDays.contains(day)) {
-					return day;
-				}
-			}
-		}
-		return previousDay;
-	}
-
-	private int __findNextDayOfPeriod(int checkinDay) {
-		for (int i = 0; i < periodLength(); i++) {
-			var day = (periodLength() + checkinDay + i) % periodLength();
-			if (__activeDays.contains(day)) {
-				return day;
-			}
-		}
-		throw new IllegalStateException("At least one day should be active");
-	}
-
-	private int __offsetForSamePeriod(
-			int checkinDay,
-			int prevDay,
-			boolean isActiveWeek) {
-		/*
-		if checkin day is in active week but before all active days
-		push it back a week so that it get's the last active day of
-		the previous active weeks
-	 */
-		return (prevDay % periodLength()) 
-			> (checkinDay % periodLength())
-				|| (checkinDay == prevDay && isActiveWeek)
-			? periodLength() 
-			: 0;
-	}
-
-	private long __distanceFromActivePeriod(long periodNum, int periodScaler) {
-		return periodNum % (periodScaler * periodLength());
-	}
-
 	public LocalDate calculatePreviousDueDate(LocalDateTime checkinDate) {
 		var checkinDatePrepared = alignDate(checkinDate);
 		return calculatePreviousDueDate(checkinDatePrepared);
@@ -155,40 +93,41 @@ public abstract class DueDateCalculator implements DateAligner {
 				"Checkin date should be after previous checkin date");
 		}
 		
-		var previousCheckinDayOfPeriod = dayOfPeriod(previousCheckinDatePrepared);
+		var previousCheckinDayOfPeriod = activeDays()
+			.dayOfPeriod(previousCheckinDatePrepared);
 
-		if (!activeDays().contains(previousCheckinDayOfPeriod)) {
+		if (!activeDays().canDayBeActive(previousCheckinDayOfPeriod)) {
 			throw new IllegalStateException(
 				"previous checkin day is not an active day");
 		}
 
 		var firstDayOfFirstWeek = previousCheckinDatePrepared
 			.minusDays(
-				(previousCheckinDayOfPeriod % periodLength()));
+				(previousCheckinDayOfPeriod % activeDays().periodLength()));
 
 		var daySpan = ChronoUnit.DAYS.between(
 			firstDayOfFirstWeek,
 			checkinDatePrepared);
 
-		var checkinDayOfTheWeek = dayOfPeriod(checkinDatePrepared);
+		var checkinDayOfTheWeek = activeDays().dayOfPeriod(checkinDatePrepared);
 
 		var firstStartToPrevStartSpan = 
-			daySpan - (checkinDayOfTheWeek % periodLength());
+			daySpan - (checkinDayOfTheWeek % activeDays().periodLength());
 
-		var isActiveWeek = __distanceFromActivePeriod(
+		var isActiveWeek = activeDays().distanceFromActivePeriod(
 			firstStartToPrevStartSpan,
 			intervalSize()) == 0;
 
-		var prevDueDayOfWeek = __findPrevDayOfPeriod(
+		var prevDueDayOfWeek = activeDays().findPrevDayOfPeriod(
 			checkinDayOfTheWeek,
 			isActiveWeek);
 
-		firstStartToPrevStartSpan -= __offsetForSamePeriod(
+		firstStartToPrevStartSpan -= activeDays().offsetForSamePeriod(
 			checkinDayOfTheWeek,
 			prevDueDayOfWeek, 
 			isActiveWeek);
 
-		var distanceFromActivePeriod = __distanceFromActivePeriod(
+		var distanceFromActivePeriod = activeDays().distanceFromActivePeriod(
 				firstStartToPrevStartSpan, 
 				intervalSize());
 
@@ -196,38 +135,38 @@ public abstract class DueDateCalculator implements DateAligner {
 			firstStartToPrevStartSpan - distanceFromActivePeriod;
 		
 		return firstDayOfFirstWeek.plusDays(
-				startOfPrevActiveWeek + (prevDueDayOfWeek % periodLength()));
+				startOfPrevActiveWeek + (prevDueDayOfWeek % activeDays().periodLength()));
 	}
 
 	private DueDatePair __calculateBothDueDates(LocalDateTime checkinDate) {
 		var previousDueDate = calculatePreviousDueDate(
 			checkinDate);
-		var prevDay = dayOfPeriod(previousDueDate);
+		var prevDay = activeDays().dayOfPeriod(previousDueDate);
 		var firstDayOfPreviousPeriod = previousDueDate.minusDays(prevDay);
 
 		var daySpan = ChronoUnit.DAYS.between(
 			firstDayOfPreviousPeriod,
 			checkinDate);
 
-		var checkinDay = dayOfPeriod(checkinDate);
+		var checkinDay = activeDays().dayOfPeriod(checkinDate);
 
 		var prevSunToThisSunSpan = daySpan - checkinDay;
 
 		var weekCount = 
-			(__distanceFromActivePeriod(daySpan, intervalSize()) / periodLength());
+			(activeDays().distanceFromActivePeriod(daySpan, intervalSize()) / activeDays().periodLength());
 
 		var nextActiveWeek = prevSunToThisSunSpan 
-			+ (((intervalSize() - weekCount) % intervalSize()) * periodLength());
+			+ (((intervalSize() - weekCount) % intervalSize()) * activeDays().periodLength());
 		
 		var periodStartDay = weekCount == 0
 			? checkinDay
 			: 0;
 
-		var nextDay = __findNextDayOfPeriod(periodStartDay);
+		var nextDay = activeDays().findNextDayOfPeriod(periodStartDay);
 
 		var samePeriodOffset = nextDay < checkinDay 
 				&& weekCount == 0
-			? intervalSize() * periodLength()
+			? intervalSize() * activeDays().periodLength()
 			: 0;
 		
 		var nextDueDate = firstDayOfPreviousPeriod
@@ -249,13 +188,13 @@ public abstract class DueDateCalculator implements DateAligner {
 	}
 
 	private LocalDate __periodStart(LocalDate date) {
-		var day = dayOfPeriod(date);
+		var day = activeDays().dayOfPeriod(date);
 		return date.minusDays(day);
 	}
 
 	private LocalDate __nextPeriodStart(LocalDate date) {
-		var day = dayOfPeriod(date);
-		return date.plusDays(periodLength() - day);
+		var day = activeDays().dayOfPeriod(date);
+		return date.plusDays(activeDays().periodLength() - day);
 	}
 
 	private PeriodBounds __constructPeriodBounds(LocalDate point) {
@@ -263,8 +202,8 @@ public abstract class DueDateCalculator implements DateAligner {
 	}
 
 	private long __missedDaysSamePeriod(LocalDate preparedCheckinDate) {
-		var checkinDay = dayOfPeriod(preparedCheckinDate);
-		var previousCheckinDay = dayOfPeriod(preparedPreviousCheckinDate());
+		var checkinDay = activeDays().dayOfPeriod(preparedCheckinDate);
+		var previousCheckinDay = activeDays().dayOfPeriod(preparedPreviousCheckinDate());
 		
 		return activeDays().stream()
 		.filter(i -> i > previousCheckinDay
@@ -274,8 +213,8 @@ public abstract class DueDateCalculator implements DateAligner {
 
 	private MissedDaysDto __constructMissedDaysDto(LocalDate checkinDate) {
 		var previousCheckinDate = preparedPreviousCheckinDate();
-		var checkinDay = dayOfPeriod(checkinDate);
-		var previousCheckinDay = dayOfPeriod(previousCheckinDate);
+		var checkinDay = activeDays().dayOfPeriod(checkinDate);
+		var previousCheckinDay = activeDays().dayOfPeriod(previousCheckinDate);
 		var firstPartialWeekCount = activeDays()
 			.stream()
 			.filter(i -> i > previousCheckinDay)
@@ -285,7 +224,7 @@ public abstract class DueDateCalculator implements DateAligner {
 			.filter(i -> i <= checkinDay)
 			.count();
 
-		var fullWeekCount = Math.abs(periodsBetween(
+		var fullWeekCount = Math.abs(activeDays().periodsBetween(
 			__nextPeriodStart(previousCheckinDate),
 			__periodStart(checkinDate)));
 
@@ -310,7 +249,6 @@ public abstract class DueDateCalculator implements DateAligner {
 	}
 
 	public long missedDays (LocalDateTime checkinDate) {
-
 		var checkinDatePrepared = alignDate(checkinDate);
 		if (!(checkinDatePrepared.isAfter(preparedPreviousCheckinDate())
 				|| checkinDatePrepared.isEqual(preparedPreviousCheckinDate()))) {

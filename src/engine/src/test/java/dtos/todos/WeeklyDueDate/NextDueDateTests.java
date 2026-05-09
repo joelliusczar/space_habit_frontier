@@ -9,7 +9,8 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import space_habit_frontier.engine.dtos.todos.WeeklyDueDate;
+import space_habit_frontier.engine.dtos.todos.DueDateCalculator;
+import space_habit_frontier.engine.dtos.todos.active_days.WeeklyActiveDaysCollection;
 
 public class NextDueDateTests {
 	
@@ -26,12 +27,11 @@ public class NextDueDateTests {
 		var baselineDate =  baselineDateTime.toLocalDate();
 		
 
-		var weeklyDueDate = new WeeklyDueDate(
-				Set.of(
-					WeeklyDueDate.idx(DayOfWeek.MONDAY),
-					WeeklyDueDate.idx(DayOfWeek.WEDNESDAY)
-				),
-				baselineDateTime)
+		var weeklyDueDate = new DueDateCalculator(new WeeklyActiveDaysCollection(Set.of(
+				WeeklyActiveDaysCollection.idx(DayOfWeek.MONDAY),
+				WeeklyActiveDaysCollection.idx(DayOfWeek.WEDNESDAY)
+			)),
+			baselineDateTime)
 			.setIntervalSize(3);
 
 		var testDate = baselineDateTime;
