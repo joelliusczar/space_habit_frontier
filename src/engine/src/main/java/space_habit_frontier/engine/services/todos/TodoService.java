@@ -1,6 +1,7 @@
 package space_habit_frontier.engine.services.todos;
 
 import java.sql.SQLException;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,8 +12,12 @@ import com.fasterxml.uuid.Generators;
 
 import space_habit_frontier.data_model.db_generated.tables.Todoevents;
 import space_habit_frontier.data_model.db_generated.tables.Todos;
+import space_habit_frontier.engine.constants.CycleRateType;
+import space_habit_frontier.engine.dtos.todos.RepeatingDueDateCalculatorFactory;
+import space_habit_frontier.engine.dtos.todos.TodoActiveDaysConverters;
 import space_habit_frontier.engine.dtos.todos.TodoFormDto;
 import space_habit_frontier.engine.dtos.todos.TodoListDto;
+import space_habit_frontier.engine.dtos.todos.WeeklyDueDate;
 import space_habit_frontier.engine.interfaces.dates.DatetimeProvider;
 import space_habit_frontier.engine.interfaces.db.DataContextProvider;
 import space_habit_frontier.engine.interfaces.users.UserProvider;
@@ -58,10 +63,10 @@ public class TodoService {
 				.set(Todos.TODOS.REPEATCOUNT, formDto.getRepeatcount())
 				.set(Todos.TODOS.REPEATTYPE, formDto.getRepeattype())
 				.set(Todos.TODOS.REPEATRATE, formDto.getRepeatrate())
-				.set(Todos.TODOS.WEEKACTIVEDAYS, formDto.getWeekactivedaysByteString())
+				.set(Todos.TODOS.WEEKACTIVEDAYS, formDto.getWeekActivedaysByteString())
 				.set(
 					Todos.TODOS.YEARACTIVEDAYS,
-					formDto.getYearactivedaysIntegerArray())
+					formDto.getYearActivedaysIntegerArray())
 				.set(
 						Todos.TODOS.MONTHACTIVEDAYS,
 						formDto.getMonthactivedays())
@@ -98,8 +103,9 @@ public class TodoService {
 					Todoevents.TODOEVENTS.CREATIONTIMESTAMP,
 					rowNum)
 				.from(Todoevents.TODOEVENTS)
+				.join(Todos.TODOS)
+				.on(Todoevents.TODOEVENTS.TODOID.eq(Todos.TODOS.ID))
 				.where(Todos.TODOS.USERID.eq(user.getId()))
-				.and(rowNum.eq(1))
 				).selectFrom(Todos.TODOS.leftJoin(
 					DSL.table(DSL.name("completed_todos")))
 					.on(cte_joinKey.eq(Todos.TODOS.ID)))
@@ -109,9 +115,44 @@ public class TodoService {
 					.or(Todos.TODOS.EXPIRATIONDATETIMESTAMP
 						.greaterOrEqual(__datetimeProvider.now().toOffsetDateTime()))
 					.or(Todos.TODOS.EFFECTIVEDATETIMESTAMP.isNull()))
+					.and(rowNum.eq(1).or(rowNum.isNull()))
+				
 				.fetch(r -> new TodoListDto(
 					r.get(Todos.TODOS.ID), 
-					r.get(Todos.TODOS.TITLE)));
+					r.get(Todos.TODOS.TITLE))
+						.setLastCompletedDatetime(
+							r.get(Todoevents.TODOEVENTS.CREATIONTIMESTAMP))
+						.setCycleRateType(
+							CycleRateType.valueOf(r.get(Todos.TODOS.REPEATTYPE)))
+						.setWeekActiveDaysSet(
+							TodoActiveDaysConverters
+								.weekActiveDaysSet(r.get(Todos.TODOS.WEEKACTIVEDAYS)))
+						
+				)
+				.stream()
+				.filter(t -> {
+					if (t.cycleRateType() == CycleRateType.DATE) {
+						return t.lastCompletedDatetime().isEmpty();
+					}
+					//filter out todos that are have been completed today.
+					var today = __datetimeProvider.now().toLocalDate();
+					return !t.alignLastCompletedDate().isEqual(today);
+				})
+				.map(t -> {
+
+					var previousCompletion = t.lastCompletedDatetime()
+						.orElse(OffsetDateTime.MIN)
+						.toLocalDateTime();
+					var calculator = RepeatingDueDateCalculatorFactory.build(
+						t.cycleRateType(),
+						t.weekActiveDaysSet(),
+						previousCompletion);
+					var dueDate = calculator
+						.calculateNextDueDate(
+							__datetimeProvider.now().toLocalDateTime());
+					return t.setNextDueDate(dueDate);
+				})
+				.toList();
 
 			return res;
 		});

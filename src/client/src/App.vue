@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import { RouterView } from "vue-router";
 import UserSigninProvider from "./components/users/UserSigninProvider.vue";
 import NavFooter from "./NavFooter.vue";
+import { useCredentialsStore } from "./stores/credentials";
 
-
+const { credentials } = storeToRefs(useCredentialsStore());
 </script>
 
 <template>
@@ -19,7 +21,7 @@ import NavFooter from "./NavFooter.vue";
 			</user-signin-provider>
 		</main>
 		<footer>
-			<nav-footer/>
+			<nav-footer v-if="credentials.isSignedIn"/>
 		</footer>
 	</div>
 </template>

@@ -7,7 +7,7 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.Set;
 
-public abstract class DueDateCalculator {
+public abstract class DueDateCalculator implements DateAligner {
 	private Set<Integer> __activeDays;
 	private LocalDateTime __previousCheckinDate;
 	private LocalDate __preparedPreviousCheckinDate;
@@ -30,13 +30,13 @@ public abstract class DueDateCalculator {
 	public DueDateCalculator setPreviousCheckinDate(
 			LocalDateTime previousCheckinDate) {
 		this.__previousCheckinDate = previousCheckinDate;
-		this.__preparedPreviousCheckinDate = prepareDate(__previousCheckinDate);
+		this.__preparedPreviousCheckinDate = alignDate(__previousCheckinDate);
 		return this;
 	}
 
 	public LocalDate preparedPreviousCheckinDate() {
 		if (__preparedPreviousCheckinDate == null) {
-			__preparedPreviousCheckinDate = prepareDate(__previousCheckinDate);
+			__preparedPreviousCheckinDate = alignDate(__previousCheckinDate);
 		}
 		
 		return __preparedPreviousCheckinDate;
@@ -67,10 +67,12 @@ public abstract class DueDateCalculator {
 		return this;
 	}
 
+	@Override
 	public LocalTime dayStartHour() {
 		return __dayStartHour;
 	}
 
+	@Override
 	public DueDateCalculator setDayStartHour(LocalTime dayStartHour) {
 		this.__dayStartHour = dayStartHour;
 		return this;
@@ -85,14 +87,6 @@ public abstract class DueDateCalculator {
 	public abstract long periodsBetween(
 		Temporal inclusive,
 		Temporal exclusive);
-
-	public LocalDate prepareDate(LocalDateTime date) {
-		if(date.toLocalTime().isBefore(__dayStartHour) 
-				|| date.toLocalTime().equals(__dayStartHour)) {
-			return date.toLocalDate();
-		}
-		return date.minusDays(1).toLocalDate();
-	}
 
 	private int __findPrevDayOfPeriod(
 			int checkinDay,
@@ -148,12 +142,12 @@ public abstract class DueDateCalculator {
 	}
 
 	public LocalDate calculatePreviousDueDate(LocalDateTime checkinDate) {
-		var checkinDatePrepared = prepareDate(checkinDate);
+		var checkinDatePrepared = alignDate(checkinDate);
 		return calculatePreviousDueDate(checkinDatePrepared);
 	}
 
 	public LocalDate calculatePreviousDueDate(LocalDate checkinDatePrepared) {
-		var previousCheckinDatePrepared = prepareDate(previousCheckinDate());
+		var previousCheckinDatePrepared = alignDate(previousCheckinDate());
 
 		if (previousCheckinDatePrepared.isAfter(checkinDatePrepared) 
 				|| previousCheckinDatePrepared.isEqual(checkinDatePrepared)) {
@@ -317,7 +311,7 @@ public abstract class DueDateCalculator {
 
 	public long missedDays (LocalDateTime checkinDate) {
 
-		var checkinDatePrepared = prepareDate(checkinDate);
+		var checkinDatePrepared = alignDate(checkinDate);
 		if (!(checkinDatePrepared.isAfter(preparedPreviousCheckinDate())
 				|| checkinDatePrepared.isEqual(preparedPreviousCheckinDate()))) {
 			throw new IllegalArgumentException(

@@ -40,6 +40,7 @@ import { Teleport } from 'vue';
 	max-width: 20rem;
 	position: fixed;
 	left: 50%;
+	top: 20%;
 }
 .button {
 	margin-inline-end: 10px;

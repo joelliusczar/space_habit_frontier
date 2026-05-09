@@ -181,41 +181,14 @@ public class TodoFormDto extends TitledId {
 			this.expirationdatetimestamp = activeToDate;
 	}
 
-	public BitSet getWeekactivedaysByteString() {
-		var result = new BitSet(7);
-		SHFEnumUtils.loopEnum(DayOfWeek.class, day -> {
-			result.set(
-				day.getValue() % 7, 
-				weekactivedays.contains(day.name().toLowerCase()));
-		});
-		return result;
+	public BitSet getWeekActivedaysByteString() {
+		return TodoActiveDaysConverters
+			.getWeekactivedaysByteString(this.weekactivedays);
 	}
 
-	public Integer[] getYearactivedaysIntegerArray() {
-		var monthMap = Map.ofEntries(
-			Map.entry(Month.JANUARY.name().toLowerCase(), Month.JANUARY),
-			Map.entry(Month.FEBRUARY.name().toLowerCase(), Month.FEBRUARY),
-			Map.entry(Month.MARCH.name().toLowerCase(), Month.MARCH),
-			Map.entry(Month.APRIL.name().toLowerCase(), Month.APRIL),
-			Map.entry(Month.MAY.name().toLowerCase(), Month.MAY),
-			Map.entry(Month.JUNE.name().toLowerCase(), Month.JUNE),
-			Map.entry(Month.JULY.name().toLowerCase(), Month.JULY),
-			Map.entry(Month.AUGUST.name().toLowerCase(), Month.AUGUST),
-			Map.entry(Month.SEPTEMBER.name().toLowerCase(), Month.SEPTEMBER),
-			Map.entry(Month.OCTOBER.name().toLowerCase(), Month.OCTOBER),
-			Map.entry(Month.NOVEMBER.name().toLowerCase(), Month.NOVEMBER),
-			Map.entry(Month.DECEMBER.name().toLowerCase(), Month.DECEMBER)
-		);
-		var result = yearactivedays.stream().map(d -> {
-			//use leap year so that all dates are captured
-			var date = LocalDate.of(
-				2000,
-				monthMap.get(d.month().toLowerCase()),
-				d.day());
-			return Integer.valueOf(date.getDayOfYear());
-		}).toArray(Integer[]::new);
-
-		return result;
+	public Integer[] getYearActivedaysIntegerArray() {
+		return TodoActiveDaysConverters
+			.getYearActivedaysIntegerArray(yearactivedays);
 	}
 
 

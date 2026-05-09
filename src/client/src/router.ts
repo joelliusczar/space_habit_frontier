@@ -45,7 +45,10 @@ const routes = [
 	{ 
 		name: "userSignup", 
 		path: "/user/sign-up", 
-		component: UserSignUp
+		component: UserSignUp,
+		meta: {
+			anonymous: true
+		}
 	},
 	{ 
 		name: "settingsNav", 
@@ -74,7 +77,7 @@ const router = createRouter({
 
 router.beforeEach((to) => {
 	const { credentials } = storeToRefs(useCredentialsStore());
-	if (credentials.value.isSignedIn || to.meta.public) {
+	if (credentials.value.isSignedIn || to.meta.public || to.meta.anonymous) {
 		return true;
 	}
 	return { name: "home"};
