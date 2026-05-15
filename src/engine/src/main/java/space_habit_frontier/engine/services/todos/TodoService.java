@@ -3,7 +3,9 @@ package space_habit_frontier.engine.services.todos;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.jooq.DSLContext;
@@ -37,7 +39,44 @@ public class TodoService {
 		__datetimeProvider = datetimeProvider;
 	}
 
-	public void add(TodoFormDto formDto) {
+	public Optional<TodoFormDto> get(UUID id) {
+		return __context.transactionResult(configuration -> {
+			var ctx = configuration.dsl();
+			return ctx.selectFrom(Todos.TODOS)
+				.where(Todos.TODOS.ID.eq(id))
+				.fetchOptional(r -> new TodoFormDto(id, r.getTitle())
+					.setNote(r.getNote())
+					.setRisk(r.getRisk())
+					.setDuedatetimestamp(
+						r.getDuedatetimestamp() != null 
+							? r.getDuedatetimestamp().toZonedDateTime() 
+							: null)
+					.setEffectivedatetimestamp(
+						r.getEffectivedatetimestamp() != null 
+							? r.getEffectivedatetimestamp().toZonedDateTime() 
+							: null)
+					.setRepeatcount(r.getRepeatcount())
+					.setRepeattype(r.getRepeattype())
+					.setRepeatrate(r.getRepeatrate())
+					.setWeekactivedays(
+						TodoActiveDaysConverters.
+						getWeekActiveDaysNames(r.getWeekactivedays()))
+					.setYearactivedays(
+						TodoActiveDaysConverters
+						.getYearActivedaysMonthDayList(
+							Arrays.asList(r.getYearactivedays())))
+					.setMonthactivedays(r.getMonthactivedays())
+					.setPoisonous(r.getPoisonous())
+					.setExpirationdatetimestamp(
+						r.getExpirationdatetimestamp() != null 
+							? r.getExpirationdatetimestamp().toZonedDateTime() 
+							: null)
+					.setRateinversionflag(r.getRateinversionflag())
+				);
+		});
+	}
+
+	public TodoListDto add(TodoFormDto formDto) {
 		var id = Generators.timeBasedEpochRandomGenerator().generate();
 		var timestamp = __datetimeProvider.now().toOffsetDateTime();
 		var userId = __userProvider.getSessionUserRequired().getId();
@@ -45,6 +84,19 @@ public class TodoService {
 			var ctx = configuration.dsl();
 			ctx.insertInto(Todos.TODOS)
 				.set(Todos.TODOS.ID, id)
+				.set(Todos.TODOS.TITLE, formDto.getTitle())						
+				.set(Todos.TODOS.STREAKSTARTTIMESTAMP, timestamp)
+				.set(Todos.TODOS.CREATIONTIMESTAMP, timestamp)
+				.set(Todos.TODOS.USERID, userId)
+				.execute();
+		});
+		return new TodoListDto(id, formDto.getTitle());
+	}
+
+	public TodoFormDto update(UUID id, TodoFormDto formDto) {
+		__context.transaction(configuration -> {
+			var ctx = configuration.dsl();
+			ctx.update(Todos.TODOS)
 				.set(Todos.TODOS.TITLE, formDto.getTitle())
 				.set(Todos.TODOS.NOTE, formDto.getNote())
 				.set(Todos.TODOS.RISK, formDto.getRisk())
@@ -58,8 +110,6 @@ public class TodoService {
 					formDto.getEffectivedatetimestamp() != null
 						? formDto.getEffectivedatetimestamp().toOffsetDateTime()
 						: null)
-						
-				.set(Todos.TODOS.STREAKSTARTTIMESTAMP, timestamp)
 				.set(Todos.TODOS.REPEATCOUNT, formDto.getRepeatcount())
 				.set(Todos.TODOS.REPEATTYPE, formDto.getRepeattype())
 				.set(Todos.TODOS.REPEATRATE, formDto.getRepeatrate())
@@ -70,8 +120,6 @@ public class TodoService {
 				.set(
 						Todos.TODOS.MONTHACTIVEDAYS,
 						formDto.getMonthactivedays())
-				.set(Todos.TODOS.CREATIONTIMESTAMP, timestamp)
-				.set(Todos.TODOS.USERID, userId)
 				.set(
 					Todos.TODOS.POISONOUS,
 					formDto.isPoisonous())
@@ -82,8 +130,10 @@ public class TodoService {
 				.set(
 					Todos.TODOS.RATEINVERSIONFLAG,
 					formDto.isRateinversionflag())
+				.where(Todos.TODOS.ID.eq(id))
 				.execute();
 		});
+		return formDto; 
 	}
 
 	public List<TodoListDto> getTodos() {

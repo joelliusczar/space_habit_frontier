@@ -3,6 +3,7 @@ package space_habit_frontier.engine.dtos.todos;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.HashSet;
@@ -28,23 +29,33 @@ public class TodoActiveDaysConverters {
 
 	public static String getWeekActiveDaysString(
 				Collection<String> weekactivedays) {
-			return "%d%d%d%d%d%d%d".formatted(
-				weekactivedays.contains(
-					DayOfWeek.SUNDAY.name().toLowerCase()) ? 1 : 0,
-				weekactivedays.contains(
-					DayOfWeek.MONDAY.name().toLowerCase()) ? 1 : 0,
-				weekactivedays.contains(
-					DayOfWeek.TUESDAY.name().toLowerCase()) ? 1 : 0,
-				weekactivedays.contains(
-					DayOfWeek.WEDNESDAY.name().toLowerCase()) ? 1 : 0,
-				weekactivedays.contains(
-					DayOfWeek.THURSDAY.name().toLowerCase()) ? 1 : 0,
-				weekactivedays.contains(
-					DayOfWeek.FRIDAY.name().toLowerCase()) ? 1 : 0,
-				weekactivedays.contains(
-					DayOfWeek.SATURDAY.name().toLowerCase()) ? 1 : 0
-				);
+		return "%d%d%d%d%d%d%d".formatted(
+			weekactivedays.contains(
+				DayOfWeek.SUNDAY.name().toLowerCase()) ? 1 : 0,
+			weekactivedays.contains(
+				DayOfWeek.MONDAY.name().toLowerCase()) ? 1 : 0,
+			weekactivedays.contains(
+				DayOfWeek.TUESDAY.name().toLowerCase()) ? 1 : 0,
+			weekactivedays.contains(
+				DayOfWeek.WEDNESDAY.name().toLowerCase()) ? 1 : 0,
+			weekactivedays.contains(
+				DayOfWeek.THURSDAY.name().toLowerCase()) ? 1 : 0,
+			weekactivedays.contains(
+				DayOfWeek.FRIDAY.name().toLowerCase()) ? 1 : 0,
+			weekactivedays.contains(
+				DayOfWeek.SATURDAY.name().toLowerCase()) ? 1 : 0
+			);
+	}
+
+	public static Collection<String> getWeekActiveDaysNames(String bitStr) {
+		var result = new HashSet<String>();
+		for (int i = 0; i < bitStr.length(); i++) {
+			if (bitStr.charAt(i) == '1') {
+				result.add(DayOfWeek.of(i == 0 ? 7 : i).name().toLowerCase());
+			}
 		}
+		return result;
+	}
 
 	public static Set<Integer> weekActiveDaysSet(String bits) {
 		var result = new HashSet<Integer>();
@@ -90,6 +101,18 @@ public class TodoActiveDaysConverters {
 			return Integer.valueOf(date.getDayOfYear());
 		}).toArray(Integer[]::new);
 
+		return result;
+	}
+
+	public static List<MonthDay> getYearActivedaysMonthDayList(
+			List<Integer> yearactivedays) {
+		var result = new ArrayList<MonthDay>();
+		for (var dayOfYear : yearactivedays) {
+			var date = LocalDate.ofYearDay(2000, dayOfYear);
+			result.add(new MonthDay(
+				date.getMonth().name().toLowerCase(), 
+				date.getDayOfMonth()));
+		}
 		return result;
 	}
 	

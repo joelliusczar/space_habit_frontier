@@ -1,10 +1,11 @@
 <script setup lang="ts">
-	import { reactive, computed } from "vue";
-	import { useRouter } from "vue-router";
+	import { ref, computed, watch } from "vue";
+	import { useRoute } from "vue-router";
 	import { useFormSubmit } from "../../composables/useFormSubmit";
 	import { Calls } from "../../api_calls/todos";
 	import { CycleRateTypes } from "../../types/todos";
 	import type { FormValues } from "../../types/todos";
+	import type { RouteId } from "../../types/requests";
 	import { monthNames } from "../../types/dates";
 	import CheckmarkIcon from "../shared/icons/CheckmarkIcon.vue";
 	import {
@@ -15,12 +16,13 @@
 	} from "@headlessui/vue"
 	import { formatOrdinal } from "../../helpers/numbers";
 	import { monthDays } from "../../helpers/dates";
-import router from "@/router";
-	
+	import router from "@/router";
+		
 
 	const formName = "todo-edit"
+	const route = useRoute();
 
-	const formValues = reactive<FormValues>({
+	const formValues = ref<FormValues>({
 		id: "00000000-0000-0000-0000-000000000000",
 		title: "",
 		note: "",
@@ -46,14 +48,35 @@ import router from "@/router";
 		expirationdatetimestamp: null
 	});
 
+	const fetch = async (id: string) => {
+		try {
+			const requestObj = Calls.get(id);
+			const response = await requestObj.call();
+			formValues.value = response
+		}
+		catch (error) {
+			console.error("Error fetching to-do:", error);
+		}
+	};
+
+	watch(() => route.params.id, async (newId, oldId) => {
+		console.log("Route id changed:", { newId, oldId });
+		if (newId === oldId) return;
+		if (Array.isArray(newId)) {
+			await fetch(newId[0]);
+		}	
+		else {
+			await fetch(newId);
+		}
+	}, { immediate: true });
 
 
 	const monthlySelectLabel = computed(() => {
-		if (!formValues.monthactivedays.length) return "Open";
-		if (formValues.monthactivedays.length === 1) {
-			return `${formatOrdinal(formValues.monthactivedays[0])} of the month`;
+		if (!formValues.value.monthactivedays.length) return "Open";
+		if (formValues.value.monthactivedays.length === 1) {
+			return `${formatOrdinal(formValues.value.monthactivedays[0])} of the month`;
 		}
-		const sorted = [...formValues.monthactivedays];
+		const sorted = [...formValues.value.monthactivedays];
 		sorted.sort();
 		const last = formatOrdinal(sorted.splice(-1, 1)[0]);
 		const joined = sorted.map(n => formatOrdinal(n)).join(", ");
@@ -61,19 +84,19 @@ import router from "@/router";
 	});
 
 	const shouldShowSkip = computed(() => {
-		return formValues.repeattype === CycleRateTypes.MONTHLY
-			|| formValues.repeattype === CycleRateTypes.YEARLY;
+		return formValues.value.repeattype === CycleRateTypes.MONTHLY
+			|| formValues.value.repeattype === CycleRateTypes.YEARLY;
 	});
 
-	const dueLabel = computed(() => shouldShowSkip && formValues.rateinversionflag
+	const dueLabel = computed(() => shouldShowSkip && formValues.value.rateinversionflag
 		? "Skip every..." 
 		: "Due every...")
 
 	const repeatCountMessage = computed(() => {
-		if (! formValues.repeatcount) {
+		if (! formValues.value.repeatcount) {
 			return "Repeats forever";
 		}
-		const repeatcount = formValues.repeatcount * 1;
+		const repeatcount = formValues.value.repeatcount * 1;
 		if (repeatcount < 0) {
 			return "Repeats forever";
 		}
@@ -84,20 +107,20 @@ import router from "@/router";
 	});
 
 	const addYearlyDueDate = () => {
-		formValues.yearactivedays.push({
+		formValues.value.yearactivedays.push({
 			month: "January",
 			day: 1,
 		});
 	};
 
 	const removeYearlyDueDate = (_: Event, idx: number) => {
-		formValues.yearactivedays.splice(idx, 1);
+		formValues.value.yearactivedays.splice(idx, 1);
 	};
 
 	useFormSubmit(
 		formName,
 		async () => {
-			const requestObj = Calls.add(formValues);
+			const requestObj = Calls.add(formValues.value);
 			await requestObj.call();
 			router.push({ name: "todos" });
 		}

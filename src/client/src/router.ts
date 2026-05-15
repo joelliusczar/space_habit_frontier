@@ -33,15 +33,9 @@ const routes = [
 	},
 	{ 
 		name: "todoEdit", 
-		path: "/todos/edit", 
+		path: "/todos/edit/:id", 
 		component: TodoEdit
 	},
-	{ 
-		name: "todoAdd", 
-		path: "/todos/add", 
-		component: TodoEdit
-	},
-	
 	{ 
 		name: "userSignup", 
 		path: "/user/sign-up", 

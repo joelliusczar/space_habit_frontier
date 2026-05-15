@@ -1,17 +1,12 @@
 package space_habit_frontier.engine.dtos.todos;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.Month;
 import java.time.ZonedDateTime;
-import java.util.BitSet;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import space_habit_frontier.engine.dtos.MonthDay;
 import space_habit_frontier.engine.dtos.TitledId;
-import space_habit_frontier.engine.utilities.SHFEnumUtils;
 
 public class TodoFormDto extends TitledId {
 
@@ -22,7 +17,7 @@ public class TodoFormDto extends TitledId {
 	private List<MonthDay> yearactivedays;
 	private Integer[] monthactivedays;
 	private boolean rateinversionflag;
-	private List<String> weekactivedays;
+	private Collection<String> weekactivedays;
 	private short repeatrate;
 	private boolean poisonous;
 	private short risk;
@@ -31,6 +26,10 @@ public class TodoFormDto extends TitledId {
 
 	public TodoFormDto() {
 		super(new UUID(0, 0), "");
+	}
+
+	public TodoFormDto(UUID id, String title) {
+		super(id, title);
 	}
 
 	public TodoFormDto(
@@ -69,8 +68,9 @@ public class TodoFormDto extends TitledId {
 		return this.note;
 	}
 
-	public void setNote(String note) {
+	public TodoFormDto setNote(String note) {
 		this.note = note;
+		return this;
 	}
 
 	// Getter and Setter for repeattype
@@ -78,8 +78,9 @@ public class TodoFormDto extends TitledId {
 		return repeattype;
 	}
 
-	public void setRepeattype(short repeattype) {
+	public TodoFormDto setRepeattype(short repeattype) {
 			this.repeattype = repeattype;
+			return this;
 	}
 
 	// Getter and Setter for dueDate
@@ -87,8 +88,9 @@ public class TodoFormDto extends TitledId {
 			return duedatetimestamp;
 	}
 
-	public void setDuedatetimestamp(ZonedDateTime dueDate) {
+	public TodoFormDto setDuedatetimestamp(ZonedDateTime dueDate) {
 			this.duedatetimestamp = dueDate;
+			return this;
 	}
 
 	// Getter and Setter for yearlyDueDays
@@ -96,8 +98,9 @@ public class TodoFormDto extends TitledId {
 			return yearactivedays;
 	}
 
-	public void setYearactivedays(List<MonthDay> yearlyDueDays) {
+	public TodoFormDto setYearactivedays(List<MonthDay> yearlyDueDays) {
 			this.yearactivedays = yearlyDueDays;
+			return this;
 	}
 
 	// Getter and Setter for monthlyDueDays
@@ -105,8 +108,9 @@ public class TodoFormDto extends TitledId {
 			return monthactivedays;
 	}
 
-	public void setMonthlyDueDays(Integer[] monthactivedays) {
+	public TodoFormDto setMonthactivedays(Integer[] monthactivedays) {
 			this.monthactivedays = monthactivedays;
+			return this;
 	}
 
 	// Getter and Setter for monthlySkipMod
@@ -114,17 +118,19 @@ public class TodoFormDto extends TitledId {
 			return rateinversionflag;
 	}
 
-	public void setRateinversionflag(boolean monthlySkipMod) {
+	public TodoFormDto setRateinversionflag(boolean monthlySkipMod) {
 			this.rateinversionflag = monthlySkipMod;
+			return this;
 	}
 
 	// Getter and Setter for weekactivedays
-	public List<String> getWeekactivedays() {
+	public Collection<String> getWeekactivedays() {
 			return weekactivedays;
 	}
 
-	public void setWeekactivedays(List<String> dueDaysOfWeek) {
+	public TodoFormDto setWeekactivedays(Collection<String> dueDaysOfWeek) {
 			this.weekactivedays = dueDaysOfWeek;
+			return this;
 	}
 
 	// Getter and Setter for dailyRate
@@ -132,8 +138,9 @@ public class TodoFormDto extends TitledId {
 			return repeatrate;
 	}
 
-	public void setRepeatrate(short repeatrate) {
+	public TodoFormDto setRepeatrate(short repeatrate) {
 			this.repeatrate = repeatrate;
+			return this;
 	}
 
 	// Getter and Setter for dailyRate
@@ -141,8 +148,9 @@ public class TodoFormDto extends TitledId {
 			return repeatcount;
 	}
 
-	public void setRepeatcount(short repeatcount) {
+	public TodoFormDto setRepeatcount(short repeatcount) {
 			this.repeatcount = repeatcount;
+			return this;
 	}
 
 	// Getter and Setter for poisonous
@@ -150,8 +158,9 @@ public class TodoFormDto extends TitledId {
 			return poisonous;
 	}
 
-	public void setPoisonous(boolean poisonous) {
+	public TodoFormDto setPoisonous(boolean poisonous) {
 			this.poisonous = poisonous;
+			return this;
 	}
 
 	// Getter and Setter for danger
@@ -159,8 +168,9 @@ public class TodoFormDto extends TitledId {
 			return risk;
 	}
 
-	public void setRisk(short risk) {
+	public TodoFormDto setRisk(short risk) {
 			this.risk = risk;
+			return this;
 	}
 
 	// Getter and Setter for activeFromDate
@@ -168,8 +178,9 @@ public class TodoFormDto extends TitledId {
 			return effectivedatetimestamp;
 	}
 
-	public void setEffectivedatetimestamp(ZonedDateTime activeFromDate) {
+	public TodoFormDto setEffectivedatetimestamp(ZonedDateTime activeFromDate) {
 			this.effectivedatetimestamp = activeFromDate;
+			return this;
 	}
 
 	// Getter and Setter for activeToDate
@@ -177,8 +188,9 @@ public class TodoFormDto extends TitledId {
 			return expirationdatetimestamp;
 	}
 
-	public void setActiveToDate(ZonedDateTime activeToDate) {
+	public TodoFormDto setExpirationdatetimestamp(ZonedDateTime activeToDate) {
 			this.expirationdatetimestamp = activeToDate;
+			return this;
 	}
 
 	public String getWeekActivedaysByteString() {
@@ -190,8 +202,6 @@ public class TodoFormDto extends TitledId {
 		return TodoActiveDaysConverters
 			.getYearActivedaysIntegerArray(yearactivedays);
 	}
-
-
 }
 
 /*

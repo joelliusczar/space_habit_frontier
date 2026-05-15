@@ -28,8 +28,8 @@ jooq {
                 inputSchema = "public"
                 forcedTypes {
                     forcedType {
-                        userType = "java.util.BitSet"
-                        binding = "space_habit_frontier.data_model.VaryingBitBinding"
+                        userType = "java.lang.String"
+                        binding = "space_habit_frontier.data_model.StringBitBinding"
                         includeTypes = "bit"
                         includeExpression = ".*weekactivedays"
                         objectType = "COLUMN"

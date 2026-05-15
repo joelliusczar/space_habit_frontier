@@ -6,19 +6,19 @@ import space_habit_frontier.engine.interfaces.FriendlyNameable;
 import org.apache.commons.text.WordUtils;
 
 public enum RepeatType implements FriendlyNameable {
-	DATE(0),
-	DAILY(1),
-	WEEKLY(7),
-	MONTHLY(31),
-	YEARLY(366);
+	DATE((short)0),
+	DAILY((short)1),
+	WEEKLY((short)7),
+	MONTHLY((short)31),
+	YEARLY((short)366);
 	
-	private int __repeattype;
+	private short __repeattype;
 	
-	RepeatType(int repeattype) {
+	RepeatType(short repeattype) {
 		this.__repeattype = repeattype;
 	}
 	
-	public int getValue() {
+	public short getValue() {
 		return __repeattype;
 	}
 
@@ -26,7 +26,7 @@ public enum RepeatType implements FriendlyNameable {
 		return WordUtils.capitalizeFully(this.name());
 	}
 
-	public static RepeatType valueOf(int value) {
+	public static RepeatType valueOf(short value) {
 		return RepeatType.values()[value];
 	}
 }
