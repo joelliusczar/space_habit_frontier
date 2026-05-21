@@ -2,6 +2,9 @@
 	import { ref } from "vue";
 	import type { TodoListItemDto} from "../../types/todos";
 	import OptionsButton from "../shared/options_button/OptionsButton.vue";
+	import { useLoader } from "../../composables/useLoader";
+	import { Calls } from "../../api_calls/todos";
+	import type { UserMoveResult } from "../../types/quest";
 
 	const { todo } = defineProps<{
 		todo: TodoListItemDto
@@ -9,14 +12,25 @@
 
 	const isCompleted = ref(false);
 
-	const toggleCompleted = () => {
+	const { 
+		data,
+		loading,
+		error,
+		communicate } = useLoader<UserMoveResult<TodoListItemDto>>(
+			async () => {
+		const requestObj = Calls.complete(todo.id);
+		return await requestObj.call();
+	});
+
+	const toggleCompleted = async () => {
+		const result = await communicate();
 		isCompleted.value = !isCompleted.value;
 	};
 
 	const options = [
 		{
 			label: "Edit",
-			href: "/todos/edit/" + todo.id,
+			to: { name: "todoEdit", params: { id: todo.id } }
 		},
 		{
 			label: "Delete",

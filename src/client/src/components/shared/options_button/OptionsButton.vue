@@ -2,6 +2,7 @@
 	import { ref, computed, useTemplateRef } from "vue";
 	import type { OptionBase } from "./options_button_types";
 	import vClickOutside from "../../../directives/click_outside";
+import type router from "router";
 
 	const { options, selectionType = "single" } = defineProps<{
 		options?: OptionBase[] | OptionBase,
@@ -54,20 +55,20 @@
 <template>
 	<span>
 		<button 
-			v-if="!(activeOption?.href)"
+			v-if="!(activeOption?.to)"
 			class="option-btn option-btn-left" 
 			@click="handleOptionClick($event, activeOption!)"
-			:href="activeOption?.href"
+			:href="activeOption?.to"
 		>
 			{{ activeOption?.label || "Options" }}
 		</button>
-		<a 
+		<router-link
 			v-else
 			class="option-btn option-btn-left" 
-			:href="activeOption?.href"
+			:to="activeOption?.to"
 		>
 			{{ activeOption?.label || "Options" }}
-		</a>
+		</router-link>
 		<button 
 			class="option-btn option-btn-right" 
 			@click="toggleMenu"
@@ -108,6 +109,7 @@
 		text-decoration: none;
 		display: inline-block;
 		text-align: center;
+		
 	}
 	.option-btn {
 		background: none;

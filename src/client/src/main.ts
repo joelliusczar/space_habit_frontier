@@ -2,6 +2,7 @@ import "./assets/main.css";
 
 import { createApp } from "vue";
 import { createPinia } from "pinia";
+import { SnackbarService } from "vue3-snackbar";
 import App from "./App.vue";
 import router from "./router";
 
@@ -10,4 +11,5 @@ const pinia = createPinia();
 createApp(App)
 .use(router)
 .use(pinia)
+.use(SnackbarService)
 .mount('#app');

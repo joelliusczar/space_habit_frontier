@@ -2,34 +2,34 @@ package space_habit_frontier.engine.dtos.monsters;
 
 public class Monster {
 
-	private MonsterDefinition definition;
-	private long currentHp;
-	private long lvl;
+	private MonsterDefinition __definition;
+	private long __currentHp;
+	private long __lvl;
 
-	public MonsterDefinition getDefinition() {
-		return definition;
+	public MonsterDefinition definition() {
+		return __definition;
 	}
 
 	public Monster setDefinition(MonsterDefinition definition) {
-		this.definition = definition;
+		this.__definition = definition;
 		return this;
 	}
 
-	public long getCurrentHp() {
-		return currentHp;
+	public long currentHp() {
+		return __currentHp;
 	}
 
 	public Monster setCurrentHp(long currentHp) {
-		this.currentHp = currentHp;
+		this.__currentHp = currentHp;
 		return this;
 	}
 
-	public long getLvl() {
-		return lvl;
+	public long lvl() {
+		return __lvl;
 	}
 
 	public Monster setLvl(long lvl) {
-		this.lvl = lvl;
+		this.__lvl = lvl;
 		return this;
 	}
 

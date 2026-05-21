@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import { RouterView } from "vue-router";
+import { Vue3Snackbar } from "vue3-snackbar";
 import UserSigninProvider from "./components/users/UserSigninProvider.vue";
 import NavFooter from "./NavFooter.vue";
 import { useCredentialsStore } from "./stores/credentials";
@@ -24,6 +25,7 @@ const { credentials } = storeToRefs(useCredentialsStore());
 			<nav-footer v-if="credentials.isSignedIn"/>
 		</footer>
 	</div>
+	<vue3-snackbar bottom left :duration="4000"></vue3-snackbar>
 </template>
 
 <style scoped>

@@ -10,3 +10,11 @@ export const cookieToObject = (cookie: string): StringObject => {
 	}
 	return obj;
 };
+
+export const checkResponse = async (response: Response) => {
+	if (!response.ok) {
+		const errorData = await response.json();
+		console.error(errorData);
+		throw new Error(`Error ${response.status}`);
+	}
+};

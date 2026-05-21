@@ -18,7 +18,8 @@
     "just-safe-get": "4.2.0",
     "pinia": "3.0.4",
     "vue": "3.5.30",
-    "vue-router": "4.5.1"
+    "vue-router": "4.5.1",
+    "vue3-snackbar": "^2.5.3"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "1.8.0",
@@ -33,7 +34,7 @@
     "npm-run-all2": "8.0.4",
     "prettier": "3.8.1",
     "typescript": "5.9.3",
-    "vite": "8.0.1",
+    "vite": "8.0.13",
     "vue-tsc": "3.2.6"
   }
 }

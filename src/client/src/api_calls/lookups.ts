@@ -1,3 +1,4 @@
+import { checkResponse } from "../helpers/browser";
 import type { LookupsDto } from "../types/lookups";
 
 export const Calls = {
@@ -10,6 +11,7 @@ export const Calls = {
 					"/api/lookups",
 					{ signal: abortController.signal }
 				);
+				await checkResponse(response);
 				return await response.json() as LookupsDto;
 			},
 		};

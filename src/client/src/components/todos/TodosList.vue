@@ -1,28 +1,33 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { Calls } from "../../api_calls/todos";
 import TodoListItem from "./TodoListItem.vue";
 import type { TodoListItemDto } from "../../types/todos";
 import { useFormSubmit } from "../../composables/useFormSubmit";
+import LoadingBackdrop from "../shared/LoadingBackdrop.vue";
+import { useLoader } from "../../composables/useLoader";
+import { CallStatus } from "../../types/requests";
 
 const formName = "todo-add";
 
 const router = useRouter();
-const data = ref<TodoListItemDto[] | null>(null);
 const title = ref("");
 
-onMounted(async () => {
+const { data, loading, error, communicate } = useLoader<TodoListItemDto[]>(
+		async () => {
 	const requestObj = Calls.all();
-	const response = await requestObj.call();
-	data.value = response;
+	return await requestObj.call();
 });
+
+communicate();
+
 
 function openAddNew() {
 	router.push({ name: "todoAdd" });
 }
 
-useFormSubmit(
+const { loading: saving } = useFormSubmit(
 		formName,
 		async () => {
 			try {
@@ -39,7 +44,7 @@ useFormSubmit(
 </script>
 
 <template>
-	<div>
+	<LoadingBackdrop :loading="loading || saving" :error="error">
 		<div>
 			<input type="text" v-model="title" />
 			<form id="todo-add" action="">
@@ -55,5 +60,5 @@ useFormSubmit(
 		<div v-for="value in data" :key="value.id">
 			<todo-list-item :todo="value"/>
 		</div>
-	</div>
+	</LoadingBackdrop>
 </template>

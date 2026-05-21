@@ -1,37 +1,33 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter,RouterLink } from "vue-router";
+import OliveIcon from "./components/shared/icons/OliveIcon.vue";
+import PyramidIcon from "./components/shared/icons/PyramidIcon.vue";
+import ToiletRollIcon from "./components/shared/icons/ToiletRollIcon.vue";
+import ToolboxIcon from "./components/shared/icons/ToolboxIcon.vue";
+
 
 const router = useRouter();
 const data = ref(null);
 
-
-
-function openSettings() {
-	router.push({ name: "settingsNav" });
-}
-
-function openTodos() {
-	router.push({ name: "todos" });
-}
-
-function openActions() {
-	router.push({ name: "actions" });
-}
-
-function openStore() {
-	router.push({ name: "inventory" });
-}
 
 </script>
 
 <template>
 	<div>
 		<div class="toolbar">
-			<button @click="openSettings">Settings</button>
-			<button @click="openTodos">Todos</button>
-			<button @click="openActions">Actions</button>
-			<button @click="openStore">Store</button>
+			<router-link :to="{ name: 'settingsNav' }">
+				<ToolboxIcon :scale="2" color="#fff"/>
+			</router-link>
+			<router-link :to="{ name: 'todos' }">
+				<PyramidIcon :scale="2" color="#fff"/>
+			</router-link>
+			<router-link :to="{ name: 'actions' }">
+				<OliveIcon :scale="2" color="#fff"/>
+			</router-link>
+			<router-link :to="{ name: 'inventory' }">
+				<ToiletRollIcon :scale="2" color="#fff"/>
+			</router-link>
 		</div>
 	</div>
 </template>

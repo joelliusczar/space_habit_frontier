@@ -1,7 +1,7 @@
 package space_habit_frontier.engine.services.todos;
 
 import java.sql.SQLException;
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.time.OffsetTime;
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +9,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.SelectWhereStep;
 import org.jooq.impl.DSL;
 
 import com.fasterxml.uuid.Generators;
@@ -20,6 +22,7 @@ import space_habit_frontier.engine.dtos.todos.DueDateCalculator;
 import space_habit_frontier.engine.dtos.todos.TodoActiveDaysConverters;
 import space_habit_frontier.engine.dtos.todos.TodoFormDto;
 import space_habit_frontier.engine.dtos.todos.TodoListDto;
+import space_habit_frontier.engine.dtos.users.UserDto;
 import space_habit_frontier.engine.interfaces.dates.DatetimeProvider;
 import space_habit_frontier.engine.interfaces.db.DataContextProvider;
 import space_habit_frontier.engine.interfaces.users.UserProvider;
@@ -136,86 +139,127 @@ public class TodoService {
 		return formDto; 
 	}
 
-	public List<TodoListDto> getTodos() {
+	private Field<Integer> __todoEventsRowNum() {
+		return DSL.rowNumber().over(
+			DSL.orderBy(Todoevents.TODOEVENTS.CREATIONTIMESTAMP.desc()))
+			.as("row_num");
+	}
+
+	private SelectWhereStep<org.jooq.Record> __todosUnfiltered(
+			DSLContext ctx,
+			UserDto user) {
+		var rowNum = __todoEventsRowNum();
+
+		var cte_joinKey = Todoevents.TODOEVENTS.TODOID.as("join_key");
+
+		var res = ctx.with("completed_todos").as(
+			ctx.select(
+				Todoevents.TODOEVENTS.ID,
+				cte_joinKey, 
+				Todoevents.TODOEVENTS.CREATIONTIMESTAMP,
+				rowNum)
+			.from(Todoevents.TODOEVENTS)
+			.join(Todos.TODOS)
+			.on(Todoevents.TODOEVENTS.TODOID.eq(Todos.TODOS.ID))
+			.where(Todos.TODOS.USERID.eq(user.getId()))
+			).selectFrom(Todos.TODOS.leftJoin(
+				DSL.table(DSL.name("completed_todos")))
+				.on(cte_joinKey.eq(Todos.TODOS.ID)));
+
+		return res;
+	}
+
+	private TodoListDto __joinedEventRecordToListDto(org.jooq.Record r) {
+		return new TodoListDto(
+			r.get(Todos.TODOS.ID), 
+			r.get(Todos.TODOS.TITLE))
+				.setLastCompletedDatetime(
+					r.get(Todoevents.TODOEVENTS.CREATIONTIMESTAMP))
+				.setCycleRateType(
+					RepeatType.valueOf(r.get(Todos.TODOS.REPEATTYPE)))
+				.setWeekActiveDaysSet(
+					TodoActiveDaysConverters
+						.weekActiveDaysSet(r.get(Todos.TODOS.WEEKACTIVEDAYS)));
+	}
+
+	public List<TodoListDto> getTodosActive() {
 		var user = __userProvider.getSessionUserRequired();
 		return __context.transactionResult(configuration -> {
+			var rowNum = __todoEventsRowNum();
+
 			var ctx = configuration.dsl();
-			var rowNum = DSL.rowNumber().over(
-				DSL.orderBy(Todoevents.TODOEVENTS.CREATIONTIMESTAMP.desc()))
-				.as("row_num");
 
-			var cte_joinKey = Todoevents.TODOEVENTS.TODOID.as("join_key");
-
-			var res = ctx.with("completed_todos").as(
-				ctx.select(
-					Todoevents.TODOEVENTS.ID,
-					cte_joinKey, 
-					Todoevents.TODOEVENTS.CREATIONTIMESTAMP,
-					rowNum)
-				.from(Todoevents.TODOEVENTS)
-				.join(Todos.TODOS)
-				.on(Todoevents.TODOEVENTS.TODOID.eq(Todos.TODOS.ID))
+			var res = __todosUnfiltered(ctx, user.toUserDto())
 				.where(Todos.TODOS.USERID.eq(user.getId()))
-				).selectFrom(Todos.TODOS.leftJoin(
-					DSL.table(DSL.name("completed_todos")))
-					.on(cte_joinKey.eq(Todos.TODOS.ID)))
-					.where(Todos.TODOS.USERID.eq(user.getId()))
-					.or(Todos.TODOS.EFFECTIVEDATETIMESTAMP
-						.lessOrEqual(__datetimeProvider.now().toOffsetDateTime())
-					.or(Todos.TODOS.EXPIRATIONDATETIMESTAMP
-						.greaterOrEqual(__datetimeProvider.now().toOffsetDateTime()))
-					.or(Todos.TODOS.EFFECTIVEDATETIMESTAMP.isNull()))
-					.and(rowNum.eq(1).or(rowNum.isNull()))
-				
-				.fetch(r -> new TodoListDto(
-					r.get(Todos.TODOS.ID), 
-					r.get(Todos.TODOS.TITLE))
-						.setLastCompletedDatetime(
-							r.get(Todoevents.TODOEVENTS.CREATIONTIMESTAMP))
-						.setCycleRateType(
-							RepeatType.valueOf(r.get(Todos.TODOS.REPEATTYPE)))
-						.setWeekActiveDaysSet(
-							TodoActiveDaysConverters
-								.weekActiveDaysSet(r.get(Todos.TODOS.WEEKACTIVEDAYS)))
-						
-				)
-				.stream()
-				.filter(t -> {
-					if (t.cycleRateType() == RepeatType.DATE) {
-						return t.lastCompletedDatetime().isEmpty();
-					}
-					//filter out todos that are have been completed today.
-					var today = __datetimeProvider.now().toLocalDate();
-					return !t.alignLastCompletedDate().isEqual(today);
-				})
-				.map(t -> {
-
-					var previousCompletion = t.lastCompletedDatetime()
-						.orElse(t.weekActiveDays().minActiveDate().atTime(OffsetTime.MIN))
-						.toLocalDateTime();
-					var calculator = new DueDateCalculator(
-						t.weekActiveDays(),
-						previousCompletion);
-					var dueDate = calculator
-						.calculateNextDueDate(
-							__datetimeProvider.now().toLocalDateTime());
-					return t.setNextDueDate(dueDate);
-				})
-				.toList();
-
+				.or(Todos.TODOS.EFFECTIVEDATETIMESTAMP
+					.lessOrEqual(__datetimeProvider.now().toOffsetDateTime())
+				.or(Todos.TODOS.EXPIRATIONDATETIMESTAMP
+					.greaterOrEqual(__datetimeProvider.now().toOffsetDateTime()))
+				.or(Todos.TODOS.EFFECTIVEDATETIMESTAMP.isNull()))
+				.and(rowNum.eq(1).or(rowNum.isNull()))
+				.fetch(this::__joinedEventRecordToListDto);
 			return res;
 		});
 	}
 
-	public void completeTodo(UUID todoId) {
-			// var user = __userProvider.getSessionUserRequired();
-			// return __context.transactionResult(configuration -> {
-			// 	var res = __context.selectFrom(Todos.TODOS)
-			// 		.where(Todos.TODOS.USERID.eq(user.getId()))
-			// 		.and(Todos.TODOS.ID.eq(todoId))
-			// 		.fetchOne();
-				
-			// });
+	public List<TodoListDto> getTodos() {
+
+		return getTodosActive()
+			.stream()
+			.filter(t -> {
+				if (t.cycleRateType() == RepeatType.DATE) {
+					return t.lastCompletedDatetime().isEmpty();
+				}
+				//filter out todos that are have been completed today.
+				var today = __datetimeProvider.now().toLocalDate();
+				return !t.alignLastCompletedDate().isEqual(today);
+			})
+			.map(this::__setCalculatedDates)
+			.toList();
+	}
+
+	private TodoListDto __setCalculatedDates(
+			TodoListDto todo,
+			LocalDateTime checkinDate) {
+		var previousCompletion = todo.lastCompletedDatetime()
+					.orElse(todo.weekActiveDays().minActiveDate().atTime(OffsetTime.MIN))
+					.toLocalDateTime();
+		var calculator = new DueDateCalculator(
+			todo.weekActiveDays(),
+			previousCompletion);
+		var dueDate = calculator
+			.calculateNextDueDate(checkinDate);
+		return todo.setNextDueDate(dueDate);
+	}
+
+	private TodoListDto __setCalculatedDates(TodoListDto todo) {
+		return __setCalculatedDates(
+			todo, 
+			__datetimeProvider.now().toLocalDateTime());
+	}
+
+	public TodoListDto completeTodo(UUID todoId) {
+			var user = __userProvider.getSessionUserRequired();
+			return __context.transactionResult(configuration -> {
+				var ctx = configuration.dsl();
+				ctx.insertInto(Todoevents.TODOEVENTS)
+					.set(
+						Todoevents.TODOEVENTS.ID,
+						Generators.timeBasedEpochRandomGenerator().generate())
+					.set(Todoevents.TODOEVENTS.TODOID, todoId)
+					.set(Todoevents.TODOEVENTS.USERID, user.getId())
+					.set(
+						Todoevents.TODOEVENTS.CREATIONTIMESTAMP,
+						__datetimeProvider.now().toOffsetDateTime())
+					.execute();
+
+				var res = __todosUnfiltered(ctx, user.toUserDto())
+						.where(Todos.TODOS.ID.eq(todoId))
+						.fetchOne(this::__joinedEventRecordToListDto);
+				return __setCalculatedDates(
+					res,
+					__datetimeProvider.now().toLocalDateTime());
+			});
 	}
 	
 }

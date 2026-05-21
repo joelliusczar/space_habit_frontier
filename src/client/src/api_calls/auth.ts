@@ -1,5 +1,6 @@
-import type { UserCreationInfo } from "../types/users";
+import { checkResponse } from "../helpers/browser";
 import { sharedHeaders } from "./overrides"
+import type { UserCreationInfo } from "../types/users";
 
 export const Calls = {
 	signup: (data: UserCreationInfo) => {
@@ -18,6 +19,7 @@ export const Calls = {
 						signal: abortController.signal
 					}
 				);
+				await checkResponse(response);
 				return await response.json();
 			},
 		};
@@ -38,13 +40,11 @@ export const Calls = {
 						signal: abortController.signal
 					}
 				);
+				await checkResponse(response);
 				if (response.ok) {
 					const sessionId = await response.text();
 					sharedHeaders["Authorization"] = `Session ${sessionId}`;
 					return sessionId;
-				}
-				else {
-					throw new Error(`Signin failed: ${response.status} ${response.statusText}`);
 				}
 			},
 		};
@@ -61,6 +61,7 @@ export const Calls = {
 						signal: abortController.signal
 					}
 				);
+				await checkResponse(response);
 				return;
 			},
 		};

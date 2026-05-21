@@ -4,12 +4,14 @@ export const CallStatus = {
 	Hide: "hide"
 };
 
-export type CallStatusT = typeof CallStatus[keyof typeof CallStatus];
+export type LoadingType = typeof CallStatus[keyof typeof CallStatus];
+
+export type ActiveLoadingType = Exclude<LoadingType, "">;
 
 export type ApiResult<T> = {
 	data: T | null,
 	error: string | null,
-	loading: CallStatusT
+	loading: LoadingType
 };
 
 export type RouteId = string | string[];
