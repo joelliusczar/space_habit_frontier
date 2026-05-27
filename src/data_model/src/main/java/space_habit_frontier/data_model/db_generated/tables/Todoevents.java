@@ -81,6 +81,11 @@ public class Todoevents extends TableImpl<TodoeventsRecord> {
      */
     public final TableField<TodoeventsRecord, UUID> USERID = createField(DSL.name("userid"), SQLDataType.UUID.nullable(false), this, "");
 
+    /**
+     * The column <code>public.todoevents.eventtype</code>.
+     */
+    public final TableField<TodoeventsRecord, String> EVENTTYPE = createField(DSL.name("eventtype"), SQLDataType.CLOB, this, "");
+
     private Todoevents(Name alias, Table<TodoeventsRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
     }

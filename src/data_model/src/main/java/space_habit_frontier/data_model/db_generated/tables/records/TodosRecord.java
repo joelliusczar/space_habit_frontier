@@ -287,6 +287,20 @@ public class TodosRecord extends UpdatableRecordImpl<TodosRecord> {
         return (Boolean) get(18);
     }
 
+    /**
+     * Setter for <code>public.todos.deletedtimestamp</code>.
+     */
+    public void setDeletedtimestamp(OffsetDateTime value) {
+        set(19, value);
+    }
+
+    /**
+     * Getter for <code>public.todos.deletedtimestamp</code>.
+     */
+    public OffsetDateTime getDeletedtimestamp() {
+        return (OffsetDateTime) get(19);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -310,7 +324,7 @@ public class TodosRecord extends UpdatableRecordImpl<TodosRecord> {
     /**
      * Create a detached, initialised TodosRecord
      */
-    public TodosRecord(UUID id, String title, String note, Short risk, OffsetDateTime duedatetimestamp, OffsetDateTime effectivedatetimestamp, OffsetDateTime streakstarttimestamp, Short repeatcount, Short repeattype, Short repeatrate, String weekactivedays, Integer[] yearactivedays, OffsetDateTime creationtimestamp, UUID userid, UUID parenttodoid, Integer[] monthactivedays, Boolean poisonous, OffsetDateTime expirationdatetimestamp, Boolean rateinversionflag) {
+    public TodosRecord(UUID id, String title, String note, Short risk, OffsetDateTime duedatetimestamp, OffsetDateTime effectivedatetimestamp, OffsetDateTime streakstarttimestamp, Short repeatcount, Short repeattype, Short repeatrate, String weekactivedays, Integer[] yearactivedays, OffsetDateTime creationtimestamp, UUID userid, UUID parenttodoid, Integer[] monthactivedays, Boolean poisonous, OffsetDateTime expirationdatetimestamp, Boolean rateinversionflag, OffsetDateTime deletedtimestamp) {
         super(Todos.TODOS);
 
         setId(id);
@@ -332,6 +346,7 @@ public class TodosRecord extends UpdatableRecordImpl<TodosRecord> {
         setPoisonous(poisonous);
         setExpirationdatetimestamp(expirationdatetimestamp);
         setRateinversionflag(rateinversionflag);
+        setDeletedtimestamp(deletedtimestamp);
         resetChangedOnNotNull();
     }
 }

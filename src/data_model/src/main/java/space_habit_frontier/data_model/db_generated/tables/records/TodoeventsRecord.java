@@ -91,6 +91,20 @@ public class TodoeventsRecord extends UpdatableRecordImpl<TodoeventsRecord> {
         return (UUID) get(4);
     }
 
+    /**
+     * Setter for <code>public.todoevents.eventtype</code>.
+     */
+    public void setEventtype(String value) {
+        set(5, value);
+    }
+
+    /**
+     * Getter for <code>public.todoevents.eventtype</code>.
+     */
+    public String getEventtype() {
+        return (String) get(5);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -114,7 +128,7 @@ public class TodoeventsRecord extends UpdatableRecordImpl<TodoeventsRecord> {
     /**
      * Create a detached, initialised TodoeventsRecord
      */
-    public TodoeventsRecord(UUID id, Integer damage, OffsetDateTime creationtimestamp, UUID todoid, UUID userid) {
+    public TodoeventsRecord(UUID id, Integer damage, OffsetDateTime creationtimestamp, UUID todoid, UUID userid, String eventtype) {
         super(Todoevents.TODOEVENTS);
 
         setId(id);
@@ -122,6 +136,7 @@ public class TodoeventsRecord extends UpdatableRecordImpl<TodoeventsRecord> {
         setCreationtimestamp(creationtimestamp);
         setTodoid(todoid);
         setUserid(userid);
+        setEventtype(eventtype);
         resetChangedOnNotNull();
     }
 }

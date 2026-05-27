@@ -155,6 +155,11 @@ public class Todos extends TableImpl<TodosRecord> {
      */
     public final TableField<TodosRecord, Boolean> RATEINVERSIONFLAG = createField(DSL.name("rateinversionflag"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "");
 
+    /**
+     * The column <code>public.todos.deletedtimestamp</code>.
+     */
+    public final TableField<TodosRecord, OffsetDateTime> DELETEDTIMESTAMP = createField(DSL.name("deletedtimestamp"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "");
+
     private Todos(Name alias, Table<TodosRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
     }
