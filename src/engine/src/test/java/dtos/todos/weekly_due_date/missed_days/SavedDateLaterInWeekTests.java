@@ -1,4 +1,4 @@
-package dtos.todos.WeeklyDueDate.MissedDays;
+package dtos.todos.weekly_due_date.missed_days;
 
 import org.junit.jupiter.api.Test;
 
@@ -16,12 +16,12 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Set;
 
-class MissedDaysSameWeek {
+class SavedDateLaterInWeekTests {
 
 	@Test
-	void testMissedDaysSameWeek() {
+	void testMissedDays1ActiveDaysInterval3() {
 
-	/*
+					/*
 			#calendar 2018
 				SU	MO	TU	WE	TH	FR	SA
 														01	02
@@ -84,7 +84,7 @@ class MissedDaysSameWeek {
 				30	31
 		*/
 		var baselineDate = OffsetDateTime.of(
-			LocalDate.of(2018, 1, 7),
+			LocalDate.of(2018, 1, 13),
 			LocalTime.MIN,
 			ZoneOffset.UTC
 		).toLocalDateTime();
@@ -101,87 +101,127 @@ class MissedDaysSameWeek {
 		.setIntervalSize(2);
 		
 		var testDate = OffsetDateTime.of(
-			LocalDate.of(2018, 1, 14),
+			LocalDate.of(2018, 1, 21),
 			LocalTime.MIN,
-			ZoneOffset.ofTotalSeconds(-18000))
+			ZoneOffset.ofTotalSeconds(0))
 		.toLocalDateTime();
 
 		var result = 0L;
 
 //testDate = \(struct SHDatetime\)\{\.year = (\d+), \.month = (\d+), \.day = (\d+), \.timezoneOffset = (-?\d+)\}
 
-//testDate = OffsetDateTime.of(\n\t\t\tLocalDate.of($1, $2, $3),\n\t\t\tLocalTime.MIN,\n\t\t\tZoneOffset.ofTotalSeconds($4))\n\t\t.toLocalDateTime()
+//testDate = OffsetDateTime.of(\n\t\t\t\t\tLocalDate.of($1, $2, $3),\n\t\t\t\t\tLocalTime.MIN,\n\t\t\t\t\tZoneOffset.ofTotalSeconds($4))\n\t\t\t\t.toLocalDateTime()
 
 		result = dueDate.missedDays(testDate);
-		assertEquals(6, result);
+		assertEquals(0, result);
 		
-		testDate = OffsetDateTime.of(
-			LocalDate.of(2018, 1, 13),
-			LocalTime.MIN,
-			ZoneOffset.ofTotalSeconds(-18000))
-		.toLocalDateTime();
+		dueDate.setPreviousCheckinDate(LocalDateTime.of(
+			LocalDate.of(2018,1,12),
+			LocalTime.MIN));
 		result = dueDate.missedDays(testDate);
-		assertEquals(5, result);
+		assertEquals(1, result);
 		
-		testDate = OffsetDateTime.of(
-			LocalDate.of(2018, 1, 12),
-			LocalTime.MIN,
-			ZoneOffset.ofTotalSeconds(-18000))
-		.toLocalDateTime();
+		dueDate.setPreviousCheckinDate(LocalDateTime.of(
+			LocalDate.of(2018,1,11),
+			LocalTime.MIN));
 		result = dueDate.missedDays(testDate);
-		assertEquals(4, result);
+		assertEquals(2, result);
 		
-		testDate = OffsetDateTime.of(
-			LocalDate.of(2018, 1, 11),
-			LocalTime.MIN,
-			ZoneOffset.ofTotalSeconds(-18000))
-		.toLocalDateTime();
+		dueDate.setPreviousCheckinDate(LocalDateTime.of(
+			LocalDate.of(2018,1,10),
+			LocalTime.MIN));
 		result = dueDate.missedDays(testDate);
 		assertEquals(3, result);
 		
+		dueDate.setPreviousCheckinDate(LocalDateTime.of(
+			LocalDate.of(2018,1,9),
+			LocalTime.MIN));
+		result = dueDate.missedDays(testDate);
+		assertEquals(4, result);
+		
+		dueDate.setPreviousCheckinDate(LocalDateTime.of(
+			LocalDate.of(2018,1,8),
+			LocalTime.MIN));
+		result = dueDate.missedDays(testDate);
+		assertEquals(5, result);
+		
+		dueDate.setPreviousCheckinDate(LocalDateTime.of(
+			LocalDate.of(2018,1,7),
+			LocalTime.MIN));
+		result = dueDate.missedDays(testDate);
+		assertEquals(6, result);
+		
+		dueDate.setPreviousCheckinDate(LocalDateTime.of(
+			LocalDate.of(2018,1,6),
+			LocalTime.MIN));
+		result = dueDate.missedDays(testDate);
+		assertEquals(7, result);
+		
+		dueDate.setPreviousCheckinDate(LocalDateTime.of(
+			LocalDate.of(2018,1,12),
+			LocalTime.MIN));
 		testDate = OffsetDateTime.of(
-			LocalDate.of(2018, 1, 10),
-			LocalTime.MIN,
-			ZoneOffset.ofTotalSeconds(-18000))
-		.toLocalDateTime();
+					LocalDate.of(2018, 1, 22),
+					LocalTime.MIN,
+					ZoneOffset.ofTotalSeconds(-18000))
+				.toLocalDateTime();
 		result = dueDate.missedDays(testDate);
 		assertEquals(2, result);
 		
 		testDate = OffsetDateTime.of(
-			LocalDate.of(2018, 1, 9),
-			LocalTime.MIN,
-			ZoneOffset.ofTotalSeconds(-18000))
-		.toLocalDateTime();
+					LocalDate.of(2018, 1, 23),
+					LocalTime.MIN,
+					ZoneOffset.ofTotalSeconds(-18000))
+				.toLocalDateTime();
 		result = dueDate.missedDays(testDate);
-		assertEquals(1, result);
+		assertEquals(3, result);
 		
 		testDate = OffsetDateTime.of(
-			LocalDate.of(2018, 1, 8),
-			LocalTime.MIN,
-			ZoneOffset.ofTotalSeconds(-18000))
-		.toLocalDateTime();
+					LocalDate.of(2018, 1, 24),
+					LocalTime.MIN,
+					ZoneOffset.ofTotalSeconds(-18000))
+				.toLocalDateTime();
 		result = dueDate.missedDays(testDate);
-		assertEquals(0, result);
+		assertEquals(4, result);
 		
 		testDate = OffsetDateTime.of(
-			LocalDate.of(2018, 1, 7),
-			LocalTime.MIN,
-			ZoneOffset.ofTotalSeconds(-18000))
-		.toLocalDateTime();
+					LocalDate.of(2018, 1, 25),
+					LocalTime.MIN,
+					ZoneOffset.ofTotalSeconds(-18000))
+				.toLocalDateTime();
 		result = dueDate.missedDays(testDate);
-		assertEquals(0, result);
+		assertEquals(5, result);
 		
-		dueDate.setPreviousCheckinDate(
-			LocalDateTime.of(
-				LocalDate.of(2018,1,13),
-				LocalTime.MIN));
 		testDate = OffsetDateTime.of(
-			LocalDate.of(2018, 1, 13),
-			LocalTime.MIN,
-			ZoneOffset.ofTotalSeconds(-18000))
-		.toLocalDateTime();
+					LocalDate.of(2018, 1, 26),
+					LocalTime.MIN,
+					ZoneOffset.ofTotalSeconds(-18000))
+				.toLocalDateTime();
 		result = dueDate.missedDays(testDate);
-		assertEquals(0, result);
-
+		assertEquals(6, result);
+		
+		testDate = OffsetDateTime.of(
+					LocalDate.of(2018, 1, 27),
+					LocalTime.MIN,
+					ZoneOffset.ofTotalSeconds(-18000))
+				.toLocalDateTime();
+		result = dueDate.missedDays(testDate);
+		assertEquals(7, result);
+		
+		testDate = OffsetDateTime.of(
+					LocalDate.of(2018, 1, 28),
+					LocalTime.MIN,
+					ZoneOffset.ofTotalSeconds(-18000))
+				.toLocalDateTime();
+		result = dueDate.missedDays(testDate);
+		assertEquals(8, result);
+		
+		testDate = OffsetDateTime.of(
+					LocalDate.of(2018, 1, 29),
+					LocalTime.MIN,
+					ZoneOffset.ofTotalSeconds(-18000))
+				.toLocalDateTime();
+		result = dueDate.missedDays(testDate);
+		assertEquals(8, result);
 	}
 }

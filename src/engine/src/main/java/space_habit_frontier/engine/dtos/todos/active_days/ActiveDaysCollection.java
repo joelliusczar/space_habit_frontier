@@ -2,10 +2,11 @@ package space_habit_frontier.engine.dtos.todos.active_days;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.temporal.Temporal;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Stream;
-
 
 public abstract class ActiveDaysCollection {
 	private Collection<Integer> __store;
@@ -72,6 +73,41 @@ public abstract class ActiveDaysCollection {
 		return previousDay;
 	}
 
+	public Optional<LocalDate> nextActiveDay(LocalDate candidate) {
+		for (int i = 0; i < periodLength(); i++) {
+			if (canDayBeActive(candidate)) {
+				return Optional.of(candidate);
+			}
+			candidate = candidate.plusDays(1);
+		}
+
+		return Optional.empty();
+	}
+
+	public Optional<OffsetDateTime> nextActiveDay(OffsetDateTime candidate) {
+		var localDate = candidate.toLocalDate();
+		var tempResult = nextActiveDay(localDate);
+		if (tempResult.isEmpty()) {
+			return Optional.empty();
+		}
+		return Optional.of(
+			OffsetDateTime.of(
+				tempResult.get(),
+				candidate.toLocalTime(),
+				candidate.getOffset()));
+	}
+
+	public Optional<LocalDate> previousActiveDay(LocalDate candidate) {
+		var startIdx = dayOfPeriod(candidate);
+		for (int i = startIdx; i >= 0; i--) {
+			if (canDayBeActive(candidate)) {
+				return Optional.of(candidate);
+			}
+			candidate = candidate.minusDays(1);
+		}
+		return Optional.empty();
+	}
+
 	public int findNextDayOfPeriod(int checkinDay) {
 		for (int i = 0; i < periodLength(); i++) {
 			var day = (periodLength() + checkinDay + i) % periodLength();
@@ -107,6 +143,10 @@ public abstract class ActiveDaysCollection {
 	}
 
 	public boolean canDayBeActive(LocalDate date) {
+		return canDayBeActive(dayOfPeriod(date));
+	}
+
+	public boolean canDayBeActive(LocalDateTime date) {
 		return canDayBeActive(dayOfPeriod(date));
 	}
 }

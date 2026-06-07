@@ -13,23 +13,29 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import space_habit_frontier.engine.dtos.UserMoves.UserMoveResult;
+import space_habit_frontier.engine.dtos.user_moves.UserMoveDto;
 import space_habit_frontier.engine.dtos.todos.TodoFormDto;
 import space_habit_frontier.engine.dtos.todos.TodoListDto;
+import space_habit_frontier.engine.dtos.user_moves.UserMoveDto;
+import space_habit_frontier.engine.services.todos.TodoListService;
 import space_habit_frontier.engine.services.todos.TodoService;
 
 @RestController
 @RequestMapping("api/todos")
 public class TodosController {
 	private final TodoService __todoService;
+	private final TodoListService __todoListService;
 
-	public TodosController(TodoService todoService) {
-		this.__todoService = todoService;
+	public TodosController(
+			TodoService todoService,
+			TodoListService todoListService) {
+		__todoService = todoService;
+		__todoListService = todoListService;
 	}
 
 	@GetMapping("/all")
 	public List<TodoListDto> getAll() {
-		var res = this.__todoService.getTodos();
+		var res = this.__todoListService.getTodos();
 		return res;
 	}
 
@@ -51,11 +57,11 @@ public class TodosController {
 		this.__todoService.update(UUID.fromString(todoId), formDto);
 	}
 
-	@PostMapping("/complete/{todoId}")
-	public UserMoveResult<TodoListDto> complete(@PathVariable String todoId) {
-		var result = this.__todoService.completeTodo(UUID.fromString(todoId));
-		return new UserMoveResult<TodoListDto>().setEntity(result); // Return the actual UserMoveResult
-	}
+	// @PostMapping("/complete/{todoId}")
+	// public UserMoveDto<TodoListDto> complete(@PathVariable String todoId) {
+	// 	var result = this.__todoService.completeTodo(UUID.fromString(todoId));
+	// 	return new UserMoveDto<TodoListDto>().setEntity(result); // Return the actual UserMoveResult
+	// }
 
 	@DeleteMapping("/{todoId}")
 	public void delete(@PathVariable String todoId) {

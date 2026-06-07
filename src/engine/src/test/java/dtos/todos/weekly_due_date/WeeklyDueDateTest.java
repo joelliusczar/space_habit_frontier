@@ -1,6 +1,7 @@
-package dtos.todos.WeeklyDueDate;
+package dtos.todos.weekly_due_date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -9,10 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -110,20 +108,17 @@ public class WeeklyDueDateTest {
 			LocalDateTime.of(
 			LocalDate.of(2018,1,11),
 			LocalTime.MIN));
-		var _testDate0 = testDate;
-		assertThrows(IllegalStateException.class, () -> {
-			weeklyDueDate.isDateADueDate(_testDate0);
-		});
+		testDate = baselineDate.plusDays(28);
+ 		result = weeklyDueDate.isDateADueDate(testDate);
+		assertTrue(result);
 		
 		
-		assertThrows(IllegalStateException.class, () -> {
-			var _testDate = OffsetDateTime.of(
-				LocalDate.of(2018, 2, 1),
-				LocalTime.MIN,
-				ZoneOffset.ofTotalSeconds(18000))
-			.toLocalDateTime();
-			weeklyDueDate.isDateADueDate(_testDate);
-		});
-
+		var _testDate = OffsetDateTime.of(
+			LocalDate.of(2018, 2, 1),
+			LocalTime.MIN,
+			ZoneOffset.ofTotalSeconds(18000))
+		.toLocalDateTime();
+		result = weeklyDueDate.isDateADueDate(_testDate);
+		assertFalse(result);
 	}
 }

@@ -34,7 +34,7 @@ public class UserManagementService {
 				.set(Users.USERS.HASHEDPW, hashed)
 				.set(Users.USERS.USERNAME, formData.getUsername())
 				.set(Users.USERS.EMAIL, formData.getEmail())
-				.set(Users.USERS.CREATIONTIMESTAMP, timestamp)
+				.set(Users.USERS.CREATIONDATETIME, timestamp)
 				.execute();
 			ctx.commit();
 		});

@@ -1,4 +1,4 @@
-package dtos.todos.WeeklyDueDate;
+package dtos.todos.weekly_due_date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -10,8 +10,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -63,18 +61,20 @@ public class PreviousDueDateTests {
 			.setIntervalSize(3);
 
 		var testDate = baselineDateTime;
+		expectedDate = baselineDate.plusDays(1);
 
-		assertThrows(IllegalArgumentException.class, () -> {
-			var testDate1 = baselineDateTime;
-			weeklyDueDate.calculatePreviousDueDate(testDate1);	
-		});
+		var actualPreviousDueDate = weeklyDueDate
+			.calculatePreviousDueDate(baselineDateTime);	
+		assertEquals(expectedDate, actualPreviousDueDate);
+		
+		expectedDate = baselineDate;
 
 		previousCheckinDate = previousCheckinDate.plusDays(1);
 		weeklyDueDate.setPreviousCheckinDate(previousCheckinDate);
 		testDate = testDate.plusDays(81);
 		expectedDate = expectedDate.plusDays(66);
 
-		var actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
+		actualPreviousDueDate = weeklyDueDate.calculatePreviousDueDate(testDate);
 		assertEquals(actualPreviousDueDate, expectedDate);
 
 		testDate = baselineDateTime.plusDays(65);

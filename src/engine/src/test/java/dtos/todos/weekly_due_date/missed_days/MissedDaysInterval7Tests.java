@@ -1,4 +1,4 @@
-package dtos.todos.WeeklyDueDate.MissedDays;
+package dtos.todos.weekly_due_date.missed_days;
 
 import org.junit.jupiter.api.Test;
 

@@ -1,8 +1,9 @@
-package space_habit_frontier.engine.dtos.UserMoves;
+package space_habit_frontier.engine.dtos.user_moves;
 
 import space_habit_frontier.engine.dtos.monsters.Monster;
 
-public class UserMoveResult<T> {
+
+public class UserMoveDto<T> {
 	private int __damageDealt;
 	private int __damageTaken;
 	private int __moneyGained;
@@ -14,7 +15,7 @@ public class UserMoveResult<T> {
 		return __entity;
 	}
 
-	public UserMoveResult<T> setEntity(T entity) {
+	public UserMoveDto<T> setEntity(T entity) {
 		this.__entity = entity;
 		return this;
 	}
@@ -23,7 +24,7 @@ public class UserMoveResult<T> {
 		return __damageDealt;
 	}
 
-	public UserMoveResult<T> setDamageDealt(int damageDealt) {
+	public UserMoveDto<T> setDamageDealt(int damageDealt) {
 		this.__damageDealt = damageDealt;
 		return this;
 	}
@@ -32,7 +33,7 @@ public class UserMoveResult<T> {
 		return __damageTaken;
 	}
 
-	public UserMoveResult<T> setDamageTaken(int damageTaken) {
+	public UserMoveDto<T> setDamageTaken(int damageTaken) {
 		this.__damageTaken = damageTaken;
 		return this;
 	}
@@ -41,7 +42,7 @@ public class UserMoveResult<T> {
 		return __moneyGained;
 	}
 
-	public UserMoveResult<T> setMoneyGained(int moneyGained) {
+	public UserMoveDto<T> setMoneyGained(int moneyGained) {
 		this.__moneyGained = moneyGained;
 		return this;
 	}
@@ -50,7 +51,7 @@ public class UserMoveResult<T> {
 		return __xpGained;
 	}
 
-	public UserMoveResult<T> setXpGained(int xpGained) {
+	public UserMoveDto<T> setXpGained(int xpGained) {
 		this.__xpGained = xpGained;
 		return this;
 	}
@@ -59,7 +60,7 @@ public class UserMoveResult<T> {
 		return __monster;
 	}
 
-	public UserMoveResult<T> setMonster(Monster monster) {
+	public UserMoveDto<T> setMonster(Monster monster) {
 		this.__monster = monster;
 		return this;
 	}

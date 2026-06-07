@@ -4,21 +4,28 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.util.BitSet;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import org.apache.commons.lang3.NotImplementedException;
+
 import space_habit_frontier.engine.constants.RepeatType;
 import space_habit_frontier.engine.dtos.TitledId;
+import space_habit_frontier.engine.dtos.todos.active_days.ActiveDaysCollection;
 import space_habit_frontier.engine.dtos.todos.active_days.WeeklyActiveDaysCollection;
 
 public class TodoListDto extends TitledId implements DateAligner {
 
 	private Optional<OffsetDateTime> __lastCompletedDatetime;
 	private Optional<LocalDate> __nextDueDate;
-	private RepeatType __cycleRateType;
+	private Optional<OffsetDateTime> __effectiveDatetime;
+	private Optional<OffsetDateTime> __creationDateTimetime;
+	private RepeatType __repeatType;
 	private Set<Integer> __weekActiveDaysSet;
 	private LocalTime __dayStartHour;
+	private int __damage;
 	
 
 	public TodoListDto(UUID id, String title) {
@@ -34,6 +41,42 @@ public class TodoListDto extends TitledId implements DateAligner {
 		return this;
 	}
 
+	public Optional<OffsetDateTime> effectiveDatetime() {
+		return __effectiveDatetime;
+	}
+
+	public TodoListDto setEffectiveDatetime(OffsetDateTime value) {
+		__effectiveDatetime = Optional.ofNullable(value);
+		return this;
+	}
+
+	public Optional<OffsetDateTime> creationDatetime() {
+		return __creationDateTimetime;
+	}
+
+	public TodoListDto setCreationDatetime(OffsetDateTime value) {
+		__creationDateTimetime = Optional.ofNullable(value);
+		return this;
+	}
+
+	public OffsetDateTime lastCompletedDatetimeBestGuess(OffsetDateTime now) {
+		return lastCompletedDatetime()
+			.orElseGet(() -> {
+				if (effectiveDatetime().isPresent()) {
+					var effectiveDatetime = effectiveDatetime().get();
+					if (effectiveDatetime.isBefore(now)) {
+						return effectiveDatetime;
+					}
+				}
+				var creationDatetime = creationDatetime().orElseThrow();
+				if (creationDatetime.isBefore(now)) {
+					return creationDatetime;
+				}
+				throw new NoSuchElementException(
+					"No reasonable value could be found for lastCompletedDatetime");
+			});
+	}
+
 	public Optional<LocalDate> nextDueDate() {
 		return __nextDueDate;
 	}
@@ -43,12 +86,12 @@ public class TodoListDto extends TitledId implements DateAligner {
 		return this;
 	}
 
-	public RepeatType cycleRateType() {
-		return __cycleRateType;
+	public RepeatType repeatType() {
+		return __repeatType;
 	}
 
-	public TodoListDto setCycleRateType(RepeatType value) {
-		__cycleRateType = value;
+	public TodoListDto setRepeatType(RepeatType value) {
+		__repeatType = value;
 		return this;
 	}
 
@@ -66,6 +109,27 @@ public class TodoListDto extends TitledId implements DateAligner {
 	}
 
 	public TodoListDto setWeekActiveDaysSet(BitSet bits) {
+		return this;
+	}
+
+	public ActiveDaysCollection activeDaysCollection() {
+		
+		switch (repeatType()) {
+			case RepeatType.WEEKLY:
+				return weekActiveDays();
+			default:
+				throw new NotImplementedException(
+					String.format("Haven't figured out what to do for %s yet",
+						repeatType().getFriendlyName()));
+		}
+	}
+
+	public int damage() {
+		return __damage;
+	}
+
+	public TodoListDto setDamage(int damage) {
+		__damage = damage;
 		return this;
 	}
 

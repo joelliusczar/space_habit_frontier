@@ -77,6 +77,10 @@ public class TodoActiveDaysConverters {
 		return result;
 	}
 
+	public static Set<Integer> weekActiveDaysSet(byte bits) {
+		return weekActiveDaysSet(BitSet.valueOf(new byte[] { bits }));
+	}
+
 	public static Integer[] getYearActivedaysIntegerArray(List<MonthDay> yearactivedays) {
 		var monthMap = Map.ofEntries(
 			Map.entry(Month.JANUARY.name().toLowerCase(), Month.JANUARY),
