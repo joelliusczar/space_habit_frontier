@@ -187,7 +187,6 @@ public class DueDateCalculator implements DateAligner {
 
 	public boolean isDateADueDate(LocalDateTime checkinDate) {
 		var nextDueDate = __calculateBothDueDates(checkinDate).next();
-
 		return nextDueDate.isEqual(checkinDate.toLocalDate());
 	}
 
@@ -256,8 +255,7 @@ public class DueDateCalculator implements DateAligner {
 		var checkinDatePrepared = alignDate(checkinDate);
 		if (!(checkinDatePrepared.isAfter(previousCheckinDateAligned())
 				|| checkinDatePrepared.isEqual(previousCheckinDateAligned()))) {
-			throw new IllegalArgumentException(
-				"checkinDate must be more recent than the previous checkin date");
+			return 0;
 		}
 
 		var periodBounds = __constructPeriodBounds(

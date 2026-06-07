@@ -6,7 +6,7 @@ public class DayStatus {
 
 	private boolean __isDayActive;
 	private int __daysTillActive;
-	private List<Integer> __missedDays;
+	private List<Long> __missedDays;
 
 	// Getters
 	public boolean isDayActive() {
@@ -17,7 +17,7 @@ public class DayStatus {
 		return __daysTillActive;
 	}
 
-	public List<Integer> missedDays() {
+	public List<Long> missedDays() {
 		return __missedDays;
 	}
 
@@ -32,7 +32,7 @@ public class DayStatus {
 		return this;
 	}
 
-	public DayStatus setMissedDays(List<Integer> missedDays) {
+	public DayStatus setMissedDays(List<Long> missedDays) {
 		__missedDays = missedDays;
 		return this;
 	}

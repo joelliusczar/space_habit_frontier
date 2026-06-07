@@ -97,17 +97,6 @@ public abstract class ActiveDaysCollection {
 				candidate.getOffset()));
 	}
 
-	public Optional<LocalDate> previousActiveDay(LocalDate candidate) {
-		var startIdx = dayOfPeriod(candidate);
-		for (int i = startIdx; i >= 0; i--) {
-			if (canDayBeActive(candidate)) {
-				return Optional.of(candidate);
-			}
-			candidate = candidate.minusDays(1);
-		}
-		return Optional.empty();
-	}
-
 	public int findNextDayOfPeriod(int checkinDay) {
 		for (int i = 0; i < periodLength(); i++) {
 			var day = (periodLength() + checkinDay + i) % periodLength();

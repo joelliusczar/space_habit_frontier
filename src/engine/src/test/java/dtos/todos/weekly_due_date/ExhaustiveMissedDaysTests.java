@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 
-import org.junit.jupiter.api.Disabled;
+
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
@@ -14,11 +14,10 @@ import space_habit_frontier.engine.dtos.todos.TodoActiveDaysConverters;
 import space_habit_frontier.engine.dtos.todos.active_days.WeeklyActiveDaysCollection;
 import utilities.ActiveDaysCalendar;
 
-public class ExhaustiveDueDateTests {
+public class ExhaustiveMissedDaysTests {
 
-	@Disabled
 	@Test
-	void testDueDateExhaustive() {
+	void testMissedDaysExhaustive() {
 
 		/*
 		#calendar 2018
@@ -106,6 +105,7 @@ dec		25	26	27	28	29	30	01	1	2
 				for (var prev = 0; prev < calendar.validCount(); prev++) {
 					calendar.loadActiveDays(prev);
 					calendar.loadDaysTill();
+					calendar.loadMissedDays();
 					dueDateCalculator
 						.setActiveDays(activeDaysCollection.setStore(activeDays))
 						.setPreviousCheckinDate(baselineDate.plusDays(prev))
@@ -115,10 +115,8 @@ dec		25	26	27	28	29	30	01	1	2
 							checkin < calendar.validCount();
 							checkin++) {
 						var actual = dueDateCalculator
-							.calculateNextDueDate(baselineDate.plusDays(checkin));
-						var expected = baselineDate
-							.plusDays(calendar.get(checkin).daysTillActive() + checkin)
-							.toLocalDate();
+							.missedDays(baselineDate.plusDays(checkin));
+						var expected = calendar.get(checkin).missedDays().get(prev);
 						try {
 							assertEquals(actual, expected);
 						}

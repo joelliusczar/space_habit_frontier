@@ -6,7 +6,6 @@ import java.util.Set;
 public class ActiveDaysCalendar {
 	private Set<Integer> __activeDays;
 	private DayStatus[] __calendar;
-	private int __periodCount;
 	private int __intervalSize;
 	private int __periodSize;
 	private int __invalidCount;
@@ -22,7 +21,6 @@ public class ActiveDaysCalendar {
 			}
 			__activeDays = days;
 			__intervalSize = intervalSize;
-			__periodCount = periodCount;
 			__periodSize = periodSize;
 	}
 
@@ -69,8 +67,8 @@ public class ActiveDaysCalendar {
 	
 	public void loadMissedDays() {
 		for (var i = 0; i < __calendar.length; i++) {
-			var missedDays = new ArrayList<Integer>();
-			var count = 0;
+			var missedDays = new ArrayList<Long>();
+			var count = 0L;
 			for (var j = 0; j < i; j++) {
 				missedDays.add(count);
 				if (__calendar[j].isDayActive()) {
