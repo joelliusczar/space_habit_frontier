@@ -65,17 +65,19 @@ public class ActiveDaysCalendar {
 		}
 	}
 	
-	public void loadMissedDays() {
-		for (var i = 0; i < __calendar.length; i++) {
-			var missedDays = new ArrayList<Long>();
-			var count = 0L;
-			for (var j = 0; j < i; j++) {
-				missedDays.add(count);
+	public void loadMissedDays(int prev) {
+		for (var i = 0; i < prev && i < __calendar.length; i++) {
+			__calendar[i].setMissedDays(0);
+		}
+
+		for (var i = prev; i < __calendar.length; i++) {
+			var count = 0l;
+			for (var j = prev + 1; j < i; j++) {
 				if (__calendar[j].isDayActive()) {
 					count++;
 				}
 			}
-			__calendar[i].setMissedDays(missedDays);
+			__calendar[i].setMissedDays(count);
 		}
 	}
 

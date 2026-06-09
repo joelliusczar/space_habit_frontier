@@ -13,6 +13,7 @@ public class DueDateCalculator implements DateAligner {
 	private ActiveDaysCollection __activeDays;
 	private LocalDateTime __previousCheckinDate;
 	private LocalDate __previousCheckinDateAligned;
+	private LocalDate __minDate;
 	private int __intervalSize;
 	private LocalTime __dayStartHour;
 
@@ -23,6 +24,7 @@ public class DueDateCalculator implements DateAligner {
 		this.__previousCheckinDate = previousCheckinDate;
 		this.__intervalSize = 1;
 		this.__dayStartHour = LocalTime.MIDNIGHT;
+		this.__minDate = LocalDate.MIN;
 	}
 
 	public LocalDateTime previousCheckinDate() {
@@ -65,6 +67,15 @@ public class DueDateCalculator implements DateAligner {
 			throw new IllegalArgumentException("intervalSize must be at least 1");
 		}
 		this.__intervalSize = intervalSize;
+		return this;
+	}
+
+	public LocalDate minDate() {
+		return __minDate;
+	}
+
+	public DueDateCalculator setMinDate(LocalDate minDate) {
+		__minDate = minDate;
 		return this;
 	}
 
@@ -239,11 +250,6 @@ public class DueDateCalculator implements DateAligner {
 
 	private long __missedDays(LocalDate previousDueDate) {
 		var missedDaysDto = __constructMissedDaysDto(previousDueDate);
-		
-		if (missedDaysDto.fullPeriodCount() < 1) {
-			throw new RuntimeException(
-				"fullPeriodCount should only be less than 1 if same week");
-		}
 
 		var adjustedWeekCount = missedDaysDto.fullPeriodCount() / intervalSize();
 		return missedDaysDto.firstPartialPeriodCount() 
@@ -252,27 +258,29 @@ public class DueDateCalculator implements DateAligner {
 	}
 
 	public long missedDays (LocalDateTime checkinDate) {
-		var checkinDatePrepared = alignDate(checkinDate);
-		if (!(checkinDatePrepared.isAfter(previousCheckinDateAligned())
-				|| checkinDatePrepared.isEqual(previousCheckinDateAligned()))) {
+		var checkinDateAligned = alignDate(checkinDate);
+		if (!(checkinDateAligned.isAfter(previousCheckinDateAligned())
+				|| checkinDateAligned.isEqual(previousCheckinDateAligned()))) {
 			return 0;
 		}
 
-		var periodBounds = __constructPeriodBounds(
-			checkinDatePrepared);
-		
+		var periodBounds = __constructPeriodBounds(checkinDateAligned);
+
 		if (periodBounds.isWithinPeriod(previousCheckinDateAligned())) {
-			return __missedDaysSamePeriod(checkinDatePrepared);
+			return __missedDaysSamePeriod(checkinDateAligned);
 		}
 
-		var previousDueDate = calculatePreviousDueDate(checkinDatePrepared);
-		if (previousDueDate.isEqual(previousCheckinDateAligned())) {
+		var previousDueDate = calculatePreviousDueDate(checkinDateAligned);
+		if (
+				previousDueDate.isEqual(previousCheckinDateAligned())
+				|| previousDueDate.isBefore(minDate())
+				|| previousDueDate.isAfter(checkinDateAligned)
+				|| previousDueDate.isEqual(checkinDateAligned)) {
 			return 0;
 		}
 
-		var previousPeriodBounds = __constructPeriodBounds(
-			previousDueDate);
-		
+		var previousPeriodBounds = __constructPeriodBounds(previousDueDate);
+
 		if (previousPeriodBounds.isWithinPeriod(previousCheckinDateAligned())) {
 			//I think the +1 is an offset to include previousDueDate itself
 			return __missedDaysSamePeriod(previousDueDate) + 1;

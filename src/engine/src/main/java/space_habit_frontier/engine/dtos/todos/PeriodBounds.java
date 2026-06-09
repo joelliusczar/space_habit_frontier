@@ -10,4 +10,8 @@ public record PeriodBounds(
 			return (periodStart().isBefore(date) || periodStart().equals(date))
 				&& nextPeriodStart().isAfter(date);
 		}
+
+		public static PeriodBounds minSort(LocalDate a, LocalDate b) {
+			return a.isBefore(b) ? new PeriodBounds(a, b) : new PeriodBounds(b, a);
+		}
 	}

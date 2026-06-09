@@ -105,18 +105,19 @@ dec		25	26	27	28	29	30	01	1	2
 				for (var prev = 0; prev < calendar.validCount(); prev++) {
 					calendar.loadActiveDays(prev);
 					calendar.loadDaysTill();
-					calendar.loadMissedDays();
+					calendar.loadMissedDays(prev);
 					dueDateCalculator
 						.setActiveDays(activeDaysCollection.setStore(activeDays))
 						.setPreviousCheckinDate(baselineDate.plusDays(prev))
-						.setIntervalSize(interval);
+						.setIntervalSize(interval)
+						.setMinDate(baselineDate.plusDays(prev).toLocalDate());
 					for (
 							var checkin = prev + 1;
 							checkin < calendar.validCount();
 							checkin++) {
 						var actual = dueDateCalculator
 							.missedDays(baselineDate.plusDays(checkin));
-						var expected = calendar.get(checkin).missedDays().get(prev);
+						var expected = calendar.get(checkin).missedDays();
 						try {
 							assertEquals(actual, expected);
 						}
