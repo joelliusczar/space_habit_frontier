@@ -6,6 +6,7 @@ import space_habit_frontier.engine.services.dates.DefaultExpirationDatesProvider
 import space_habit_frontier.app.dtos.AppUserDetails;
 import space_habit_frontier.app.security.AppCookieManager;
 import space_habit_frontier.app.security.AppUserDetailsService;
+import space_habit_frontier.engine.dtos.todos.TodoListDto;
 import space_habit_frontier.engine.dtos.web.GlobalStore;
 import space_habit_frontier.engine.dtos.web.IpAddressPair;
 import space_habit_frontier.engine.dtos.web.TrackingInfo;
@@ -21,7 +22,10 @@ import space_habit_frontier.engine.services.events.FSEventService;
 import space_habit_frontier.engine.services.events.InMemEventService;
 import space_habit_frontier.engine.services.events.VisitorService;
 import space_habit_frontier.engine.services.secrets_providers.db.EnvApiUserSecretsProvider;
+import space_habit_frontier.engine.services.todos.TodoEventService;
+import space_habit_frontier.engine.services.todos.TodoListService;
 import space_habit_frontier.engine.services.todos.TodoService;
+import space_habit_frontier.engine.services.user_moves.UserMovesEventBroadcaster;
 import space_habit_frontier.engine.services.users.BasicUserProvider;
 import space_habit_frontier.engine.services.users.UserAccessService;
 import space_habit_frontier.engine.services.users.UserManagementService;
@@ -33,6 +37,7 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -221,10 +226,44 @@ class AppDependencies {
 			DataContextProvider dataContextProvider,
 			UserProvider userProvider,
 			DatetimeProvider datetimeProvider
-	)  throws SQLException {
+	) throws SQLException {
 		return new TodoService(
 			dataContextProvider,
 			userProvider,
 			datetimeProvider);
+	}
+
+	@Bean
+	public TodoEventService todoEventService(
+			DataContextProvider dataContextProvider,
+			UserProvider userProvider,
+			DatetimeProvider datetimeProvider
+		) throws SQLException {
+		return new TodoEventService(
+			dataContextProvider,
+			userProvider,
+			datetimeProvider);
+	}
+
+	@Bean
+	public TodoListService todoListService(
+			DataContextProvider dataContextProvider,
+			UserProvider userProvider,
+			DatetimeProvider datetimeProvider,
+			TodoEventService todoEventService,
+			UserMovesEventBroadcaster<TodoListDto> todoEventBroadcaster) 
+			throws SQLException {
+		return new TodoListService(
+			dataContextProvider.getContext(),
+			userProvider,
+			datetimeProvider, 
+			todoEventService,
+			todoEventBroadcaster);
+	}
+
+	@Bean
+	public UserMovesEventBroadcaster<TodoListDto> todoEventBroadcaster() {
+		return new UserMovesEventBroadcaster<TodoListDto>(List.of(
+		));
 	}
 }

@@ -26,7 +26,7 @@ public class TodoListDto extends TitledId implements DateAligner {
 	private Set<Integer> __weekActiveDaysSet;
 	private LocalTime __dayStartHour;
 	private int __damage;
-	
+	private int __intervalSize;
 
 	public TodoListDto(UUID id, String title) {
 		super(id, title);
@@ -130,6 +130,15 @@ public class TodoListDto extends TitledId implements DateAligner {
 
 	public TodoListDto setDamage(int damage) {
 		__damage = damage;
+		return this;
+	}
+
+	public int intervalSize() {
+		return __intervalSize;
+	}
+
+	public TodoListDto setIntervalSize(int intervalSize) {
+		__intervalSize = intervalSize;
 		return this;
 	}
 

@@ -1,7 +1,5 @@
 package utilities;
 
-import java.util.List;
-
 public class DayStatus {
 
 	private boolean __isDayActive;

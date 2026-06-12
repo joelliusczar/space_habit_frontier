@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import space_habit_frontier.engine.exceptions.ResourceNotFoundException;
+
 
 @RestControllerAdvice
 public class AppExceptionHandler {
@@ -34,5 +36,14 @@ public class AppExceptionHandler {
 		problemDetail.setTitle("Onk! Caveman error! What do?");
 		return problemDetail;
 	}
-	
+
+	@ExceptionHandler(ResourceNotFoundException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public ProblemDetail handleNotFound(ResourceNotFoundException ex) {
+		var problemDetail = ProblemDetail.forStatus(
+			HttpStatus.NOT_FOUND);
+		problemDetail.setTitle("Not Found");
+		problemDetail.setDetail(ex.getMessage());
+		return problemDetail;
+	}
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import space_habit_frontier.engine.dtos.user_moves.RollDto;
 import space_habit_frontier.engine.dtos.user_moves.UserMoveDto;
 import space_habit_frontier.engine.interfaces.user_moves.UserMoveEventSubscriber;
 
@@ -22,11 +21,17 @@ public class UserMovesEventBroadcaster<T> {
 		__subscribers.add(subscriber);
 	}
 
-	public void broadcastCompletedEvent(RollDto roll) {
+	public void subscribe(int order, UserMoveEventSubscriber<T> subscriber) {
+		__subscribers.add(order, subscriber);
+	}
+
+	public UserMoveDto<T> broadcastCompletedEvent(T entity) {
 		var userMoveResult = new UserMoveDto<T>();
+		userMoveResult.setEntity(entity);
 		for (var subscriber : __subscribers) {
 			subscriber.onCompleted(userMoveResult);
 		}
+		return userMoveResult;
 	}
 
 	public void broadcastRevertedEvent(UUID todoId) {

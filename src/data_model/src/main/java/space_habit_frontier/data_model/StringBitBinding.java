@@ -3,7 +3,6 @@ package space_habit_frontier.data_model;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Types;
-import java.util.BitSet;
 
 import org.jooq.Binding;
 import org.jooq.BindingGetResultSetContext;

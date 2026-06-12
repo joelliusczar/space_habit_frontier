@@ -1,14 +1,17 @@
 package space_habit_frontier.engine.services.todos;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.SelectWhereStep;
 import org.jooq.impl.DSL;
+
 
 import com.fasterxml.uuid.Generators;
 
@@ -18,28 +21,43 @@ import space_habit_frontier.engine.constants.RepeatType;
 import space_habit_frontier.engine.dtos.todos.DueDateCalculator;
 import space_habit_frontier.engine.dtos.todos.TodoActiveDaysConverters;
 import space_habit_frontier.engine.dtos.todos.TodoListDto;
-import space_habit_frontier.engine.dtos.user_moves.RollDto;
 import space_habit_frontier.engine.dtos.user_moves.UserMoveDto;
 import space_habit_frontier.engine.dtos.users.UserDto;
+import space_habit_frontier.engine.exceptions.ResourceNotFoundException;
 import space_habit_frontier.engine.interfaces.dates.DatetimeProvider;
+import space_habit_frontier.engine.interfaces.todos.DueDate;
 import space_habit_frontier.engine.interfaces.user_moves.UserMoveEventSubscriber;
 import space_habit_frontier.engine.interfaces.users.UserProvider;
+import space_habit_frontier.engine.services.user_moves.UserMovesEventBroadcaster;
+
+import static org.jooq.impl.DSL.and;
+import static org.jooq.impl.DSL.or;
 
 public class TodoListService implements UserMoveEventSubscriber<TodoListDto> {
 	private final DSLContext __context;
 	private final UserProvider __userProvider;
 	private final DatetimeProvider __datetimeProvider;
 	private final TodoEventService __todoEventService;
+	private final UserMovesEventBroadcaster<TodoListDto> __todoEventBroadcaster;
+	private final DueDateCalculator __calculator;
 
 	public TodoListService(
 			DSLContext context,
 			UserProvider userProvider,
 			DatetimeProvider datetimeProvider,
-			TodoEventService todoEventService) {
+			TodoEventService todoEventService,
+			UserMovesEventBroadcaster<TodoListDto> todoEventBroadcaster) {
 		__context = context;
 		__userProvider = userProvider;
 		__datetimeProvider = datetimeProvider;
 		__todoEventService = todoEventService;
+		__todoEventBroadcaster = todoEventBroadcaster;
+		__todoEventBroadcaster.subscribe(0, this);
+		__calculator = new DueDateCalculator();
+	}
+
+	private DueDate __dueDateCalculator(RepeatType repeatType) {
+		return __calculator;
 	}
 
 	private Field<Integer> __todoEventsRowNum() {
@@ -84,7 +102,8 @@ public class TodoListService implements UserMoveEventSubscriber<TodoListDto> {
 					TodoActiveDaysConverters
 						.weekActiveDaysSet(r.get(Todos.TODOS.WEEKACTIVEDAYS)))
 				.setEffectiveDatetime(r.get(Todos.TODOS.EFFECTIVEDATETIME))
-				.setCreationDatetime(r.get(Todos.TODOS.CREATIONDATETIME));
+				.setCreationDatetime(r.get(Todos.TODOS.CREATIONDATETIME))
+				.setIntervalSize(r.get(Todos.TODOS.REPEATRATE));
 	}
 
 	public List<TodoListDto> getTodosActive() {
@@ -95,51 +114,63 @@ public class TodoListService implements UserMoveEventSubscriber<TodoListDto> {
 			var ctx = configuration.dsl();
 
 			var res = __todosUnfiltered(ctx, user.toUserDto())
-				.where(Todos.TODOS.USERID.eq(user.getId()))
-				.or(Todos.TODOS.EFFECTIVEDATETIME
-					.lessOrEqual(__datetimeProvider.now().toOffsetDateTime())
-				.or(Todos.TODOS.EXPIRATIONDATETIMESTAMP
-					.greaterOrEqual(__datetimeProvider.now().toOffsetDateTime()))
-				.or(Todos.TODOS.EFFECTIVEDATETIME.isNull()))
-				.and(rowNum.eq(1).or(rowNum.isNull()))
+				.where(
+					or(
+						and(
+							Todos.TODOS.USERID.eq(user.getId()),
+							or(Todos.TODOS.EFFECTIVEDATETIME
+								.lessOrEqual(__datetimeProvider.now().toOffsetDateTime()),
+								Todos.TODOS.EFFECTIVEDATETIME.isNull()),
+							or(Todos.TODOS.EXPIRATIONDATETIMESTAMP
+								.greaterOrEqual(__datetimeProvider.now().toOffsetDateTime()),
+								Todos.TODOS.EXPIRATIONDATETIMESTAMP.isNull()),
+							or(
+								rowNum.eq(1),
+								rowNum.isNull())),
+						and(
+							Todos.TODOS.REPEATTYPE.eq(RepeatType.DATE.getValue()),
+							Todos.TODOS.DUEDATETIME.isNull()
+						)))
 				.fetch(this::__joinedEventRecordToListDto);
 			return res;
 		});
 	}
 
-	public List<TodoListDto> getTodos() {
+	public List<TodoListDto> getTodosToday() {
+		var todos = getTodosStream()
+			.filter(t -> {
+				return __dueDateCalculator(t.repeatType())
+					.isDateADueDate(__datetimeProvider.now().toOffsetDateTime(), t);
+			}).toList();
+		return todos;
+	}
+
+	public Stream<TodoListDto> getTodosStream() {
 		return getTodosActive()
 			.stream()
-			.filter(t -> {
-				if (t.repeatType() == RepeatType.DATE) {
-					return t.lastCompletedDatetime().isEmpty();
-				}
-				//filter out todos that are have been completed today.
-				var today = __datetimeProvider.now().toLocalDate();
-				return !t.alignLastCompletedDate().isEqual(today);
-			})
-			.map(this::__setCalculatedDates)
-			.toList();
+			.map(this::__setCalculatedDates);
+	}
+
+	public List<TodoListDto> getTodos() {
+		return getTodosStream().toList();
 	}
 
 	private TodoListDto __setCalculatedDates(
 			TodoListDto todo,
-			LocalDateTime checkinDate) {
-		var previousCompletion = todo.lastCompletedDatetime()
-					.orElse(todo.weekActiveDays().minActiveDate().atTime(OffsetTime.MIN))
-					.toLocalDateTime();
-		var calculator = new DueDateCalculator(
-			todo.weekActiveDays(),
-			previousCompletion);
-		var dueDate = calculator
-			.calculateNextDueDate(checkinDate);
+			OffsetDateTime checkinDate) {
+		if (todo.repeatType() == RepeatType.DATE) {
+			return todo;
+		}
+		
+		var dueDate = __dueDateCalculator(todo.repeatType())
+			.calculateNextDueDate(checkinDate, todo);
 		return todo.setNextDueDate(dueDate);
 	}
 
 	private TodoListDto __setCalculatedDates(TodoListDto todo) {
 		return __setCalculatedDates(
 			todo, 
-			__datetimeProvider.now().toLocalDateTime());
+			__datetimeProvider.now().toOffsetDateTime());
 	}
 
 	@Override
@@ -155,9 +186,19 @@ public class TodoListService implements UserMoveEventSubscriber<TodoListDto> {
 						.fetchOne(this::__joinedEventRecordToListDto);
 				return __setCalculatedDates(
 					res,
-					__datetimeProvider.now().toLocalDateTime());
+					__datetimeProvider.now().toOffsetDateTime());
 		});
 		return userMoveDto.setEntity(entity);
+	}
+
+	public UserMoveDto<TodoListDto> onCompleted(UUID todoId) 
+			throws ResourceNotFoundException {
+		var entity = getTodosStream()
+			.filter(t -> t.id() == todoId)
+			.findFirst()
+			.orElseThrow(() -> new ResourceNotFoundException(
+				String.format("Record with id %s not found", todoId)));
+		return __todoEventBroadcaster.broadcastCompletedEvent(entity);
 	}
 
 	@Override

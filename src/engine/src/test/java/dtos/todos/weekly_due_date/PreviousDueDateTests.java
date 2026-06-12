@@ -1,7 +1,6 @@
 package dtos.todos.weekly_due_date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.lang.reflect.InvocationTargetException;
 import java.time.DayOfWeek;

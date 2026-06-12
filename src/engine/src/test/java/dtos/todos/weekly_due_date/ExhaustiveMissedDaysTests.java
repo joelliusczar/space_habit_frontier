@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 
-
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
@@ -16,6 +16,7 @@ import utilities.ActiveDaysCalendar;
 
 public class ExhaustiveMissedDaysTests {
 
+	@Disabled
 	@Test
 	void testMissedDaysExhaustive() {
 

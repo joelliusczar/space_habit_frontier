@@ -3,19 +3,25 @@ package space_habit_frontier.engine.dtos.todos;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import space_habit_frontier.engine.dtos.todos.active_days.ActiveDaysCollection;
+import space_habit_frontier.engine.interfaces.todos.DueDate;
 
-public class DueDateCalculator implements DateAligner {
+public class DueDateCalculator implements DateAligner, DueDate {
 	private ActiveDaysCollection __activeDays;
 	private LocalDateTime __previousCheckinDate;
 	private LocalDate __previousCheckinDateAligned;
 	private LocalDate __minDate;
 	private int __intervalSize;
 	private LocalTime __dayStartHour;
+
+	public DueDateCalculator() {
+		this(null, null);
+	}
 
 	public DueDateCalculator(
 		ActiveDaysCollection activeDays,
@@ -192,10 +198,12 @@ public class DueDateCalculator implements DateAligner {
 		return new DueDatePair(Optional.of(previousDueDate), nextDueDate);
 	}
 
+	@Override
 	public LocalDate calculateNextDueDate(LocalDateTime checkinDate) {
 		return __calculateBothDueDates(checkinDate).next();
 	}
 
+	@Override
 	public boolean isDateADueDate(LocalDateTime checkinDate) {
 		var nextDueDate = __calculateBothDueDates(checkinDate).next();
 		return nextDueDate.isEqual(checkinDate.toLocalDate());
@@ -301,6 +309,26 @@ public class DueDateCalculator implements DateAligner {
 		var dueDate = calculator
 			.calculateNextDueDate(checkinDate);
 		return todo.setNextDueDate(dueDate);
+	}
+
+	@Override
+	public LocalDate calculateNextDueDate(
+			OffsetDateTime checkinDate,
+			TodoListDto todo) {
+		setActiveDays(todo.weekActiveDays())
+		.setPreviousCheckinDate(
+			todo.lastCompletedDatetimeBestGuess(checkinDate)
+			.toLocalDateTime())
+		.setIntervalSize(todo.intervalSize())
+		.setDayStartHour(todo.dayStartHour());
+
+		return calculateNextDueDate(checkinDate.toLocalDateTime());
+	}
+
+	@Override
+	public boolean isDateADueDate(OffsetDateTime checkinDate, TodoListDto todo) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'isDateADueDate'");
 	}
 	
 }

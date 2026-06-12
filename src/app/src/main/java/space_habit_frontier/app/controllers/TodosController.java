@@ -14,23 +14,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import space_habit_frontier.engine.dtos.user_moves.UserMoveDto;
+import space_habit_frontier.engine.exceptions.ResourceNotFoundException;
 import space_habit_frontier.engine.dtos.todos.TodoFormDto;
 import space_habit_frontier.engine.dtos.todos.TodoListDto;
 import space_habit_frontier.engine.dtos.user_moves.UserMoveDto;
 import space_habit_frontier.engine.services.todos.TodoListService;
 import space_habit_frontier.engine.services.todos.TodoService;
+import space_habit_frontier.engine.services.user_moves.UserMovesEventBroadcaster;
 
 @RestController
 @RequestMapping("api/todos")
 public class TodosController {
 	private final TodoService __todoService;
 	private final TodoListService __todoListService;
+	private final UserMovesEventBroadcaster<TodoListDto> __todoEventBroadcaster;
 
 	public TodosController(
 			TodoService todoService,
-			TodoListService todoListService) {
+			TodoListService todoListService,
+			UserMovesEventBroadcaster<TodoListDto> todoEventBroadcaster) {
 		__todoService = todoService;
 		__todoListService = todoListService;
+		__todoEventBroadcaster = todoEventBroadcaster;
 	}
 
 	@GetMapping("/all")
@@ -57,14 +62,15 @@ public class TodosController {
 		this.__todoService.update(UUID.fromString(todoId), formDto);
 	}
 
-	// @PostMapping("/complete/{todoId}")
-	// public UserMoveDto<TodoListDto> complete(@PathVariable String todoId) {
-	// 	var result = this.__todoService.completeTodo(UUID.fromString(todoId));
-	// 	return new UserMoveDto<TodoListDto>().setEntity(result); // Return the actual UserMoveResult
-	// }
+	@PostMapping("/complete/{todoId}")
+	public UserMoveDto<TodoListDto> complete(@PathVariable String todoId)
+			throws ResourceNotFoundException {
+		return __todoListService.onCompleted(UUID.fromString(todoId));
+	}
 
 	@DeleteMapping("/{todoId}")
 	public void delete(@PathVariable String todoId) {
+		// __todoListService.getTodosActive()
 		// this.__todoService.delete(UUID.fromString(todoId));
 	}
 
